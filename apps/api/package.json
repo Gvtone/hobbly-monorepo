@@ -1,0 +1,25 @@
+{
+  "name": "@hobbies-dashboard/api",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "devDependencies": {
+    "@hobbies-dashboard/typescript-config": "*",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.19.15",
+    "prisma": "^7.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.6.0",
+    "cors": "^2.8.6",
+    "dotenv": "^16.0.3",
+    "express": "^5.2.1"
+  }
+}
