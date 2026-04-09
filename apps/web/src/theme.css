@@ -18,8 +18,8 @@
   --destructive-foreground: #ffffff;
   --border: rgba(45, 58, 74, 0.1);
 
-  --font-weight-medium: 600;
-  --font-weight-normal: 400;
+  /* --font-weight-medium: 600;
+  --font-weight-normal: 400; */
 
   --radius: 1rem;
 
@@ -79,9 +79,9 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
-
+  /* 
   --font-weight-medium: var(--font-weight-medium);
-  --font-weight-normal: var(--font-weight-normal);
+  --font-weight-normal: var(--font-weight-normal); */
 
   /* --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
