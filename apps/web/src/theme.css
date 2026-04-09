@@ -39,6 +39,10 @@
   --hobbly-surface: #1a2744;
   --hobbly-surface-2: #243154;
   --hobbly-text-light: #e8edf5;
+
+  /* Hobbly font */
+  --hobbly-serif: "Playfair Display", serif;
+  --hobbly-sans-serif: "Nunito", sans-serif;
 }
 
 .dark {
@@ -76,6 +80,9 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
 
+  --font-weight-medium: var(--font-weight-medium);
+  --font-weight-normal: var(--font-weight-normal);
+
   /* --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -97,6 +104,10 @@
   --color-hobbly-surface: var(--hobbly-surface);
   --color-hobbly-surface-2: var(--hobbly-surface-2);
   --color-hobbly-text-light: var(--hobbly-text-light);
+
+  /* Hobbly custom fonts */
+  --font-hobbly-serif: var(--hobbly-serif);
+  --font-hobbly-sans-serif: var(--hobbly-sans-serif);
 }
 
 @layer base {

@@ -63,6 +63,13 @@ const buttonVariants = cva(
         true: "bg-primary text-primary-foreground border-hobbly-sky hover:bg-primary"
       }
     },
+    compoundVariants: [
+      {
+        variant: "ghost",
+        active: true,
+        className: "border-none hover:text-primary-foreground"
+      }
+    ],
     defaultVariants: {
       variant: "gradient",
       shape: "rounded",
