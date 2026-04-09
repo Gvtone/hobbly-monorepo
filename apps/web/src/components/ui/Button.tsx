@@ -30,7 +30,10 @@ const buttonVariants = cva(
           "text-foreground",
           "hover:bg-muted"
         ],
-        ghost: ["bg-transparent text-foreground", "hover:bg-muted"],
+        ghost: [
+          "bg-transparent text-muted-foreground",
+          "hover:bg-muted hover:text-foreground"
+        ],
         translucent: [
           "bg-white/20",
           "backdrop-blur-md",
