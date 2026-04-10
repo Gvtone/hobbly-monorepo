@@ -1,6 +1,10 @@
 import Button from "../components/ui/Button";
 import { Card, CardInfo, type CardInfoProps } from "../components/ui/Card";
 import { Sparkles, Moon, ArrowRight } from "lucide-react";
+import cloudsBg from "../assets/clouds.jpg";
+
+// const HERO_IMAGE =
+//   "https://images.unsplash.com/photo-1687449923456-0bcf08c02662?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200";
 
 const cardData: CardInfoProps[] = [
   {
@@ -87,7 +91,7 @@ function LandingPage() {
       </section>
 
       <section>
-        <div className="px-6 pb-16 max-w-4xl m-auto">
+        <div className="px-6 pb-20 max-w-4xl m-auto">
           <Card></Card>
         </div>
       </section>
@@ -109,6 +113,40 @@ function LandingPage() {
           </div>
         </div>
       </section>
+
+      <section>
+        <div className="py-20 px-6 max-w-5xl mx-auto">
+          <Card
+            className="bg-cover bg-center h-80 p-0"
+            style={{ backgroundImage: `url(${cloudsBg})` }}
+          >
+            <div className="flex flex-col items-center justify-center gap-6 rounded-3xl bg-linear-135 from-hobbly-navy/70 to-hobbly-sky-dark/40 h-full ">
+              <h2 className="text-white text-5xl">
+                Begin your hobby journey today
+              </h2>
+              <Button variant="translucent" size="lg">
+                Start for free
+                <ArrowRight></ArrowRight>
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      <footer className="flex flex-col items-center justify-center gap-2 py-6 border-t border-border">
+        <div className="flex justify-center items-center gap-2">
+          <span className="flex justify-center items-center rounded-full bg-linear-135 from-hobbly-sky to-hobbly-lavender p-2 text-white">
+            <Sparkles size={12}></Sparkles>
+          </span>
+          <span className="font-md font-hobbly-serif">Hobbly</span>
+        </div>
+        <span className="text-sm text-muted-foreground">
+          Made with ✨ for hobby lovers everywhere
+        </span>
+        <span className="text-sm">
+          © 2026 Hobbly · <a href="#">Privacy</a> · <a href="#">Terms</a>
+        </span>
+      </footer>
     </>
   );
 }
