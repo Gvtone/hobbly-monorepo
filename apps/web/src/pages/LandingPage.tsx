@@ -47,7 +47,11 @@ function LandingPage() {
           <Button variant="ghost" shape="pill" size="icon" className="p-2">
             <Moon className="text-muted-foreground" />
           </Button>
-          <Button variant="transparent" shape="pill">
+          <Button
+            variant="transparent"
+            shape="pill"
+            className="hidden md:inline-flex"
+          >
             Log in
           </Button>
           <Button variant="gradient" shape="pill">
@@ -64,18 +68,18 @@ function LandingPage() {
               Your cozy hobby journal
             </span>
           </div>
-          <h1 className="text-6xl text-center max-w-2xl">
+          <h1 className="text-5xl md:text-6xl text-center max-w-2xl">
             A cozy place for{" "}
             <span className="bg-linear-to-r from-hobbly-sky-dark to-hobbly-lavender bg-clip-text text-transparent">
               everything{" "}
             </span>
             you love
           </h1>
-          <p className="text-lg text-muted-foreground text-center max-w-md">
+          <p className="text-md md:text-lg text-muted-foreground text-center max-w-md">
             Anime, books, gaming, art — collect it all in a dreamy, visual board
             that's completely yours.
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-col md:flex-row justify-center gap-4">
             <Button variant="gradient" shape="rounded" size="lg">
               Start your journal
               <ArrowRight size={20} />
@@ -102,7 +106,7 @@ function LandingPage() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-3  gap-4 p-4">
               <div
                 className="relative flex flex-col justify-between rounded-xl min-h-40 p-2 pb-3 bg-cover bg-center"
                 style={{ backgroundImage: `url(${animeBg})` }}
@@ -169,7 +173,7 @@ function LandingPage() {
               Discover and organize your favorite hobbies in one place.
             </p>
           </div>
-          <div className="flex justify-between gap-4 ">
+          <div className="flex flex-col md:flex-row justify-between gap-4 ">
             {cardData.map((card, index) => (
               <CardInfo key={index} {...card} />
             ))}
@@ -184,7 +188,7 @@ function LandingPage() {
             style={{ backgroundImage: `url(${cloudsBg})` }}
           >
             <div className="flex flex-col items-center justify-center gap-6 rounded-3xl bg-linear-135 from-hobbly-navy/70 to-hobbly-sky-dark/40 h-full ">
-              <h2 className="text-white text-5xl">
+              <h2 className="text-white text-center text-3xl md:text-5xl">
                 Begin your hobby journey today
               </h2>
               <Button variant="translucent" size="lg">
