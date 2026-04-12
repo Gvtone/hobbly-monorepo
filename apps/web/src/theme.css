@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  --background: #fbf6ee;
+  --foreground: #2d3a4a;
+  --card: #ffffff;
+  --card-foreground: #2d3a4a;
+  --primary: #b8e4f5;
+  --primary-foreground: #5bb3d0;
+  --secondary: #8baf8b;
+  --secondary-foreground: #ffffff;
+  --muted: #f0e8d8;
+  --muted-foreground: #7a8899;
+  --accent: #f5ecd7;
+  --accent-foreground: #2d3a4a;
+  --destructive: #e8857a;
+  --destructive-foreground: #ffffff;
+  --border: rgba(45, 58, 74, 0.1);
+
+  /* --font-weight-medium: 600;
+  --font-weight-normal: 400; */
+
+  --radius: 1rem;
+
+  /* Hobbly palette */
+  --hobbly-sky: #7ec8e3;
+  --hobbly-sky-light: #b8e4f5;
+  --hobbly-sky-dark: #5bb3d0;
+  --hobbly-green: #8baf8b;
+  --hobbly-green-light: #b8d4b8;
+  --hobbly-cream: #f5ecd7;
+  --hobbly-cream-dark: #edd9bb;
+  --hobbly-red: #e8857a;
+  --hobbly-red-light: #f5b5ae;
+  --hobbly-lavender: #c8a2e3;
+  --hobbly-peach: #f5c27a;
+  --hobbly-navy: #0f1b35;
+  --hobbly-surface: #1a2744;
+  --hobbly-surface-2: #243154;
+  --hobbly-text-light: #e8edf5;
+
+  /* Hobbly font */
+  --hobbly-serif: "Playfair Display", serif;
+  --hobbly-sans-serif: "Nunito", sans-serif;
+}
+
+.dark {
+  --background: #0f1b35;
+  --foreground: #e8edf5;
+  --card: #1a2744;
+  --card-foreground: #e8edf5;
+  --primary: #7ec8e3;
+  --primary-foreground: #0f1b35;
+  --secondary: #8baf8b;
+  --secondary-foreground: #e8edf5;
+  --muted: #243154;
+  --muted-foreground: #8a9ec0;
+  --accent: #243154;
+  --accent-foreground: #e8edf5;
+  --destructive: #e8857a;
+  --destructive-foreground: #ffffff;
+  --border: rgba(232, 237, 245, 0.1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  /* 
+  --font-weight-medium: var(--font-weight-medium);
+  --font-weight-normal: var(--font-weight-normal); */
+
+  /* --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 8px); */
+
+  /* Hobbly custom colors */
+  --color-hobbly-sky: var(--hobbly-sky);
+  --color-hobbly-sky-light: var(--hobbly-sky-light);
+  --color-hobbly-sky-dark: var(--hobbly-sky-dark);
+  --color-hobbly-green: var(--hobbly-green);
+  --color-hobbly-green-light: var(--hobbly-green-light);
+  --color-hobbly-cream: var(--hobbly-cream);
+  --color-hobbly-cream-dark: var(--hobbly-cream-dark);
+  --color-hobbly-red: var(--hobbly-red);
+  --color-hobbly-red-light: var(--hobbly-red-light);
+  --color-hobbly-lavender: var(--hobbly-lavender);
+  --color-hobbly-peach: var(--hobbly-peach);
+  --color-hobbly-navy: var(--hobbly-navy);
+  --color-hobbly-surface: var(--hobbly-surface);
+  --color-hobbly-surface-2: var(--hobbly-surface-2);
+  --color-hobbly-text-light: var(--hobbly-text-light);
+
+  /* Hobbly custom fonts */
+  --font-hobbly-serif: var(--hobbly-serif);
+  --font-hobbly-sans-serif: var(--hobbly-sans-serif);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Nunito", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: "Playfair Display", serif;
+  }
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+    font-family: "Nunito", sans-serif;
+  }
+
+  label {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  button {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+    font-family: "Nunito", sans-serif;
+  }
+
+  input {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+    font-family: "Nunito", sans-serif;
+  }
+}
