@@ -1,10 +1,7 @@
 import Button from "../components/ui/Button";
 import { Card, CardInfo, type CardInfoProps } from "../components/ui/Card";
 import { Sparkles, Moon, ArrowRight } from "lucide-react";
-import cloudsBg from "../assets/clouds.jpg";
-
-// const HERO_IMAGE =
-//   "https://images.unsplash.com/photo-1687449923456-0bcf08c02662?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200";
+import { cloudsBg, animeBg, booksBg, journalBg } from "../assets";
 
 const cardData: CardInfoProps[] = [
   {
@@ -92,7 +89,73 @@ function LandingPage() {
 
       <section>
         <div className="px-6 pb-20 max-w-4xl m-auto">
-          <Card></Card>
+          <Card className="relative p-0">
+            <div className="flex py-1 px-4 rounded-t-2xl border-b-2 border-border">
+              <div className="flex justify-center items-center gap-2 mr-6">
+                <div className="rounded-full size-3 bg-hobbly-red"></div>
+                <div className="rounded-full size-3 bg-hobbly-peach"></div>
+                <div className="rounded-full size-3 bg-hobbly-green"></div>
+              </div>
+              <div className="flex-1 p-2">
+                <div className="flex items-center bg-muted rounded-full px-4 mr-6">
+                  <span className="text-muted-foreground">hobbly.app/Jade</span>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 p-4">
+              <div
+                className="relative flex flex-col justify-between rounded-xl min-h-40 p-2 pb-3 bg-cover bg-center"
+                style={{ backgroundImage: `url(${animeBg})` }}
+              >
+                <div className="flex items-center gap-2 bg-hobbly-lavender/60 rounded-full px-2 w-fit">
+                  <span>🎌</span>
+                  <span className=" text-white text-sm font-semibold">
+                    Anime Tracker
+                  </span>
+                </div>
+                <span className="text-white font-hobbly-serif font-bold text-xl z-1">
+                  8 Series
+                </span>
+                <div className="absolute bottom-0 left-0 right-0 h-full bg-linear-to-t from-black/50 to-transparent rounded-xl" />
+              </div>
+              <div
+                className="relative flex flex-col justify-between rounded-xl min-h-40 p-2 pb-3 bg-cover bg-center"
+                style={{ backgroundImage: `url(${booksBg})` }}
+              >
+                <div className="flex items-center gap-2 bg-hobbly-lavender/60 rounded-full px-2 w-fit">
+                  <span>🎌</span>
+                  <span className=" text-white text-sm font-semibold">
+                    Reading List
+                  </span>
+                </div>
+                <span className="text-white font-hobbly-serif font-bold text-xl z-1">
+                  23 books
+                </span>
+                <div className="absolute bottom-0 left-0 right-0 h-full bg-linear-to-t from-black/50 to-transparent rounded-xl" />
+              </div>
+              <div
+                className="relative flex flex-col justify-between rounded-xl min-h-40 p-2 pb-3 bg-cover bg-center"
+                style={{ backgroundImage: `url(${journalBg})` }}
+              >
+                <div className="flex items-center gap-2 bg-hobbly-lavender/60 rounded-full px-2 w-fit">
+                  <span>🎌</span>
+                  <span className=" text-white text-sm font-semibold">
+                    Daily Journal
+                  </span>
+                </div>
+                <span className="text-white font-hobbly-serif font-bold text-xl z-1">
+                  142 Entries
+                </span>
+                <div className="absolute bottom-0 left-0 right-0 h-full bg-linear-to-t from-black/50 to-transparent rounded-xl" />
+              </div>
+            </div>
+            <div className="absolute -top-3 -right-3 text-3xl rotate-15">
+              ✨
+            </div>
+            <div className="absolute -bottom-3 -left-3 text-3xl -rotate-10">
+              🌸
+            </div>
+          </Card>
         </div>
       </section>
 
@@ -117,7 +180,7 @@ function LandingPage() {
       <section>
         <div className="py-20 px-6 max-w-5xl mx-auto">
           <Card
-            className="bg-cover bg-center h-80 p-0"
+            className="bg-cover bg-center h-80 p-0 shadow-2xl"
             style={{ backgroundImage: `url(${cloudsBg})` }}
           >
             <div className="flex flex-col items-center justify-center gap-6 rounded-3xl bg-linear-135 from-hobbly-navy/70 to-hobbly-sky-dark/40 h-full ">
@@ -143,7 +206,7 @@ function LandingPage() {
         <span className="text-sm text-muted-foreground">
           Made with ✨ for hobby lovers everywhere
         </span>
-        <span className="text-sm">
+        <span className="text-xs text-muted-foreground">
           © 2026 Hobbly · <a href="#">Privacy</a> · <a href="#">Terms</a>
         </span>
       </footer>
