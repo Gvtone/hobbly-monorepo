@@ -6,8 +6,10 @@ import {
   type InfoCardProps,
   type WidgetCardProps
 } from "../components/ui/Card";
-import { Sparkles, Moon, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 import { cloudsBg, animeBg, booksBg, journalBg } from "../assets";
+import LandingNavbar from "../components/layout/LandingNavbar";
+import Footer from "../components/layout/Footer";
 
 const infoCardData: InfoCardProps[] = [
   {
@@ -63,35 +65,7 @@ const previewCardData: WidgetCardProps[] = [
 function LandingPage() {
   return (
     <>
-      <nav
-        id="nav-bar"
-        className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto"
-      >
-        <div id="title" className="flex gap-2 items-center">
-          <div className="flex justify-center items-center bg-linear-to-br from-hobbly-sky to-hobbly-lavender rounded-full w-8 h-8 shadow shadow-hobbly-sky/30">
-            <Sparkles className="text-background" size={16}></Sparkles>
-          </div>
-          <span className="text-xl font-semibold font-hobbly-serif">
-            Hobbly
-          </span>
-        </div>
-
-        <div id="nav-links" className="flex justify-center items-center gap-2">
-          <Button variant="ghost" shape="pill" size="icon" className="p-2">
-            <Moon className="text-muted-foreground" />
-          </Button>
-          <Button
-            variant="transparent"
-            shape="pill"
-            className="hidden md:inline-flex"
-          >
-            Log in
-          </Button>
-          <Button variant="gradient" shape="pill">
-            Start for free
-          </Button>
-        </div>
-      </nav>
+      <LandingNavbar />
 
       <section>
         <div className="flex flex-col items-center gap-6 h-screen/80 py-20 px-6">
@@ -200,20 +174,7 @@ function LandingPage() {
         </div>
       </section>
 
-      <footer className="flex flex-col items-center justify-center gap-2 py-6 border-t border-border">
-        <div className="flex justify-center items-center gap-2">
-          <span className="flex justify-center items-center rounded-full bg-linear-135 from-hobbly-sky to-hobbly-lavender p-2 text-white">
-            <Sparkles size={12}></Sparkles>
-          </span>
-          <span className="font-md font-hobbly-serif">Hobbly</span>
-        </div>
-        <span className="text-sm text-muted-foreground">
-          Made with ✨ for hobby lovers everywhere
-        </span>
-        <span className="text-xs text-muted-foreground">
-          © 2026 Hobbly · <a href="#">Privacy</a> · <a href="#">Terms</a>
-        </span>
-      </footer>
+      <Footer />
     </>
   );
 }
