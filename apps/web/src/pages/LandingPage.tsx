@@ -1,9 +1,15 @@
 import Button from "../components/ui/Button";
-import { Card, CardInfo, type CardInfoProps } from "../components/ui/Card";
+import {
+  Card,
+  InfoCard,
+  WidgetCard,
+  type InfoCardProps,
+  type WidgetCardProps
+} from "../components/ui/Card";
 import { Sparkles, Moon, ArrowRight } from "lucide-react";
 import { cloudsBg, animeBg, booksBg, journalBg } from "../assets";
 
-const cardData: CardInfoProps[] = [
+const infoCardData: InfoCardProps[] = [
   {
     icon: "✨",
     iconBgColor: "bg-primary/40",
@@ -24,6 +30,33 @@ const cardData: CardInfoProps[] = [
     title: "Private by Default",
     description:
       "Your journal is yours. Share only what you want with a simple link — or keep it all cozy and private."
+  }
+];
+
+const previewCardData: WidgetCardProps[] = [
+  {
+    hobbyTag: "Anime",
+    tagColor: "bg-hobbly-lavender/60",
+    bgImage: animeBg,
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    hobbyTag: "Books",
+    tagColor: "bg-hobbly-peach/60",
+    bgImage: booksBg,
+    trackedNumber: "23",
+    trackedLabel: "books read",
+    additional: "Currently reading 2"
+  },
+  {
+    hobbyTag: "Daily Journal",
+    tagColor: "bg-hobbly-cream/60",
+    bgImage: journalBg,
+    trackedNumber: "142",
+    trackedLabel: "entries written",
+    additional: "12 day streak 🔥"
   }
 ];
 
@@ -106,52 +139,19 @@ function LandingPage() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3  gap-4 p-4">
-              <div
-                className="relative flex flex-col justify-between rounded-xl min-h-40 p-2 pb-3 bg-cover bg-center"
-                style={{ backgroundImage: `url(${animeBg})` }}
-              >
-                <div className="flex items-center gap-2 bg-hobbly-lavender/60 rounded-full px-2 w-fit">
-                  <span>🎌</span>
-                  <span className=" text-white text-sm font-semibold">
-                    Anime Tracker
-                  </span>
-                </div>
-                <span className="text-white font-hobbly-serif font-bold text-xl z-1">
-                  8 Series
-                </span>
-                <div className="absolute bottom-0 left-0 right-0 h-full bg-linear-to-t from-black/50 to-transparent rounded-xl" />
-              </div>
-              <div
-                className="relative flex flex-col justify-between rounded-xl min-h-40 p-2 pb-3 bg-cover bg-center"
-                style={{ backgroundImage: `url(${booksBg})` }}
-              >
-                <div className="flex items-center gap-2 bg-hobbly-lavender/60 rounded-full px-2 w-fit">
-                  <span>🎌</span>
-                  <span className=" text-white text-sm font-semibold">
-                    Reading List
-                  </span>
-                </div>
-                <span className="text-white font-hobbly-serif font-bold text-xl z-1">
-                  23 books
-                </span>
-                <div className="absolute bottom-0 left-0 right-0 h-full bg-linear-to-t from-black/50 to-transparent rounded-xl" />
-              </div>
-              <div
-                className="relative flex flex-col justify-between rounded-xl min-h-40 p-2 pb-3 bg-cover bg-center"
-                style={{ backgroundImage: `url(${journalBg})` }}
-              >
-                <div className="flex items-center gap-2 bg-hobbly-lavender/60 rounded-full px-2 w-fit">
-                  <span>🎌</span>
-                  <span className=" text-white text-sm font-semibold">
-                    Daily Journal
-                  </span>
-                </div>
-                <span className="text-white font-hobbly-serif font-bold text-xl z-1">
-                  142 Entries
-                </span>
-                <div className="absolute bottom-0 left-0 right-0 h-full bg-linear-to-t from-black/50 to-transparent rounded-xl" />
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+              {previewCardData.map(data => (
+                <WidgetCard
+                  key={data.hobbyTag}
+                  hobbyTag={data.hobbyTag}
+                  tagColor={data.tagColor}
+                  bgImage={data.bgImage}
+                  trackedNumber={data.trackedNumber}
+                  trackedLabel={data.trackedLabel}
+                  additional={data.additional}
+                  className="h-40"
+                />
+              ))}
             </div>
             <div className="absolute -top-3 -right-3 text-3xl rotate-15">
               ✨
@@ -174,8 +174,8 @@ function LandingPage() {
             </p>
           </div>
           <div className="flex flex-col md:flex-row justify-between gap-4 ">
-            {cardData.map((card, index) => (
-              <CardInfo key={index} {...card} />
+            {infoCardData.map(card => (
+              <InfoCard key={card.title} {...card} />
             ))}
           </div>
         </div>
