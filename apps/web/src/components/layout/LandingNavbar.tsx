@@ -1,7 +1,10 @@
-import { Sparkles, Moon } from "lucide-react";
+import { Sparkles, Moon, Sun } from "lucide-react";
 import Button from "../ui/Button";
+import { useTheme } from "../../features/theme/useTheme";
 
 function LandingNavbar() {
+  const { isDark, toggleTheme } = useTheme();
+
   return (
     <nav
       id="nav-bar"
@@ -15,8 +18,18 @@ function LandingNavbar() {
       </div>
 
       <div id="nav-links" className="flex justify-center items-center gap-2">
-        <Button variant="ghost" shape="pill" size="icon" className="p-2">
-          <Moon className="text-muted-foreground" />
+        <Button
+          onClick={toggleTheme}
+          variant="ghost"
+          shape="pill"
+          size="icon"
+          className="p-2"
+        >
+          {isDark ? (
+            <Sun className="text-muted-foreground" />
+          ) : (
+            <Moon className="text-muted-foreground" />
+          )}
         </Button>
         <Button
           variant="transparent"

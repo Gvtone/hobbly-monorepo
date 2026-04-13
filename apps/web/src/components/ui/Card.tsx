@@ -1,4 +1,4 @@
-import { cn } from "../../lib/utils";
+import { cn } from "../../utils/utils";
 import { Ellipsis, Expand } from "lucide-react";
 
 const defaultClasses =
