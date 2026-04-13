@@ -10,13 +10,15 @@ function LandingNavbar() {
       id="nav-bar"
       className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto"
     >
+      {/* Logo and name */}
       <div id="title" className="flex gap-2 items-center">
         <div className="flex justify-center items-center bg-linear-to-br from-hobbly-sky to-hobbly-lavender rounded-full w-8 h-8 shadow shadow-hobbly-sky/30">
-          <Sparkles className="text-background" size={16}></Sparkles>
+          <Sparkles className="text-white" size={16}></Sparkles>
         </div>
         <span className="text-xl font-semibold font-hobbly-serif">Hobbly</span>
       </div>
 
+      {/* Navigation links */}
       <div id="nav-links" className="flex justify-center items-center gap-2">
         <Button
           onClick={toggleTheme}

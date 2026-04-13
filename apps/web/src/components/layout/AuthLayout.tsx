@@ -9,7 +9,7 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
         w-1/2 text-white p-12 bg-center bg-cover"
         style={{ backgroundImage: `url(${moonSky})` }}
       >
-        <div className="flex flex-col gap-4 justify-center items-center z-1">
+        <div className="flex flex-col gap-4 justify-center items-center z-10">
           <div className="flex justify-center items-center bg-linear-to-br from from-hobbly-sky to-hobbly-lavender p-4 size-16 rounded-2xl">
             <Sparkles></Sparkles>
           </div>

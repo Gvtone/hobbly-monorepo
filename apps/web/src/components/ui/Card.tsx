@@ -63,7 +63,7 @@ function WidgetCard({
       className={cn(defaultClasses, className)}
       style={bgImage ? { backgroundImage: `url(${bgImage})` } : undefined}
     >
-      <div className="flex justify-between z-1">
+      <div className="flex justify-between z-10">
         <div className={`${tagColor} rounded-full px-2 w-fit h-fit`}>
           <span className="text-white text-sm font-semibold">{hobbyTag}</span>
         </div>
@@ -76,7 +76,7 @@ function WidgetCard({
           </div>
         </div>
       </div>
-      <div className="flex justify-between items-end z-1">
+      <div className="flex justify-between items-end z-10">
         <div className="flex flex-col">
           <span className="text-white font-hobbly-serif font-bold text-2xl">
             {trackedNumber}
