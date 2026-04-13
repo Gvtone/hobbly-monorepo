@@ -71,7 +71,7 @@ const buttonVariants = cva(
       }
     ],
     defaultVariants: {
-      variant: "gradient",
+      variant: "default",
       shape: "rounded",
       size: "default"
     }

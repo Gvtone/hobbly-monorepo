@@ -69,6 +69,7 @@ function LandingPage() {
 
       <section>
         <div className="flex flex-col items-center gap-6 h-screen/80 py-20 px-6">
+          {/* Jumbotron */}
           <div className="flex justify-center items-center gap-0.5 rounded-full bg-primary/30 text-primary-foreground py-1 px-2">
             <Sparkles size={15} />
             <span className="text-sm font-semibold tracking-wide py-1 px-2">
@@ -98,6 +99,7 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* Preview Section */}
       <section>
         <div className="px-6 pb-20 max-w-4xl m-auto">
           <Card className="relative p-0">
@@ -137,6 +139,7 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* Info Section */}
       <section>
         <div className="py-20 px-6 max-w-5xl mx-auto">
           <div className="flex flex-col items-center gap-2 mb-12">
@@ -155,6 +158,7 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* CTA Section */}
       <section>
         <div className="py-20 px-6 max-w-5xl mx-auto">
           <Card
