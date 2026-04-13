@@ -97,6 +97,8 @@
   /* Hobbly custom fonts */
   --font-hobbly-serif: var(--hobbly-serif);
   --font-hobbly-sans-serif: var(--hobbly-sans-serif);
+
+  --breakpoint-xs: 23rem;
 }
 
 @layer base {

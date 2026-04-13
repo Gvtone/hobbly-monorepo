@@ -5,7 +5,7 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen">
       <div
-        className="sticky top-0 h-screen hidden md:flex items-center justify-center 
+        className="sticky top-0 h-screen hidden lg:flex items-center justify-center 
         w-1/2 text-white p-12 bg-center bg-cover"
         style={{ backgroundImage: `url(${moonSky})` }}
       >
@@ -19,10 +19,7 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
           </span>
           <div className="flex flex-wrap justify-center gap-4 text-3xl">
             {["✨", "🎌", "📚", "🎮", "🎨", "🍜", "🎵", "🌿"].map(e => (
-              <span
-                key={e}
-                style={{ filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.3))" }}
-              >
+              <span key={e} className="drop-shadow-xl drop-shadow-black/30">
                 {e}
               </span>
             ))}
@@ -31,7 +28,7 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
         <div className="absolute bg-linear-to-br from-[#0f1b35d9] to-[#5bb3d04d] size-full"></div>
       </div>
 
-      <div className="flex flex-col items-center justify-center w-full md:w-1/2 bg-background p-12">
+      <div className="flex flex-col items-center justify-center w-full lg:w-1/2 bg-background p-12">
         {children}
       </div>
     </div>
