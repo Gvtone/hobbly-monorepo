@@ -2,7 +2,7 @@ import { cn } from "../../lib/utils";
 import { Ellipsis, Expand } from "lucide-react";
 
 const defaultClasses =
-  "flex flex-col bg-card border border-border rounded-3xl p-6";
+  "flex flex-col bg-card text-card-foreground border border-border rounded-3xl p-6";
 
 function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn(defaultClasses, className)} {...props} />;

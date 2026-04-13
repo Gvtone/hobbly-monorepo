@@ -20,11 +20,6 @@
   --destructive-foreground: #ffffff;
   --border: rgba(45, 58, 74, 0.1);
 
-  /* --font-weight-medium: 600;
-  --font-weight-normal: 400; */
-
-  --radius: 1rem;
-
   /* Hobbly palette */
   --hobbly-sky: #7ec8e3;
   --hobbly-sky-light: #b8e4f5;
@@ -81,14 +76,6 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
-  /* 
-  --font-weight-medium: var(--font-weight-medium);
-  --font-weight-normal: var(--font-weight-normal); */
-
-  /* --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 8px); */
 
   /* Hobbly custom colors */
   --color-hobbly-sky: var(--hobbly-sky);
