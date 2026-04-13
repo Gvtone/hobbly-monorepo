@@ -14,10 +14,10 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
             <Sparkles></Sparkles>
           </div>
           <h1 className="text-5xl">Hobbly</h1>
-          <span className="text-xl mb-4">
+          <span className="text-xl text-center mb-4">
             "A cozy place for everything you love."
           </span>
-          <div className="flex gap-4 text-3xl">
+          <div className="flex flex-wrap justify-center gap-4 text-3xl">
             {["✨", "🎌", "📚", "🎮", "🎨", "🍜", "🎵", "🌿"].map(e => (
               <span
                 key={e}

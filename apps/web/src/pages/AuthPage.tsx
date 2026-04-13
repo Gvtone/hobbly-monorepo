@@ -7,8 +7,9 @@ import { useState } from "react";
 
 function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [mode, setMode] = useState<"login" | "signup">("login");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
   };
 
@@ -23,33 +24,42 @@ function AuthPage() {
         </div>
         <Card className="items-center p-10 shadow-xl mb-6">
           <div className="flex flex-col items-center gap-2 mb-8">
-            <h2>Welcome back ✨</h2>
+            <h2>
+              {mode === "login" ? "Welcome back ✨" : "Create your space 🌸"}
+            </h2>
             <span className="text-sm text-muted-foreground">
-              Welcome back to your space
+              {mode === "login"
+                ? "Welcome back to your space"
+                : "Start your cozy hobby journey"}
             </span>
           </div>
           <div className="flex bg-accent rounded-full w-full py-1.5 px-2 mb-6">
-            <Button
-              variant="default"
-              shape="pill"
-              className="border-none"
-              fullWidth
-            >
-              Log in
-            </Button>
-            <Button
-              variant="transparent"
-              shape="pill"
-              className="border-none"
-              fullWidth
-            >
-              Sign Up
-            </Button>
+            {(["login", "signup"] as const).map(m => {
+              return (
+                <Button
+                  onClick={() => setMode(m)}
+                  variant={mode === m ? "default" : "transparent"}
+                  shape="pill"
+                  className="border-none"
+                  fullWidth
+                >
+                  {m === "login" ? "Log in" : "Sign up"}
+                </Button>
+              );
+            })}
           </div>
           <form onSubmit={handleSubmit} className="flex flex-col w-full mb-8">
+            {mode === "signup" && (
+              <div className="flex flex-col mb-6">
+                <label htmlFor="username" className="mb-2 ml-2">
+                  Username
+                </label>
+                <Input id="username" variant="text" placeholder="Starweaver" />
+              </div>
+            )}
             <div className="flex flex-col mb-6">
               <label htmlFor="email" className="mb-2 ml-2">
-                Email
+                {mode === "login" ? "Email or Username" : "Email"}
               </label>
               <Input id="email" variant="text" placeholder="you@example.com" />
             </div>
