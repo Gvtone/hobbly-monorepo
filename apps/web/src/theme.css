@@ -19,6 +19,7 @@
   --destructive: #e8857a;
   --destructive-foreground: #ffffff;
   --border: rgba(45, 58, 74, 0.1);
+  --ring: #7ec8e3;
 
   /* Hobbly palette */
   --hobbly-sky: #7ec8e3;
@@ -58,6 +59,7 @@
   --destructive: #e8857a;
   --destructive-foreground: #ffffff;
   --border: rgba(232, 237, 245, 0.1);
+  --ring: #7ec8e3;
 }
 
 @theme inline {
@@ -76,6 +78,7 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  --color-ring: var(--ring);
 
   /* Hobbly custom colors */
   --color-hobbly-sky: var(--hobbly-sky);
