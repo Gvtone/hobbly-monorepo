@@ -1,7 +1,58 @@
-import { Lock, PenLine, Share2 } from "lucide-react";
+import { Lock, MoveRight, PenLine, Share2 } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
 import Button from "../components/ui/Button";
-import { Card } from "../components/ui/Card";
+import { Card, WidgetCard, type WidgetCardProps } from "../components/ui/Card";
+
+const mockData: WidgetCardProps[] = [
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  }
+];
 
 function ProfilePage() {
   const tempPinnedTrackers = [
@@ -29,8 +80,9 @@ function ProfilePage() {
 
   return (
     <AppLayout>
-      <div className="flex flex-col py-10 px-6 max-w-5xl mx-auto">
-        <Card className="flex flex-col shadow-lg p-0">
+      <div className="py-10 px-6 max-w-5xl mx-auto">
+        {/* Main profile card */}
+        <Card className="flex flex-col shadow-lg p-0 mb-10">
           {/* Profile Cover */}
           <div className="relative h-28">
             <div className="absolute rounded-t-3xl h-42 top-0 left-0 right-0 overflow-hidden">
@@ -97,6 +149,7 @@ function ProfilePage() {
               </div>
             </div>
 
+            {/* Pinned Trackers */}
             <div className="flex gap-4">
               {tempPinnedTrackers.map(tracker => (
                 <div className="flex-1" key={tracker.trackerTag}>
@@ -114,6 +167,33 @@ function ProfilePage() {
             </div>
           </div>
         </Card>
+
+        <div>
+          <div className="flex justify-between items-baseline mb-4">
+            <h3 className="text-xl">My Hobby Board</h3>
+            <a
+              href=""
+              className="flex text-hobbly-sky-dark items-center text-sm gap-2"
+            >
+              Manage
+              <MoveRight size={14}></MoveRight>
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {mockData.map(data => (
+              <WidgetCard
+                bgImage={data.bgImage}
+                tagColor={data.tagColor}
+                hobbyTag={data.hobbyTag}
+                trackedNumber={data.trackedNumber}
+                trackedLabel={data.trackedLabel}
+                additional={data.additional}
+                className="min-h-36"
+              ></WidgetCard>
+            ))}
+          </div>
+        </div>
       </div>
     </AppLayout>
   );

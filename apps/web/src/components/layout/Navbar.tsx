@@ -22,7 +22,7 @@ function Navbar() {
   ];
 
   return (
-    <nav className="bg-card sticky top-0 z-10 w-full border-b border-border">
+    <nav className="bg-card sticky top-0 w-full border-b border-border z-50">
       <div className="relative flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
         {/* Logo and name */}
         <div id="title" className="flex gap-2 items-center z-20">

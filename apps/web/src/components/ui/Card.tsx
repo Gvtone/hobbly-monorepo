@@ -43,7 +43,7 @@ interface WidgetCardProps extends React.HTMLAttributes<HTMLDivElement> {
   bgImage?: string;
   trackedNumber: string;
   trackedLabel: string;
-  additional: string;
+  additional?: string;
 }
 
 function WidgetCard({
