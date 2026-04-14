@@ -96,8 +96,8 @@ function ProfilePage() {
 
           {/* Profile Info */}
           <div className="flex flex-col px-6 pb-6 z-20">
-            <div className="flex justify-between items-end mb-8">
-              <div className="relative rounded-xl size-24 border-2 border-card drop-shadow-xl">
+            <div className="flex flex-col md:flex-row md:justify-between items-center md:items-end gap-6 md:gap-0 mb-8">
+              <div className="relative rounded-xl size-36 md:size-24 border-2 border-card drop-shadow-xl">
                 <img
                   src="https://images.unsplash.com/photo-1621036189456-895776ffe69f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100"
                   className="object-cover object-center w-full h-full rounded-xl"
@@ -128,13 +128,13 @@ function ProfilePage() {
             </div>
 
             <div className="flex flex-col mb-4">
-              <h2 className="text-3xl">Jade</h2>
-              <span className="text-sm text-muted-foreground mb-2">
+              <h2 className="text-3xl text-center md:text-start">Jade</h2>
+              <span className="text-sm text-muted-foreground text-center md:text-start mb-2">
                 @starweaver
               </span>
 
               <div className="flex items-center group">
-                <p className="text-sm">
+                <p className="text-sm text-center md:text-start">
                   Anime lover 🎌 · Watercolor artist 🎨 · Cozy gamer 🎮 · Always
                   reading 📚
                 </p>
@@ -150,7 +150,7 @@ function ProfilePage() {
             </div>
 
             {/* Pinned Trackers */}
-            <div className="flex gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {tempPinnedTrackers.map(tracker => (
                 <div className="flex-1" key={tracker.trackerTag}>
                   <div className="flex flex-col items-center bg-accent rounded-xl p-4">
