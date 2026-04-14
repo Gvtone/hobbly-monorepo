@@ -181,8 +181,9 @@ function ProfilePage() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {mockData.map(data => (
+            {mockData.map((data, index) => (
               <WidgetCard
+                key={index}
                 bgImage={data.bgImage}
                 tagColor={data.tagColor}
                 hobbyTag={data.hobbyTag}
