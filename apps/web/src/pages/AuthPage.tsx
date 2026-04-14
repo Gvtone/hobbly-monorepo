@@ -66,14 +66,27 @@ function AuthPage() {
                 <label htmlFor="username" className="mb-2 ml-2">
                   Username
                 </label>
-                <Input id="username" variant="text" placeholder="Starweaver" />
+                <Input
+                  id="username"
+                  variant="auth"
+                  shape="pill"
+                  fullWidth
+                  placeholder="starweaver"
+                />
               </div>
             )}
             <div className="flex flex-col mb-6">
               <label htmlFor="email" className="mb-2 ml-2">
                 {mode === "login" ? "Email or Username" : "Email"}
               </label>
-              <Input id="email" variant="text" placeholder="you@example.com" />
+              <Input
+                id="email"
+                variant="auth"
+                shape="pill"
+                type="text"
+                fullWidth
+                placeholder="you@example.com"
+              />
             </div>
             <div className="flex flex-col mb-6">
               <label htmlFor="password" className="mb-2 ml-2">
@@ -82,7 +95,10 @@ function AuthPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  variant={showPassword ? "text" : "password"}
+                  variant="auth"
+                  shape="pill"
+                  type={showPassword ? "text" : "password"}
+                  fullWidth
                   placeholder="••••••••"
                   className="w-full pr-12"
                 />
