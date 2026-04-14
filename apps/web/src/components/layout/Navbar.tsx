@@ -35,9 +35,15 @@ function Navbar() {
         </div>
 
         {/* Navigation links/buttons */}
-        <div className="absolute left-0 right-0 flex justify-center items-center gap-2">
+        <div className="md:absolute left-0 right-0 flex justify-center items-center gap-2">
           {navItems.map(({ to, label, icon: Icon }) => (
-            <Button variant="ghost" shape="pill" key={to} active={isActive(to)}>
+            <Button
+              variant="ghost"
+              shape="pill"
+              className="hidden xs:flex xs:p-2 md:px-5"
+              key={to}
+              active={isActive(to)}
+            >
               <Icon size={18} />
               <span className="hidden sm:block text-sm">{label}</span>
             </Button>
