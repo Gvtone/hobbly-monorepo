@@ -9,6 +9,7 @@ import {
 import Button from "../ui/Button";
 import { useLocation } from "react-router-dom";
 import { useTheme } from "../../features/theme/useTheme";
+import LinkButton from "../ui/LinkButton";
 
 function Navbar() {
   const { isDark, toggleTheme } = useTheme();
@@ -37,7 +38,8 @@ function Navbar() {
         {/* Navigation links/buttons */}
         <div className="md:absolute left-0 right-0 flex justify-center items-center gap-2">
           {navItems.map(({ to, label, icon: Icon }) => (
-            <Button
+            <LinkButton
+              to={to}
               variant="ghost"
               shape="pill"
               className="hidden xs:flex xs:p-2 md:px-5"
@@ -46,7 +48,7 @@ function Navbar() {
             >
               <Icon size={18} />
               <span className="hidden sm:block text-sm">{label}</span>
-            </Button>
+            </LinkButton>
           ))}
         </div>
 
