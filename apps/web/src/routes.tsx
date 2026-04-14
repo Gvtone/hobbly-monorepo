@@ -5,6 +5,7 @@ import AuthPage from "./pages/AuthPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage";
 import DashboardPage from "./pages/DashboardPage";
+import ExplorePage from "./pages/ExplorePage";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
       { path: "auth", Component: AuthPage },
       { path: "dashboard", Component: DashboardPage },
       { path: "profile", Component: ProfilePage },
+      { path: "explore", Component: ExplorePage },
       { path: "*", Component: NotFoundPage }
     ]
   }
