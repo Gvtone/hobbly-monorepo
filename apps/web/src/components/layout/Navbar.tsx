@@ -17,8 +17,8 @@ function Navbar() {
 
   const navItems = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/explore", label: "Explore", icon: Compass },
-    { to: "/profile", label: "Profile", icon: User }
+    { to: "/profile", label: "Profile", icon: User },
+    { to: "/explore", label: "Explore", icon: Compass }
   ];
 
   return (
