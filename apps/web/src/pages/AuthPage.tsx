@@ -4,10 +4,15 @@ import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [searchParams] = useSearchParams();
+  const [mode, setMode] = useState<"login" | "signup">(() => {
+    const modeParam = searchParams.get("mode");
+    return modeParam === "signup" ? "signup" : "login";
+  });
 
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -22,6 +27,8 @@ function AuthPage() {
             Back to Hobbly
           </a>
         </div>
+
+        {/* Main card */}
         <Card className="items-center p-10 shadow-xl mb-6">
           <div className="flex flex-col items-center gap-2 mb-8">
             <h2 className="text-center text-lg xs:text-2xl">
@@ -33,10 +40,13 @@ function AuthPage() {
                 : "Start your cozy hobby journey"}
             </span>
           </div>
+
+          {/* Switch */}
           <div className="flex flex-col xs:flex-row bg-accent rounded-2xl xs:rounded-full w-full py-1.5 px-2 mb-6">
             {(["login", "signup"] as const).map(m => {
               return (
                 <Button
+                  key={m}
                   onClick={() => setMode(m)}
                   variant={mode === m ? "default" : "transparent"}
                   shape="pill"
@@ -48,6 +58,8 @@ function AuthPage() {
               );
             })}
           </div>
+
+          {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col w-full mb-8">
             {mode === "signup" && (
               <div className="flex flex-col mb-6">
@@ -88,10 +100,17 @@ function AuthPage() {
             <a href="#" className="self-end text-hobbly-sky-dark mb-6">
               Forgot password?
             </a>
-            <Button shape="pill" size="lg" fullWidth className="max-xs:text-xs">
-              Log in to Hobbly
+            <Button
+              variant="gradient"
+              shape="pill"
+              size="lg"
+              fullWidth
+              className="max-xs:text-xs"
+            >
+              {mode === "login" ? "Log in to Hobbly" : "Create my space"}
             </Button>
           </form>
+
           <div className="w-full flex justify-center items-center mb-8">
             <div className="flex-1 h-px border border-border"></div>
             <span className="text-muted-foreground text-sm rounded-full bg-card px-2">
@@ -99,6 +118,8 @@ function AuthPage() {
             </span>
             <div className="flex-1 h-px border border-border"></div>
           </div>
+
+          {/* Sign in with Google */}
           <Button
             variant="secondary"
             shape="pill"
@@ -129,6 +150,8 @@ function AuthPage() {
             <span>Continue with Google</span>
           </Button>
         </Card>
+
+        {/* Terms and Policy */}
         <p className="text-center text-xs text-muted-foreground">
           By continuing, you agree to Hobbly's{" "}
           <a href="#" className="cursor-pointer text-hobbly-sky-dark">
