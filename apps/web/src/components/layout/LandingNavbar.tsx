@@ -1,6 +1,7 @@
 import { Sparkles, Moon, Sun } from "lucide-react";
 import Button from "../ui/Button";
 import { useTheme } from "../../features/theme/useTheme";
+import LinkButton from "../ui/LinkButton";
 
 function LandingNavbar() {
   const { isDark, toggleTheme } = useTheme();
@@ -33,16 +34,17 @@ function LandingNavbar() {
             <Moon className="text-muted-foreground" />
           )}
         </Button>
-        <Button
+        <LinkButton
+          to="/auth"
           variant="transparent"
           shape="pill"
           className="hidden md:inline-flex"
         >
           Log in
-        </Button>
-        <Button variant="gradient" shape="pill">
+        </LinkButton>
+        <LinkButton to="/auth?mode=signup" variant="gradient" shape="pill">
           Start for free
-        </Button>
+        </LinkButton>
       </div>
     </nav>
   );

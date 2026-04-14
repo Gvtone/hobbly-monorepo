@@ -10,6 +10,7 @@ import { Sparkles, ArrowRight } from "lucide-react";
 import { cloudsBg, animeBg, booksBg, journalBg } from "../assets";
 import LandingNavbar from "../components/layout/LandingNavbar";
 import Footer from "../components/layout/Footer";
+import LinkButton from "../components/ui/LinkButton";
 
 const infoCardData: InfoCardProps[] = [
   {
@@ -88,13 +89,13 @@ function LandingPage() {
             that's completely yours.
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-4">
-            <Button variant="gradient" shape="rounded" size="lg">
+            <LinkButton to="/auth" variant="gradient" shape="rounded" size="lg">
               Start your journal
               <ArrowRight size={20} />
-            </Button>
-            <Button variant="default" shape="rounded" size="lg">
+            </LinkButton>
+            <LinkButton to="/#info" variant="default" shape="rounded" size="lg">
               Learn more
-            </Button>
+            </LinkButton>
           </div>
         </div>
       </section>
@@ -140,7 +141,7 @@ function LandingPage() {
       </section>
 
       {/* Info Section */}
-      <section>
+      <section id="info">
         <div className="py-20 px-6 max-w-5xl mx-auto">
           <div className="flex flex-col items-center gap-2 mb-12">
             <h2 className="text-3xl font-bold text-center">

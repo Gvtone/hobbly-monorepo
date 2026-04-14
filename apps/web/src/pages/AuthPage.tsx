@@ -4,10 +4,15 @@ import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [searchParams] = useSearchParams();
+  const [mode, setMode] = useState<"login" | "signup">(() => {
+    const modeParam = searchParams.get("mode");
+    return modeParam === "signup" ? "signup" : "login";
+  });
 
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -37,6 +42,7 @@ function AuthPage() {
             {(["login", "signup"] as const).map(m => {
               return (
                 <Button
+                  key={m}
                   onClick={() => setMode(m)}
                   variant={mode === m ? "default" : "transparent"}
                   shape="pill"
@@ -88,8 +94,14 @@ function AuthPage() {
             <a href="#" className="self-end text-hobbly-sky-dark mb-6">
               Forgot password?
             </a>
-            <Button shape="pill" size="lg" fullWidth className="max-xs:text-xs">
-              Log in to Hobbly
+            <Button
+              variant="gradient"
+              shape="pill"
+              size="lg"
+              fullWidth
+              className="max-xs:text-xs"
+            >
+              {mode === "login" ? "Log in to Hobbly" : "Create my space"}
             </Button>
           </form>
           <div className="w-full flex justify-center items-center mb-8">
