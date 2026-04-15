@@ -1,7 +1,7 @@
 import { Search, TrendingUp, Users } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
 import Input from "../components/ui/Input";
-import { ProfileCard } from "../components/ui/Card";
+import ProfileCard from "../components/explore/ProfileCard";
 import Button from "../components/ui/Button";
 
 const mockProfiles = [
