@@ -1,6 +1,7 @@
 import { Lock, PenLine, Share2 } from "lucide-react";
 import Button from "../ui/Button";
 import { Card } from "../ui/Card";
+import { cn } from "../../utils/utils";
 
 interface MainProfileCardProps {
   coverPhoto?: string;
@@ -9,7 +10,8 @@ interface MainProfileCardProps {
   displayname: string;
   handle: string;
   bio?: string;
-  children?: string;
+  className?: string;
+  children?: React.ReactNode;
 }
 
 function MainProfileCard({
@@ -19,10 +21,11 @@ function MainProfileCard({
   displayname,
   handle,
   bio,
+  className,
   children
 }: MainProfileCardProps) {
   return (
-    <Card className="flex flex-col shadow-lg p-0 mb-10">
+    <Card className={cn(className, "flex flex-col shadow-lg p-0")}>
       {/* Profile Cover */}
       <div className="relative h-28">
         <div className="absolute rounded-t-3xl h-42 top-0 left-0 right-0 overflow-hidden">
