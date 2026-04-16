@@ -37,7 +37,7 @@ function InfoCard({
   );
 }
 
-interface WidgetCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface HobbyCardProps extends React.HTMLAttributes<HTMLDivElement> {
   hobbyTag: string;
   tagColor: string;
   bgImage?: string;
@@ -46,7 +46,7 @@ interface WidgetCardProps extends React.HTMLAttributes<HTMLDivElement> {
   additional?: string;
 }
 
-function WidgetCard({
+function HobbyCard({
   hobbyTag,
   tagColor,
   bgImage,
@@ -54,9 +54,9 @@ function WidgetCard({
   trackedLabel,
   additional,
   className
-}: WidgetCardProps) {
+}: HobbyCardProps) {
   const defaultClasses =
-    "relative rounded-xl p-2 bg-cover bg-center justify-between";
+    "relative rounded-xl p-3 bg-cover bg-center justify-between";
 
   return (
     <Card
@@ -95,5 +95,5 @@ function WidgetCard({
   );
 }
 
-export { Card, InfoCard, WidgetCard };
-export type { InfoCardProps, WidgetCardProps };
+export { Card, InfoCard, HobbyCard };
+export type { InfoCardProps, HobbyCardProps };

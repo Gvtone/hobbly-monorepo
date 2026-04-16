@@ -2,9 +2,9 @@ import Button from "../components/ui/Button";
 import {
   Card,
   InfoCard,
-  WidgetCard,
+  HobbyCard,
   type InfoCardProps,
-  type WidgetCardProps
+  type HobbyCardProps
 } from "../components/ui/Card";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { cloudsBg, animeBg, booksBg, journalBg } from "../assets";
@@ -36,7 +36,7 @@ const infoCardData: InfoCardProps[] = [
   }
 ];
 
-const previewCardData: WidgetCardProps[] = [
+const previewCardData: HobbyCardProps[] = [
   {
     hobbyTag: "Anime",
     tagColor: "bg-hobbly-lavender/60",
@@ -118,7 +118,7 @@ function LandingPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
               {previewCardData.map(data => (
-                <WidgetCard
+                <HobbyCard
                   key={data.hobbyTag}
                   hobbyTag={data.hobbyTag}
                   tagColor={data.tagColor}
