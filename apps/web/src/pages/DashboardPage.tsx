@@ -2,6 +2,75 @@ import { Plus, Settings } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
 import Button from "../components/ui/Button";
 import EntryCard from "../components/profile/EntryCard";
+import { HobbyCard, type HobbyCardProps } from "../components/ui/Card";
+import Carousel from "../components/ui/Carousel";
+
+const mockData: HobbyCardProps[] = [
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  },
+  {
+    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
+    tagColor: "bg-hobbly-sky",
+    hobbyTag: "Anime",
+    trackedNumber: "8",
+    trackedLabel: "series tracked",
+    additional: "Celestial Chronicles"
+  }
+];
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -40,6 +109,23 @@ function DashboardPage() {
             </Button>
           </div>
         </div>
+
+        <section>
+          <Carousel className="mb-8">
+            {mockData.map((data, i) => (
+              <HobbyCard
+                key={i}
+                hobbyTag={data.hobbyTag}
+                tagColor={data.tagColor}
+                bgImage={data.bgImage}
+                trackedNumber={data.trackedNumber}
+                trackedLabel={data.trackedLabel}
+                additional={data.additional}
+                className="size-56 shrink-0"
+              ></HobbyCard>
+            ))}
+          </Carousel>
+        </section>
 
         <section>
           <div className="flex justify-between items-baseline mb-4">
