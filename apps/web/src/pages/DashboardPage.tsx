@@ -1,14 +1,7 @@
 import { Plus, Settings } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
 import Button from "../components/ui/Button";
-import { Card } from "../components/ui/Card";
-
-const mockRowData = [
-  { emoji: "🎯", value: "8", title: "Hobbies Tracked" },
-  { emoji: "🔥", value: "12 days", title: "Journal streak" },
-  { emoji: "🎌", value: "8 total", title: "Anime series" },
-  { emoji: "📚", value: "23 total", title: "Books read" }
-];
+import EntryCard from "../components/profile/EntryCard";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -43,28 +36,42 @@ function DashboardPage() {
             </Button>
             <Button variant="gradient" shape="pill">
               <Plus size={16} />
-              Add Widget
+              New Entry
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
-          {mockRowData.map(data => (
-            <Card className="py-4" key={data.title}>
-              <div className="flex gap-2 items-center">
-                <span className="text-4xl">{data.emoji}</span>
-                <div className="flex flex-col">
-                  <span className="font-hobbly-serif text-xl font-semibold">
-                    {data.value}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {data.title}
-                  </span>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+        <section>
+          <div className="flex justify-between items-baseline mb-4">
+            <h3 className="text-xl">My Entries</h3>
+            <p className="text-sm text-muted-foreground">8 total</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <EntryCard
+              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
+              mood="😭"
+              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
+              title="Celestial Chronicles"
+              note="The ending hit different tonight. That scene with the lanterns in the rain..."
+              dashboard
+            ></EntryCard>
+            <EntryCard
+              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
+              mood="😭"
+              title="Test"
+              note="The ending hit different tonight. That scene with the lanterns in the rain..."
+              dashboard
+            ></EntryCard>
+            <EntryCard
+              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
+              mood="😭"
+              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
+              title="Celestial Chronicles"
+              note="The ending hit different tonight. That scene with the lanterns in the rain..."
+            ></EntryCard>
+          </div>
+        </section>
       </div>
     </AppLayout>
   );

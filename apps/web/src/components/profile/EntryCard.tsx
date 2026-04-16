@@ -10,6 +10,7 @@ interface EntryCardProps {
   title: string;
   note?: string;
   reference?: string;
+  dashboard?: boolean;
 }
 
 function EntryCard({
@@ -18,16 +19,18 @@ function EntryCard({
   hobby,
   title,
   note,
-  reference
+  reference,
+  dashboard = false
 }: EntryCardProps) {
   return (
-    <div className="break-inside-avoid">
-      <Card className="p-0">
-        <div className="flex flex-col">
+    <div className={cn("break-inside-avoid", dashboard && "h-full")}>
+      <Card className={cn("p-0", dashboard && "h-full")}>
+        <div className="flex flex-col h-full">
           <div
             className={cn(
-              "relative flex  justify-between rounded-t-3xl overflow-hidden p-4",
-              `${coverImg && "flex-col aspect-4/3"}`
+              "relative flex justify-between rounded-t-3xl overflow-hidden p-4",
+              coverImg && "flex-col aspect-4/3",
+              coverImg && dashboard ? "aspect-3/1" : ""
             )}
             style={
               !coverImg
@@ -53,36 +56,53 @@ function EntryCard({
 
             <div
               className={cn(
-                `bg-[${hobby.color}]`,
                 "flex gap-2 px-2 py-1 text-xs z-10 size-fit rounded-full",
                 `${!coverImg && "-order-1"}`
               )}
+              style={{ backgroundColor: hobby.color }}
             >
               <span>{hobby.emoji}</span>
               <span className="text-white">{hobby.name}</span>
             </div>
           </div>
 
-          <div className="flex flex-col justify-between p-4">
+          <div className={"flex flex-col justify-between p-4 flex-1"}>
             <div className="flex flex-col gap-1 mb-4">
-              <p className="font-serif text-xm">{title}</p>
+              <p className={cn("font-serif mb-2", dashboard && "text-xl")}>
+                {title}
+              </p>
               {note && (
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p
+                  className={cn(
+                    "text-muted-foreground leading-relaxed",
+                    dashboard ? "text-sm" : "text-xs "
+                  )}
+                >
                   {note}
                 </p>
               )}
               {reference && <p className="text-muted text-xs">{reference}</p>}
             </div>
 
-            <div className="flex text-xs gap-2">
-              <Button variant="transparent" size="sm" className="p-0">
-                <Heart size={12}></Heart>
-                <span>31</span>
-              </Button>
-              <Button variant="transparent" size="sm" className="p-0">
-                <MessageCircleIcon size={12}></MessageCircleIcon>
-                <span>31</span>
-              </Button>
+            <div>
+              {dashboard && <div className="border border-border my-2"></div>}
+              <div
+                className={cn("flex text-xs", dashboard && "justify-between")}
+              >
+                {dashboard && (
+                  <p className="text-muted-foreground">Yesterday</p>
+                )}
+                <div className="flex gap-2">
+                  <Button variant="transparent" size="sm" className="p-0">
+                    <Heart size={12}></Heart>
+                    <span>31</span>
+                  </Button>
+                  <Button variant="transparent" size="sm" className="p-0">
+                    <MessageCircleIcon size={12}></MessageCircleIcon>
+                    <span>31</span>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
