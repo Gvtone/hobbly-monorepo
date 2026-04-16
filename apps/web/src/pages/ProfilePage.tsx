@@ -1,9 +1,12 @@
 import { MoveRight } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
-import { WidgetCard, type WidgetCardProps } from "../components/ui/Card";
+import { HobbyCard, type HobbyCardProps } from "../components/ui/Card";
 import MainProfileCard from "../components/profile/MainProfileCard";
+import ActivityCalendar from "../components/profile/ActivityCalendar";
+import ProfileEntriesLayout from "../components/profile/ProfileEntriesLayout";
+import EntryCard from "../components/profile/EntryCard";
 
-const mockData: WidgetCardProps[] = [
+const mockData: HobbyCardProps[] = [
   {
     bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
     tagColor: "bg-hobbly-sky",
@@ -66,9 +69,13 @@ function ProfilePage() {
           displayname="Jade"
           handle="@starweaver"
           bio="Anime lover 🎌 · Watercolor artist 🎨 · Cozy gamer 🎮 · Always reading 📚"
+          className="mb-10"
         ></MainProfileCard>
 
-        <div>
+        {/* Activity calendar */}
+        <ActivityCalendar />
+
+        <section>
           <div className="flex justify-between items-baseline mb-4">
             <h3 className="text-xl">My Hobby Board</h3>
             <a
@@ -80,9 +87,9 @@ function ProfilePage() {
             </a>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-10">
             {mockData.map((data, index) => (
-              <WidgetCard
+              <HobbyCard
                 key={index}
                 bgImage={data.bgImage}
                 tagColor={data.tagColor}
@@ -91,10 +98,54 @@ function ProfilePage() {
                 trackedLabel={data.trackedLabel}
                 additional={data.additional}
                 className="min-h-36"
-              ></WidgetCard>
+              ></HobbyCard>
             ))}
           </div>
-        </div>
+        </section>
+
+        <section>
+          <div className="flex justify-between items-baseline mb-4">
+            <h3 className="text-xl">My Entries</h3>
+            <p className="text-sm text-muted-foreground">8 total</p>
+          </div>
+
+          <ProfileEntriesLayout>
+            <EntryCard
+              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
+              mood="😭"
+              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
+              title="Celestial Chronicles"
+              note="The ending hit different tonight. That scene with the lanterns in the rain..."
+            ></EntryCard>
+            <EntryCard
+              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
+              mood="😭"
+              title="Test"
+              note="The ending hit different tonight. That scene with the lanterns in the rain..."
+            ></EntryCard>
+            <EntryCard
+              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
+              mood="😭"
+              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
+              title="Celestial Chronicles"
+              note="The ending hit different tonight. That scene with the lanterns in the rain..."
+            ></EntryCard>
+            <EntryCard
+              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
+              mood="😭"
+              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
+              title="Celestial Chronicles"
+              note="The ending hit different tonight. That scene with the lanterns in the rain..."
+            ></EntryCard>
+            <EntryCard
+              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
+              mood="😭"
+              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
+              title="Celestial Chronicles"
+              note="The ending hit different tonight. That scene with the lanterns in the rain..."
+            ></EntryCard>
+          </ProfileEntriesLayout>
+        </section>
       </div>
     </AppLayout>
   );
