@@ -1,0 +1,27 @@
+enum UserRole {
+  ADMIN
+  HOBBYIST
+}
+
+enum Visibility {
+  PRIVATE
+  PUBLIC
+}
+
+model User {
+  id             Int        @id @default(autoincrement())
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  deletedAt      DateTime?
+  displayName    String
+  username       String     @unique
+  email          String     @unique
+  password       String
+  profilePicture String?
+  coverImage     String?
+  bio            String?
+  role           UserRole   @default(HOBBYIST)
+  visibility     Visibility @default(PRIVATE)
+
+  @@index([id, username])
+}
