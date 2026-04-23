@@ -1,0 +1,59 @@
+import { MailerService } from '@nestjs-modules/mailer';
+import { Injectable } from '@nestjs/common';
+import { ForgotPasswordEmailDto } from './dto/forgot-password-email.dto';
+import { WelcomeDto } from './dto/welcome.dto';
+import { ConfigService } from '@nestjs/config';
+
+@Injectable()
+export class MailService {
+  private readonly clientUrl: string;
+
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
+  ) {
+    this.clientUrl = this.configService.getOrThrow<string>('CLIENT_URL');
+  }
+
+  async sendWelcomeEmail({ email, ...welcomeDto }: WelcomeDto) {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Welcome to Hobbly ✨',
+        template: 'welcome',
+        context: { welcomeDto },
+      });
+
+      return { status: 'SUCCESS', message: 'Sent Welcome email successfully' };
+    } catch (error) {
+      return {
+        status: 'FAILED',
+        message: `Welcome email failed to be sent: ${error}`,
+      };
+    }
+  }
+
+  async sendForgotPasswordEmail({
+    to,
+    username,
+    token,
+  }: ForgotPasswordEmailDto) {
+    const resetUrl = `${this.clientUrl}/reset?token=${token}`;
+
+    try {
+      await this.mailerService.sendMail({
+        to,
+        subject: 'Reset your Hobbly Password',
+        template: 'forgot-password',
+        context: { username, resetUrl },
+      });
+
+      return { status: 'SUCCESS', message: 'Sent Welcome email successfully' };
+    } catch (error) {
+      return {
+        status: 'FAILED',
+        message: `Welcome email failed to be sent: ${error}`,
+      };
+    }
+  }
+}
