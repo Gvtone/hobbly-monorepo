@@ -22,6 +22,7 @@ model User {
   bio            String?
   role           UserRole   @default(HOBBYIST)
   visibility     Visibility @default(PRIVATE)
+  token          Token[]
 
   @@index([id, username])
 }
