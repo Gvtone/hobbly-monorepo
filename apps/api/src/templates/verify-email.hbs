@@ -1,0 +1,215 @@
+<html lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <title>Verify your Hobbly email</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Nunito:wght@400;600&display=swap');
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #fbf6ee;
+      }
+      a {
+        color: inherit;
+      }
+      @media only screen and (max-width: 620px) {
+        .email-wrapper {
+          padding: 16px !important;
+        }
+        .email-card {
+          padding: 28px 20px !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    style="margin:0;padding:0;background-color:#FBF6EE;font-family:'Nunito',Arial,sans-serif;"
+  >
+
+    <table
+      width='100%'
+      cellpadding='0'
+      cellspacing='0'
+      border='0'
+      style='background-color:#FBF6EE;'
+    >
+      <tr>
+        <td align='center' class='email-wrapper' style='padding:40px 16px;'>
+          <table
+            width='100%'
+            cellpadding='0'
+            cellspacing='0'
+            border='0'
+            style='max-width:560px;'
+          >
+
+            <!-- ── HEADER ── -->
+            <tr>
+              <td
+                style='background-color:#1C2B3A;border-radius:20px 20px 0 0;padding:28px 36px 24px;text-align:center;'
+              >
+                <p
+                  style="margin:0 0 4px;font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:600;color:#FBF6EE;letter-spacing:-0.3px;"
+                >
+                  ✨ Hobbly
+                </p>
+                <p
+                  style="margin:0;font-family:'Nunito',Arial,sans-serif;font-size:13px;color:#A8BCCF;letter-spacing:0.2px;"
+                >
+                  A cozy place for everything you love
+                </p>
+              </td>
+            </tr>
+
+            <!-- ── ACCENT STRIPE ── -->
+            <tr>
+              <td
+                style='background-color:#5BB3D0;height:4px;font-size:0;line-height:0;'
+              >&nbsp;</td>
+            </tr>
+
+            <!-- ── BODY ── -->
+            <tr>
+              <td
+                class='email-card'
+                style='background-color:#FFFFFF;padding:40px 40px 32px;border-left:1px solid #EDE8DF;border-right:1px solid #EDE8DF;'
+              >
+
+                <p
+                  style='margin:0 0 20px;text-align:center;font-size:48px;line-height:1;'
+                >📬</p>
+
+                <h1
+                  style="margin:0 0 12px;font-family:'Playfair Display',Georgia,serif;font-size:26px;font-weight:600;color:#1C2B3A;text-align:center;line-height:1.25;"
+                >
+                  Confirm your email
+                </h1>
+
+                <p
+                  style="margin:0 0 8px;font-family:'Nunito',Arial,sans-serif;font-size:15px;color:#4A5568;text-align:center;line-height:1.6;"
+                >
+                  Hey
+                  {{name}}, just one small step before your cozy corner is
+                  ready. 🌿
+                </p>
+                <p
+                  style="margin:0 0 32px;font-family:'Nunito',Arial,sans-serif;font-size:15px;color:#4A5568;text-align:center;line-height:1.6;"
+                >
+                  Click the button below to verify your email address and
+                  activate your Hobbly account.
+                </p>
+
+                <!-- CTA Button -->
+                <table
+                  width='100%'
+                  cellpadding='0'
+                  cellspacing='0'
+                  border='0'
+                  style='margin-bottom:28px;'
+                >
+                  <tr>
+                    <td align='center'>
+                      <table cellpadding='0' cellspacing='0' border='0'>
+                        <tr>
+                          <td
+                            style='background-color:#5BB3D0;border-radius:50px;box-shadow:0 4px 14px rgba(91,179,208,0.35);'
+                          >
+                            <a
+                              href='{{verificationUrl}}'
+                              style="display:inline-block;padding:14px 36px;font-family:'Nunito',Arial,sans-serif;font-size:15px;font-weight:600;color:#FFFFFF;text-decoration:none;letter-spacing:0.2px;"
+                            >
+                              Verify my email →
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Expiry note -->
+                <table
+                  width='100%'
+                  cellpadding='0'
+                  cellspacing='0'
+                  border='0'
+                  style='margin-bottom:28px;'
+                >
+                  <tr>
+                    <td
+                      align='center'
+                      style='padding:12px 20px;background-color:#FBF6EE;border-radius:12px;border:1px solid #EDE8DF;'
+                    >
+                      <p
+                        style="margin:0;font-family:'Nunito',Arial,sans-serif;font-size:13px;color:#6B7A8B;line-height:1.5;"
+                      >
+                        ⏱ This link expires in
+                        <strong style='color:#1C2B3A;'>{{expiryHours}}
+                          hours</strong>. After that you can request a new one
+                        from the login page.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Divider -->
+                <table
+                  width='100%'
+                  cellpadding='0'
+                  cellspacing='0'
+                  border='0'
+                  style='margin-bottom:20px;'
+                >
+                  <tr>
+                    <td
+                      style='border-top:1px solid #EDE8DF;font-size:0;line-height:0;'
+                    >&nbsp;</td>
+                  </tr>
+                </table>
+
+                <!-- Fallback URL -->
+                <p
+                  style="margin:0;font-family:'Nunito',Arial,sans-serif;font-size:12px;color:#8A9AAA;text-align:center;line-height:1.6;"
+                >
+                  Button not working? Copy and paste this link into your
+                  browser:<br />
+                  <span
+                    style='color:#5BB3D0;word-break:break-all;'
+                  >{{verificationUrl}}</span>
+                </p>
+
+              </td>
+            </tr>
+
+            <!-- ── FOOTER ── -->
+            <tr>
+              <td
+                style='background-color:#F0EBE1;border-radius:0 0 20px 20px;padding:24px 36px;text-align:center;border-left:1px solid #EDE8DF;border-right:1px solid #EDE8DF;border-bottom:1px solid #EDE8DF;'
+              >
+                <p
+                  style="margin:0 0 8px;font-family:'Nunito',Arial,sans-serif;font-size:12px;color:#8A9AAA;line-height:1.6;"
+                >
+                  You're receiving this because you created a Hobbly account.<br
+                  />
+                  If you didn't sign up, please ignore this email — your address
+                  won't be used.
+                </p>
+                <p
+                  style="margin:0;font-family:'Nunito',Arial,sans-serif;font-size:12px;color:#B0BEC5;"
+                >
+                  ©
+                  {{year}}
+                  Hobbly · Made with ✨ for hobby lovers
+                </p>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+
+  </body>
+</html>

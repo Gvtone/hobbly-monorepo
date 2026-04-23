@@ -1,0 +1,272 @@
+<html lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <title>Welcome to Hobbly ✨</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Nunito:wght@400;600&display=swap');
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #fbf6ee;
+      }
+      a {
+        color: inherit;
+      }
+      @media only screen and (max-width: 620px) {
+        .email-wrapper {
+          padding: 16px !important;
+        }
+        .email-card {
+          padding: 28px 20px !important;
+        }
+        .hobby-pill {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    style="margin:0;padding:0;background-color:#FBF6EE;font-family:'Nunito',Arial,sans-serif;"
+  >
+
+    <!-- Outer wrapper -->
+    <table
+      width='100%'
+      cellpadding='0'
+      cellspacing='0'
+      border='0'
+      style='background-color:#FBF6EE;'
+    >
+      <tr>
+        <td align='center' class='email-wrapper' style='padding:40px 16px;'>
+
+          <!-- Email card -->
+          <table
+            width='100%'
+            cellpadding='0'
+            cellspacing='0'
+            border='0'
+            style='max-width:560px;'
+          >
+
+            <!-- ── HEADER ── -->
+            <tr>
+              <td
+                style='background-color:#1C2B3A;border-radius:20px 20px 0 0;padding:28px 36px 24px;text-align:center;'
+              >
+                <!-- Wordmark -->
+                <p
+                  style="margin:0 0 4px;font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:600;color:#FBF6EE;letter-spacing:-0.3px;"
+                >
+                  ✨ Hobbly
+                </p>
+                <p
+                  style="margin:0;font-family:'Nunito',Arial,sans-serif;font-size:13px;color:#A8BCCF;letter-spacing:0.2px;"
+                >
+                  A cozy place for everything you love
+                </p>
+              </td>
+            </tr>
+
+            <!-- ── BODY ── -->
+            <tr>
+              <td
+                class='email-card'
+                style='background-color:#FFFFFF;padding:40px 40px 32px;border-left:1px solid #EDE8DF;border-right:1px solid #EDE8DF;'
+              >
+
+                <!-- Greeting emoji -->
+                <p
+                  style='margin:0 0 20px;text-align:center;font-size:48px;line-height:1;'
+                >🎉</p>
+
+                <!-- Heading -->
+                <h1
+                  style="margin:0 0 12px;font-family:'Playfair Display',Georgia,serif;font-size:26px;font-weight:600;color:#1C2B3A;text-align:center;line-height:1.25;"
+                >
+                  Welcome,
+                  {{welcomeDto.username}}!
+                </h1>
+
+                <!-- Subheading -->
+                <p
+                  style="margin:0 0 28px;font-family:'Nunito',Arial,sans-serif;font-size:15px;color:#4A5568;text-align:center;line-height:1.6;"
+                >
+                  Your cozy hobby sanctuary is ready. Start tracking the things
+                  you love — anime, books, art, cooking, and everything in
+                  between.
+                </p>
+
+                <!-- Hobby pill row -->
+                <table
+                  width='100%'
+                  cellpadding='0'
+                  cellspacing='0'
+                  border='0'
+                  style='margin-bottom:32px;'
+                >
+                  <tr>
+                    <td align='center'>
+                      <span
+                        class='hobby-pill'
+                        style="display:inline-block;margin:0 4px 8px;padding:6px 14px;background-color:#C8A2E326;border-radius:20px;font-family:'Nunito',Arial,sans-serif;font-size:13px;color:#9B72CB;"
+                      >🎌 Anime</span>
+                      <span
+                        class='hobby-pill'
+                        style="display:inline-block;margin:0 4px 8px;padding:6px 14px;background-color:#F5C27A26;border-radius:20px;font-family:'Nunito',Arial,sans-serif;font-size:13px;color:#C48C2A;"
+                      >📚 Books</span>
+                      <span
+                        class='hobby-pill'
+                        style="display:inline-block;margin:0 4px 8px;padding:6px 14px;background-color:#E8857A26;border-radius:20px;font-family:'Nunito',Arial,sans-serif;font-size:13px;color:#C0524A;"
+                      >🎨 Art</span>
+                      <span
+                        class='hobby-pill'
+                        style="display:inline-block;margin:0 4px 8px;padding:6px 14px;background-color:#8BAF8B26;border-radius:20px;font-family:'Nunito',Arial,sans-serif;font-size:13px;color:#4E7A4E;"
+                      >🌿 Plants</span>
+                      <span
+                        class='hobby-pill'
+                        style="display:inline-block;margin:0 4px 8px;padding:6px 14px;background-color:#5BB3D026;border-radius:20px;font-family:'Nunito',Arial,sans-serif;font-size:13px;color:#2E7FA0;"
+                      >🎵 Music</span>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Divider -->
+                <table
+                  width='100%'
+                  cellpadding='0'
+                  cellspacing='0'
+                  border='0'
+                  style='margin-bottom:32px;'
+                >
+                  <tr>
+                    <td
+                      style='border-top:1px solid #EDE8DF;font-size:0;line-height:0;'
+                    >&nbsp;</td>
+                  </tr>
+                </table>
+
+                <!-- What's next list -->
+                <table
+                  width='100%'
+                  cellpadding='0'
+                  cellspacing='0'
+                  border='0'
+                  style='margin-bottom:32px;'
+                >
+                  <tr>
+                    <td style='padding-bottom:14px;'>
+                      <table cellpadding='0' cellspacing='0' border='0'>
+                        <tr>
+                          <td
+                            style='width:32px;vertical-align:top;padding-top:1px;font-size:20px;'
+                          >🏠</td>
+                          <td
+                            style="font-family:'Nunito',Arial,sans-serif;font-size:14px;color:#4A5568;line-height:1.5;"
+                          >
+                            <strong style='color:#1C2B3A;'>Set up your Hobby
+                              Board</strong><br />
+                            Add the hobbies you want to track and personalize
+                            your dashboard.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style='padding-bottom:14px;'>
+                      <table cellpadding='0' cellspacing='0' border='0'>
+                        <tr>
+                          <td
+                            style='width:32px;vertical-align:top;padding-top:1px;font-size:20px;'
+                          >📝</td>
+                          <td
+                            style="font-family:'Nunito',Arial,sans-serif;font-size:14px;color:#4A5568;line-height:1.5;"
+                          >
+                            <strong style='color:#1C2B3A;'>Log your first entry</strong><br
+                            />
+                            Jot down what you watched, read, made, or played
+                            today.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table cellpadding='0' cellspacing='0' border='0'>
+                        <tr>
+                          <td
+                            style='width:32px;vertical-align:top;padding-top:1px;font-size:20px;'
+                          >🌸</td>
+                          <td
+                            style="font-family:'Nunito',Arial,sans-serif;font-size:14px;color:#4A5568;line-height:1.5;"
+                          >
+                            <strong style='color:#1C2B3A;'>Explore the community</strong><br
+                            />
+                            See what other hobby lovers are tracking and get
+                            inspired.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- CTA Button -->
+                <table width='100%' cellpadding='0' cellspacing='0' border='0'>
+                  <tr>
+                    <td align='center'>
+                      <table cellpadding='0' cellspacing='0' border='0'>
+                        <tr>
+                          <td
+                            style='background-color:#5BB3D0;border-radius:50px;box-shadow:0 4px 14px rgba(91,179,208,0.35);'
+                          >
+                            <a
+                              href='{{welcomeDto.dashboardUrl}}'
+                              style="display:inline-block;padding:14px 36px;font-family:'Nunito',Arial,sans-serif;font-size:15px;font-weight:600;color:#FFFFFF;text-decoration:none;letter-spacing:0.2px;"
+                            >
+                              Go to My Dashboard →
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+              </td>
+            </tr>
+
+            <!-- ── FOOTER ── -->
+            <tr>
+              <td
+                style='background-color:#F0EBE1;border-radius:0 0 20px 20px;padding:24px 36px;text-align:center;border-left:1px solid #EDE8DF;border-right:1px solid #EDE8DF;border-bottom:1px solid #EDE8DF;'
+              >
+                <p
+                  style="margin:0 0 8px;font-family:'Nunito',Arial,sans-serif;font-size:12px;color:#8A9AAA;line-height:1.6;"
+                >
+                  You're receiving this because you signed up at Hobbly.<br />
+                  If this wasn't you, you can safely ignore this email.
+                </p>
+                <p
+                  style="margin:0;font-family:'Nunito',Arial,sans-serif;font-size:12px;color:#B0BEC5;"
+                >
+                  ©
+                  {{year}}
+                  Hobbly · Made with ✨ for hobby lovers
+                </p>
+              </td>
+            </tr>
+
+          </table>
+          <!-- /Email card -->
+
+        </td>
+      </tr>
+    </table>
+
+  </body>
+</html>
