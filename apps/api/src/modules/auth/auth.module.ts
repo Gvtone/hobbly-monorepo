@@ -8,6 +8,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HashService } from '../../common/utils/hash.service';
+import { MailModule } from '../mail/mail.module';
+import { TokenModule } from '../token/token.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { HashService } from '../../common/utils/hash.service';
         signOptions: { expiresIn: '15m' },
       }),
     }),
+    MailModule,
+    TokenModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy, HashService],

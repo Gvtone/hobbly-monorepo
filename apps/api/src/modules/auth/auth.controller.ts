@@ -3,6 +3,8 @@ import { LocalGuard } from './guard/local.guard';
 import type { Request, Response } from 'express';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { AuthService } from './auth.service';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,5 +24,15 @@ export class AuthController {
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
     return this.authService.logout(res);
+  }
+
+  @Post('forgot')
+  async forgot(@Body() { email }: ForgotPasswordDto) {
+    return this.authService.forgot(email);
+  }
+
+  @Post('reset')
+  async reset(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.reset(resetPasswordDto);
   }
 }

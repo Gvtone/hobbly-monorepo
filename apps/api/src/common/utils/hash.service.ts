@@ -13,7 +13,7 @@ export class HashService {
     return await compare(password, hash);
   }
 
-  generatePasswordToken() {
-    return crypto.randomBytes(32).toString('hex');
+  generateToken(size: number = 32) {
+    return crypto.randomBytes(size).toString('hex');
   }
 }

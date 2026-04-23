@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { HashService } from '../../common/utils/hash.service';
 import { AuthPayloadDto } from './dto/auth.dto';
@@ -8,6 +8,10 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import ms, { StringValue } from 'ms';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { MailService } from '../mail/mail.service';
+import { TokenService } from '../token/token.service';
+import { TokenType } from '../../generated/prisma/enums';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +20,8 @@ export class AuthService {
     private readonly hashService: HashService,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
+    private readonly tokenService: TokenService,
   ) {}
 
   async validateUser({
@@ -87,7 +93,15 @@ export class AuthService {
   }
 
   async register(createUserDto: CreateUserDto) {
-    return this.userService.createUser(createUserDto);
+    const createdUser = await this.userService.createUser(createUserDto);
+
+    await this.mailService.sendWelcomeEmail({
+      dashboardUrl: '#',
+      email: createdUser.email,
+      username: createdUser.username,
+    });
+
+    return createdUser;
   }
 
   async logout(response: Response) {
@@ -95,5 +109,44 @@ export class AuthService {
     response.clearCookie('refresh_token');
 
     return { message: 'Logged out successfully' };
+  }
+
+  async forgot(email: string) {
+    const user = await this.userService.findUserByEmail(email);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const existingToken = await this.tokenService.findTokenByUserId(
+      user.id,
+      TokenType.PASSWORD_RESET,
+    );
+
+    if (existingToken) {
+      await this.tokenService.deleteToken(existingToken.id);
+    }
+
+    const token = await this.tokenService.generateToken({
+      type: TokenType.PASSWORD_RESET,
+      userId: user.id,
+    });
+
+    return await this.mailService.sendForgotPasswordEmail({
+      to: user.email,
+      username: user.username,
+      token,
+    });
+  }
+
+  async reset({ password, token }: ResetPasswordDto) {
+    const { userId } = await this.tokenService.verifyToken({
+      token,
+      type: TokenType.PASSWORD_RESET,
+    });
+
+    const newPassword = await this.hashService.hashPassword(password);
+
+    await this.userService.updateUser(userId, { password: newPassword });
+
+    return { message: 'Password reset successfully' };
   }
 }

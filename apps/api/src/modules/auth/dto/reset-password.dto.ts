@@ -1,23 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import {
-  IsLowercase,
-  IsNotEmpty,
-  IsString,
-  Matches,
-  MinLength,
-} from 'class-validator';
+import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
 
-export class CreateUserDto {
-  @IsNotEmpty()
+export class ResetPasswordDto {
   @IsString()
-  @Transform(({ value }: { value: string }) => value?.toLowerCase())
-  @IsLowercase()
-  username: string;
-
   @IsNotEmpty()
-  @IsString()
-  email: string;
+  token: string;
 
   @IsString()
   @IsNotEmpty()

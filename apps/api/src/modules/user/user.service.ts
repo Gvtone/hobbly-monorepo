@@ -3,6 +3,7 @@ import { DatabaseService } from '../../common/database/database.service';
 import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { HashService } from '../../common/utils/hash.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,15 @@ export class UserService {
   async findUserByEmail(email: string) {
     const user = await this.databaseService.user.findFirst({
       where: { email: { equals: email, mode: 'insensitive' } },
+    });
+
+    if (!user) return null;
+    return new UserEntity(user);
+  }
+
+  async findUserById(id: number) {
+    const user = await this.databaseService.user.findFirst({
+      where: { id },
     });
 
     if (!user) return null;
@@ -44,5 +54,12 @@ export class UserService {
     });
 
     return new UserEntity(user);
+  }
+
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    return await this.databaseService.user.update({
+      where: { id },
+      data: { ...updateUserDto },
+    });
   }
 }
