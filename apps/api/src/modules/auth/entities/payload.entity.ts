@@ -19,4 +19,7 @@ export class PayloadEntity {
 
   @ApiProperty({ enum: Visibility })
   visibility: Visibility;
+
+  @ApiProperty({ enum: { ACCESS: 'ACCESS', REFRESH: 'REFRESH' } })
+  type: 'ACCESS' | 'REFRESH' = 'ACCESS';
 }

@@ -35,6 +35,7 @@ export class AuthService {
         email,
         role: user.role,
         visibility: user.visibility,
+        type: 'ACCESS',
       };
     }
 
@@ -55,14 +56,14 @@ export class AuthService {
     ) as StringValue;
 
     const accessToken = this.jwtService.sign(
-      { ...payload, type: 'access' },
+      { ...payload, type: 'ACCESS' },
       {
         expiresIn: jwtAccessTokenExpiration,
       },
     );
 
     const refreshToken = this.jwtService.sign(
-      { ...payload, type: 'refresh' },
+      { ...payload, type: 'REFRESH' },
       {
         expiresIn: jwtRefreshTokenExpiration,
       },
@@ -87,5 +88,12 @@ export class AuthService {
 
   async register(createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
+  }
+
+  async logout(response: Response) {
+    response.clearCookie('access_token');
+    response.clearCookie('refresh_token');
+
+    return { message: 'Logged out successfully' };
   }
 }
