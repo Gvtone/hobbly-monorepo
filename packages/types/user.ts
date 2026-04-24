@@ -1,5 +1,11 @@
 import type { UserRole, UserStatus, Visibility } from "./enums";
 
+export interface CreateUserDto {
+  username: string;
+  email: string;
+  password: string;
+}
+
 export interface UserEntity {
   id: number;
   createdAt: Date;

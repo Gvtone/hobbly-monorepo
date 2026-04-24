@@ -1,6 +1,6 @@
 import { Sparkles, Moon, Sun } from "lucide-react";
 import Button from "../ui/Button";
-import { useTheme } from "../../features/theme/useTheme";
+import { useTheme } from "../../context/theme/useTheme";
 import LinkButton from "../ui/LinkButton";
 
 function LandingNavbar() {

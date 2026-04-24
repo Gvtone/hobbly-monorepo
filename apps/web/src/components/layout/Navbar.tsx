@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Button from "../ui/Button";
 import { useLocation } from "react-router-dom";
-import { useTheme } from "../../features/theme/useTheme";
+import { useTheme } from "../../context/theme/useTheme";
 import LinkButton from "../ui/LinkButton";
 
 function Navbar() {

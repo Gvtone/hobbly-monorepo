@@ -4,7 +4,8 @@ import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "../context/auth/useAuth";
 
 function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,9 +14,36 @@ function AuthPage() {
     const modeParam = searchParams.get("mode");
     return modeParam === "signup" ? "signup" : "login";
   });
+  const { login, register } = useAuth();
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
+
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement)
+      .value;
+
+    try {
+      if (mode === "login") {
+        await login(email, password);
+      } else {
+        const username = (
+          form.elements.namedItem("username") as HTMLInputElement
+        ).value;
+        await register(username, email, password);
+      }
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -75,6 +103,7 @@ function AuthPage() {
                 />
               </div>
             )}
+
             <div className="flex flex-col mb-6">
               <label htmlFor="email" className="mb-2 ml-2">
                 {mode === "login" ? "Email or Username" : "Email"}
@@ -88,6 +117,7 @@ function AuthPage() {
                 placeholder="you@example.com"
               />
             </div>
+
             <div className="flex flex-col mb-6">
               <label htmlFor="password" className="mb-2 ml-2">
                 Password
@@ -113,18 +143,28 @@ function AuthPage() {
                 </Button>
               </div>
             </div>
+
             <a href="#" className="self-end text-hobbly-sky-dark mb-6">
               Forgot password?
             </a>
+
             <Button
+              type="submit"
               variant="gradient"
               shape="pill"
               size="lg"
               fullWidth
               className="max-xs:text-xs"
+              disabled={isSubmitting}
             >
               {mode === "login" ? "Log in to Hobbly" : "Create my space"}
             </Button>
+
+            {error && (
+              <p className="text-destructive text-sm text-center mb-4">
+                {error}
+              </p>
+            )}
           </form>
 
           <div className="w-full flex justify-center items-center mb-8">
