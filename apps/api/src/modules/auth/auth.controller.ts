@@ -39,7 +39,7 @@ export class AuthController {
   }
 
   @Post('verify')
-  async verifyEmail({ token }: VerifyEmailDto) {
+  async verifyEmail(@Body() { token }: VerifyEmailDto) {
     return this.authService.verifyEmail(token);
   }
 
