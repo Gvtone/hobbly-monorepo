@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole, Visibility } from '../../../generated/prisma/enums';
+import type { JwtPayload } from '@hobbies-dashboard/types';
 
-export class PayloadEntity {
+export class PayloadEntity implements JwtPayload {
   @ApiProperty({ type: Number })
   sub: number;
 

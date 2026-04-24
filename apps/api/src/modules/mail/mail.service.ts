@@ -5,6 +5,10 @@ import { WelcomeDto } from './dto/welcome.dto';
 import { ConfigService } from '@nestjs/config';
 import { PasswordChangeEmailDto } from './dto/password-changed-email.dto';
 import { SendVerifyEmailDto } from './dto/send-verify-email.dto';
+import {
+  GenericOutputEntity,
+  GenericOutputStatus,
+} from '../../common/entities/generic-output.entity';
 
 @Injectable()
 export class MailService {
@@ -17,7 +21,10 @@ export class MailService {
     this.clientUrl = this.configService.getOrThrow<string>('CLIENT_URL');
   }
 
-  async sendWelcomeEmail({ email, ...welcomeDto }: WelcomeDto) {
+  async sendWelcomeEmail({
+    email,
+    ...welcomeDto
+  }: WelcomeDto): Promise<GenericOutputEntity> {
     try {
       await this.mailerService.sendMail({
         to: email,
@@ -26,16 +33,23 @@ export class MailService {
         context: { welcomeDto },
       });
 
-      return { status: 'SUCCESS', message: 'Sent Welcome email successfully' };
+      return {
+        status: GenericOutputStatus.SUCCESS,
+        message: 'Sent Welcome email successfully',
+      };
     } catch (error) {
       return {
-        status: 'FAILED',
+        status: GenericOutputStatus.FAILED,
         message: String(error),
       };
     }
   }
 
-  async sendVerificationEmail({ to, username, token }: SendVerifyEmailDto) {
+  async sendVerificationEmail({
+    to,
+    username,
+    token,
+  }: SendVerifyEmailDto): Promise<GenericOutputEntity> {
     const verificationUrl = `${this.clientUrl}/verify-email?token=${token}`;
 
     try {
@@ -47,12 +61,12 @@ export class MailService {
       });
 
       return {
-        status: 'SUCCESS',
+        status: GenericOutputStatus.SUCCESS,
         message: 'Sent Forgot Password email successfully',
       };
     } catch (error) {
       return {
-        status: 'FAILED',
+        status: GenericOutputStatus.FAILED,
         message: String(error),
       };
     }
@@ -62,7 +76,7 @@ export class MailService {
     to,
     username,
     token,
-  }: ForgotPasswordEmailDto) {
+  }: ForgotPasswordEmailDto): Promise<GenericOutputEntity> {
     const resetUrl = `${this.clientUrl}/reset?token=${token}`;
 
     try {
@@ -74,18 +88,21 @@ export class MailService {
       });
 
       return {
-        status: 'SUCCESS',
+        status: GenericOutputStatus.SUCCESS,
         message: 'Sent Forgot Password email successfully',
       };
     } catch (error) {
       return {
-        status: 'FAILED',
+        status: GenericOutputStatus.FAILED,
         message: String(error),
       };
     }
   }
 
-  async sendPasswordChangedEmail({ to, username }: PasswordChangeEmailDto) {
+  async sendPasswordChangedEmail({
+    to,
+    username,
+  }: PasswordChangeEmailDto): Promise<GenericOutputEntity> {
     try {
       await this.mailerService.sendMail({
         to,
@@ -95,12 +112,12 @@ export class MailService {
       });
 
       return {
-        status: 'SUCCESS',
+        status: GenericOutputStatus.SUCCESS,
         message: 'Sent Password Changed email successfully',
       };
     } catch (error) {
       return {
-        status: 'FAILED',
+        status: GenericOutputStatus.FAILED,
         message: String(error),
       };
     }

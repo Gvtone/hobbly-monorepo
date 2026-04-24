@@ -12,6 +12,8 @@ import { MailService } from '../mail/mail.service';
 import { TokenService } from '../token/token.service';
 import { TokenType, UserStatus } from '../../generated/prisma/enums';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { GenericOutputEntity } from '../../common/entities/generic-output.entity';
+import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -92,7 +94,7 @@ export class AuthService {
     return payload;
   }
 
-  async register(createUserDto: CreateUserDto) {
+  async register(createUserDto: CreateUserDto): Promise<UserEntity> {
     const createdUser = await this.userService.createUser(createUserDto);
 
     const token = await this.tokenService.generateToken({
@@ -109,7 +111,7 @@ export class AuthService {
     return createdUser;
   }
 
-  async resendVerificationEmail(email: string) {
+  async resendVerificationEmail(email: string): Promise<GenericOutputEntity> {
     const user = await this.userService.findUserByEmail(email);
 
     if (user.status === UserStatus.ACTIVE) {
@@ -153,14 +155,14 @@ export class AuthService {
     return await this.userService.updateUser(userId, { status: 'ACTIVE' });
   }
 
-  async logout(response: Response) {
+  async logout(response: Response): Promise<GenericOutputEntity> {
     response.clearCookie('access_token');
     response.clearCookie('refresh_token');
 
     return { message: 'Logged out successfully' };
   }
 
-  async forgot(email: string) {
+  async forgot(email: string): Promise<GenericOutputEntity> {
     const user = await this.userService.findUserByEmail(email);
 
     if (!user) throw new NotFoundException('User not found');
@@ -186,7 +188,10 @@ export class AuthService {
     });
   }
 
-  async reset({ password, token }: ResetPasswordDto) {
+  async reset({
+    password,
+    token,
+  }: ResetPasswordDto): Promise<GenericOutputEntity> {
     const { userId } = await this.tokenService.verifyToken({
       token,
       type: TokenType.PASSWORD_RESET,

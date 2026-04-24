@@ -6,8 +6,9 @@ import {
 } from '../../../generated/prisma/enums';
 import { UserModel } from '../../../generated/prisma/models';
 import { Exclude } from 'class-transformer';
+import type { UserEntity as IUserEntity } from '@hobbies-dashboard/types';
 
-export class UserEntity implements UserModel {
+export class UserEntity implements UserModel, IUserEntity {
   constructor(data: Partial<UserEntity>) {
     Object.assign(this, data);
   }
