@@ -57,9 +57,11 @@ export class UserService {
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto) {
-    return await this.databaseService.user.update({
+    const user = await this.databaseService.user.update({
       where: { id },
       data: { ...updateUserDto },
     });
+
+    return new UserEntity(user);
   }
 }
