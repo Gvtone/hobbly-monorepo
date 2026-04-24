@@ -1,13 +1,3 @@
-enum UserRole {
-  ADMIN
-  HOBBYIST
-}
-
-enum Visibility {
-  PRIVATE
-  PUBLIC
-}
-
 model User {
   id             Int        @id @default(autoincrement())
   createdAt      DateTime   @default(now())
@@ -22,7 +12,26 @@ model User {
   bio            String?
   role           UserRole   @default(HOBBYIST)
   visibility     Visibility @default(PRIVATE)
+  status         UserStatus @default(VERIFY)
   token          Token[]
 
   @@index([id, username])
+}
+
+enum UserRole {
+  ADMIN
+  HOBBYIST
+}
+
+enum Visibility {
+  PRIVATE
+  PUBLIC
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  VERIFY
+  DELETED
 }

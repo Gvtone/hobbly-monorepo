@@ -1,5 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRole, Visibility } from '../../../generated/prisma/enums';
+import {
+  UserRole,
+  UserStatus,
+  Visibility,
+} from '../../../generated/prisma/enums';
 import { UserModel } from '../../../generated/prisma/models';
 import { Exclude } from 'class-transformer';
 
@@ -47,4 +51,7 @@ export class UserEntity implements UserModel {
 
   @ApiProperty({ enum: Visibility })
   visibility: Visibility;
+
+  @ApiProperty({ enum: UserStatus })
+  status: UserStatus;
 }

@@ -20,8 +20,8 @@ export class TokenService {
   ) {}
 
   async generateToken({
-    type,
     userId,
+    type,
     expiresAt = new Date(Date.now() + ms('5m')),
   }: GenerateTokenDto) {
     const token = this.hashService.generateToken();
@@ -46,7 +46,10 @@ export class TokenService {
     if (token.expiresAt <= new Date())
       throw new UnauthorizedException('Token Expired');
 
-    return await this.databaseService.token.delete({ where: { id: token.id } });
+    return await this.databaseService.token.delete({
+      where: { id: token.id },
+      select: { userId: true },
+    });
   }
 
   async findToken(token: string) {

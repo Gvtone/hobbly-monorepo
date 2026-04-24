@@ -10,7 +10,7 @@ import ms, { StringValue } from 'ms';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { MailService } from '../mail/mail.service';
 import { TokenService } from '../token/token.service';
-import { TokenType } from '../../generated/prisma/enums';
+import { TokenType, UserStatus } from '../../generated/prisma/enums';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
@@ -95,13 +95,62 @@ export class AuthService {
   async register(createUserDto: CreateUserDto) {
     const createdUser = await this.userService.createUser(createUserDto);
 
-    await this.mailService.sendWelcomeEmail({
-      dashboardUrl: '#',
-      email: createdUser.email,
-      username: createdUser.username,
+    const token = await this.tokenService.generateToken({
+      userId: createdUser.id,
+      type: 'EMAIL_VERIFICATION',
+    });
+
+    await this.mailService.sendVerificationEmail({
+      to: createUserDto.email,
+      username: createUserDto.username,
+      token,
     });
 
     return createdUser;
+  }
+
+  async resendVerificationEmail(email: string) {
+    const user = await this.userService.findUserByEmail(email);
+
+    if (user.status === UserStatus.ACTIVE) {
+      return { message: 'Email is already active. Please log in.' };
+    }
+
+    const token = await this.tokenService.findTokenByUserId(
+      user.id,
+      TokenType.EMAIL_VERIFICATION,
+    );
+
+    if (token) await this.tokenService.deleteToken(token.id);
+
+    const verificationToken = await this.tokenService.generateToken({
+      userId: user.id,
+      type: TokenType.EMAIL_VERIFICATION,
+    });
+
+    await this.mailService.sendVerificationEmail({
+      to: user.email,
+      username: user.username,
+      token: verificationToken,
+    });
+
+    return { message: 'New verification email has been sent.' };
+  }
+
+  async verifyEmail(token: string) {
+    const { userId } = await this.tokenService.verifyToken({
+      token,
+      type: TokenType.EMAIL_VERIFICATION,
+    });
+
+    const user = await this.userService.findUserById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    // TODO: Check if user account was deleted or suspended
+    // TODO: and create ways for them to recover their accounts
+
+    return await this.userService.updateUser(userId, { status: 'ACTIVE' });
   }
 
   async logout(response: Response) {
@@ -126,8 +175,8 @@ export class AuthService {
     }
 
     const token = await this.tokenService.generateToken({
-      type: TokenType.PASSWORD_RESET,
       userId: user.id,
+      type: TokenType.PASSWORD_RESET,
     });
 
     return await this.mailService.sendForgotPasswordEmail({
