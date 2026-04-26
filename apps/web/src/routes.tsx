@@ -6,6 +6,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage";
 import DashboardPage from "./pages/DashboardPage";
 import ExplorePage from "./pages/ExplorePage";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -14,9 +15,30 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: LandingPage },
       { path: "auth", Component: AuthPage },
-      { path: "dashboard", Component: DashboardPage },
-      { path: "profile", Component: ProfilePage },
-      { path: "explore", Component: ExplorePage },
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "explore",
+        element: (
+          <ProtectedRoute>
+            <ExplorePage />
+          </ProtectedRoute>
+        )
+      },
       { path: "*", Component: NotFoundPage }
     ]
   }
