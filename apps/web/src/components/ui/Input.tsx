@@ -1,8 +1,9 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/utils";
+import { forwardRef } from "react";
 
 const inputVariants = cva(
-  "transition focus:outline-none focus:ring-1 focus:ring-ring",
+  "transition focus:outline-none focus:ring-1 focus:ring-ring transform",
   {
     variants: {
       variant: {
@@ -35,27 +36,56 @@ const inputVariants = cva(
 interface InputProps
   extends
     React.InputHTMLAttributes<HTMLInputElement>,
-    VariantProps<typeof inputVariants> {}
-
-function Input({
-  className,
-  variant,
-  shape,
-  fullWidth,
-  scale,
-  type = "text",
-  ...props
-}: InputProps) {
-  return (
-    <input
-      {...props}
-      type={type}
-      className={cn(
-        inputVariants({ variant, shape, scale, fullWidth }),
-        className
-      )}
-    />
-  );
+    VariantProps<typeof inputVariants> {
+  textCase?: "lowercase" | "uppercase" | "normal";
 }
+
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      className,
+      variant,
+      shape,
+      fullWidth,
+      scale,
+      type = "text",
+      textCase = "normal",
+      onChange,
+      ...props
+    },
+    ref
+  ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (textCase !== "normal") {
+        const converted =
+          textCase === "lowercase"
+            ? e.target.value.toLowerCase()
+            : e.target.value.toUpperCase();
+
+        Object.defineProperty(e.target, "value", {
+          writable: true,
+          value: converted
+        });
+      }
+
+      onChange?.(e); // call react-hook-form's onChange
+    };
+
+    return (
+      <input
+        {...props}
+        ref={ref}
+        type={type}
+        onChange={handleChange}
+        className={cn(
+          inputVariants({ variant, shape, scale, fullWidth }),
+          className
+        )}
+      />
+    );
+  }
+);
+
+Input.displayName = "Input";
 
 export default Input;
