@@ -36,20 +36,23 @@ function AuthPage() {
     formState: { errors },
     reset,
     control
-  } = useForm<SignupFormValues>();
+  } = useForm<SignupFormValues>({ shouldUnregister: true });
 
   const { field: usernameField } = useController({
     name: "username",
     control,
-    rules: {
-      required: "Username is required",
-      minLength: { value: 3, message: "At least 3 characters" },
-      maxLength: { value: 20, message: "At most 20 characters" },
-      pattern: {
-        value: /^[a-z0-9_]+$/,
-        message: "Only lowercase letters, numbers, and underscores"
-      }
-    }
+    rules:
+      mode === "signup"
+        ? {
+            required: "Username is required",
+            minLength: { value: 3, message: "At least 3 characters" },
+            maxLength: { value: 20, message: "At most 20 characters" },
+            pattern: {
+              value: /^[a-z0-9_]+$/,
+              message: "Only lowercase letters, numbers, and underscores"
+            }
+          }
+        : {}
   });
 
   const onSubmit = async (data: SignupFormValues) => {
