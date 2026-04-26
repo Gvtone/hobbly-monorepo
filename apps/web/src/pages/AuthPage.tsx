@@ -158,12 +158,14 @@ function AuthPage() {
                 shape="pill"
                 type="text"
                 fullWidth
-                placeholder="you@example.com"
+                placeholder={mode === "login" ? "you@example.com or username" : "you@example.com"}
                 {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Enter a valid email"
+                  required: "Email or username is required",
+                  validate: (value) => {
+                    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+                    const isUsername = /^[^\s]{3,}$/.test(value);
+                    if (mode === "login") return isEmail || isUsername || "Enter a valid email or username";
+                    return isEmail || "Enter a valid email";
                   }
                 })}
               />
