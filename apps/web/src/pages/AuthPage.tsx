@@ -7,36 +7,59 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/auth/useAuth";
 import { showToast } from "../utils/toast";
+import { useController, useForm } from "react-hook-form";
+
+interface LoginFormValues {
+  email: string;
+  password: string;
+}
+
+interface SignupFormValues extends LoginFormValues {
+  username: string;
+}
 
 function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchParams] = useSearchParams();
+  const { login, register: registerUser } = useAuth();
+  const navigate = useNavigate();
   const mode = searchParams.get("mode") === "signup" ? "signup" : "login";
   const handleModeChange = (m: "login" | "signup") => {
+    reset();
     navigate(`/auth?mode=${m}`, { replace: true });
   };
-  const { login, register } = useAuth();
-  const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    control
+  } = useForm<SignupFormValues>();
+
+  const { field: usernameField } = useController({
+    name: "username",
+    control,
+    rules: {
+      required: "Username is required",
+      minLength: { value: 3, message: "At least 3 characters" },
+      maxLength: { value: 20, message: "At most 20 characters" },
+      pattern: {
+        value: /^[a-z0-9_]+$/,
+        message: "Only lowercase letters, numbers, and underscores"
+      }
+    }
+  });
+
+  const onSubmit = async (data: SignupFormValues) => {
     setIsSubmitting(true);
-
-    const form = e.currentTarget;
-    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
-    const password = (form.elements.namedItem("password") as HTMLInputElement)
-      .value;
-
     try {
       if (mode === "login") {
-        await login(email, password);
+        await login(data.email, data.password);
         showToast.success("Welcome back! ✨");
       } else {
-        const username = (
-          form.elements.namedItem("username") as HTMLInputElement
-        ).value;
-        await register(username, email, password);
+        await registerUser(data.username, data.email, data.password);
         showToast.success("Your space is ready 🌸");
       }
       navigate("/dashboard");
@@ -91,7 +114,10 @@ function AuthPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="flex flex-col w-full mb-8">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col w-full mb-8"
+          >
             {mode === "signup" && (
               <div className="flex flex-col mb-6">
                 <label htmlFor="username" className="mb-2 ml-2">
@@ -103,8 +129,19 @@ function AuthPage() {
                   shape="pill"
                   fullWidth
                   placeholder="starweaver"
-                  textCase="lowercase"
+                  {...usernameField}
+                  onChange={e => {
+                    const cleaned = e.target.value
+                      .toLowerCase()
+                      .replace(/[^a-z0-9_]/g, "");
+                    usernameField.onChange(cleaned);
+                  }}
                 />
+                {errors.username && (
+                  <p className="text-destructive text-xs mt-1 ml-2">
+                    {errors.username.message}
+                  </p>
+                )}
               </div>
             )}
 
@@ -119,7 +156,19 @@ function AuthPage() {
                 type="text"
                 fullWidth
                 placeholder="you@example.com"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email"
+                  }
+                })}
               />
+              {errors.email && (
+                <p className="text-destructive text-xs mt-1 ml-2">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div className="flex flex-col mb-6">
@@ -135,8 +184,17 @@ function AuthPage() {
                   fullWidth
                   placeholder="••••••••"
                   className="w-full pr-12"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: { value: 8, message: "At least 8 characters" },
+                    pattern: {
+                      value: /(?=.*[A-Z])/,
+                      message: "Must contain at least one uppercase letter"
+                    }
+                  })}
                 />
                 <Button
+                  type="button"
                   variant="transparent"
                   shape="pill"
                   size="icon"
@@ -146,6 +204,11 @@ function AuthPage() {
                   {showPassword ? <Eye /> : <EyeClosed />}
                 </Button>
               </div>
+              {errors.password && (
+                <p className="text-destructive text-xs mt-1 ml-2">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <a href="#" className="self-end text-hobbly-sky-dark mb-6">
@@ -161,7 +224,11 @@ function AuthPage() {
               className="max-xs:text-xs"
               disabled={isSubmitting}
             >
-              {mode === "login" ? "Log in to Hobbly" : "Create my space"}
+              {isSubmitting
+                ? "Please wait..."
+                : mode === "login"
+                  ? "Log in to Hobbly"
+                  : "Create my space"}
             </Button>
           </form>
 

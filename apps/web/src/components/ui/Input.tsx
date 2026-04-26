@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/utils";
-import { useState } from "react";
+import { forwardRef } from "react";
 
 const inputVariants = cva(
   "transition focus:outline-none focus:ring-1 focus:ring-ring transform",
@@ -40,44 +40,52 @@ interface InputProps
   textCase?: "lowercase" | "uppercase" | "normal";
 }
 
-function Input({
-  className,
-  variant,
-  shape,
-  fullWidth,
-  scale,
-  type = "text",
-  textCase = "normal",
-  ...props
-}: InputProps) {
-  const [value, setValue] = useState("");
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      className,
+      variant,
+      shape,
+      fullWidth,
+      scale,
+      type = "text",
+      textCase = "normal",
+      onChange,
+      ...props
+    },
+    ref
+  ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (textCase !== "normal") {
+        const converted =
+          textCase === "lowercase"
+            ? e.target.value.toLowerCase()
+            : e.target.value.toUpperCase();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    switch (textCase) {
-      case "lowercase":
-        setValue(e.target.value.toLowerCase());
-        break;
-      case "uppercase":
-        setValue(e.target.value.toUpperCase());
-        break;
-      default:
-        setValue(e.target.value);
-        break;
-    }
-  };
+        Object.defineProperty(e.target, "value", {
+          writable: true,
+          value: converted
+        });
+      }
 
-  return (
-    <input
-      {...props}
-      type={type}
-      className={cn(
-        inputVariants({ variant, shape, scale, fullWidth }),
-        className
-      )}
-      onChange={handleChange}
-      value={value}
-    />
-  );
-}
+      onChange?.(e); // call react-hook-form's onChange
+    };
+
+    return (
+      <input
+        {...props}
+        ref={ref}
+        type={type}
+        onChange={handleChange}
+        className={cn(
+          inputVariants({ variant, shape, scale, fullWidth }),
+          className
+        )}
+      />
+    );
+  }
+);
+
+Input.displayName = "Input";
 
 export default Input;
