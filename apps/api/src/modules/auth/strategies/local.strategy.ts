@@ -7,17 +7,18 @@ import { PayloadEntity } from '../entities/payload.entity';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    super({ usernameField: 'email' });
+    super({ usernameField: 'identifier' });
   }
 
-  async validate(email: string, password: string): Promise<PayloadEntity> {
-    const user = await this.authService.validateUser({ email, password });
+  async validate(identifier: string, password: string): Promise<PayloadEntity> {
+    const validatedUser = await this.authService.validateUser({
+      identifier,
+      password,
+    });
 
-    if (!user)
-      throw new UnauthorizedException(
-        'You have entered a wrong email or password',
-      );
+    if (!validatedUser)
+      throw new UnauthorizedException('You have entered wrong credentials');
 
-    return user;
+    return validatedUser;
   }
 }

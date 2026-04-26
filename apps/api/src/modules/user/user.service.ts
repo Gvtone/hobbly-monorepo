@@ -30,6 +30,15 @@ export class UserService {
     return new UserEntity(user);
   }
 
+  async findUserByUsername(username: string) {
+    const user = await this.databaseService.user.findFirst({
+      where: { username },
+    });
+
+    if (!user) return null;
+    return new UserEntity(user);
+  }
+
   async createUser({ username, email, password }: CreateUserDto) {
     const existingUsername = await this.databaseService.user.findFirst({
       where: { username },

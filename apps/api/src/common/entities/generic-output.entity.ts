@@ -1,8 +1,8 @@
 import type { GenericOutputEntity as IGenericOutputEntity } from '@hobbies-dashboard/types';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class GenericOutputEntity implements IGenericOutputEntity {
-  @ApiProperty({ type: String })
+  @ApiPropertyOptional({ type: String, nullable: true })
   status?: GenericOutputStatus | null;
 
   @ApiProperty({ type: String })
