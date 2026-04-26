@@ -1,6 +1,6 @@
 import { Sparkles, Moon, Sun } from "lucide-react";
 import Button from "../ui/Button";
-import { useTheme } from "../../features/theme/useTheme";
+import { useTheme } from "../../context/theme/useTheme";
 import LinkButton from "../ui/LinkButton";
 
 function LandingNavbar() {
@@ -35,7 +35,7 @@ function LandingNavbar() {
           )}
         </Button>
         <LinkButton
-          to="/auth"
+          to="/auth?mode=login"
           variant="transparent"
           shape="pill"
           className="hidden md:inline-flex"
