@@ -14,6 +14,7 @@ function Button({
   size,
   fullWidth,
   active,
+  type = "button",
   ...props
 }: ButtonProps) {
   return (
@@ -22,6 +23,7 @@ function Button({
         buttonVariants({ variant, shape, size, fullWidth, active }),
         className
       )}
+      type={type}
       {...props}
     />
   );
