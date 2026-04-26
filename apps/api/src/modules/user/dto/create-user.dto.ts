@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
+  IsEmail,
   IsLowercase,
   IsNotEmpty,
   IsString,
@@ -9,16 +10,35 @@ import {
 } from 'class-validator';
 
 export class CreateUserDto {
+  @ApiProperty({
+    required: true,
+    type: String,
+    example: 'starweaver',
+    description: "User's picked username",
+  })
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }: { value: string }) => value?.toLowerCase())
   @IsLowercase()
   username: string;
 
+  @ApiProperty({
+    required: true,
+    type: String,
+    example: 'starweaver@hobbly.io',
+    description: 'Email address',
+  })
   @IsNotEmpty()
   @IsString()
+  @IsEmail()
   email: string;
 
+  @ApiProperty({
+    required: true,
+    type: String,
+    minLength: 8,
+    example: 'ILoveHobbly!',
+  })
   @IsString()
   @IsNotEmpty()
   @MinLength(8)

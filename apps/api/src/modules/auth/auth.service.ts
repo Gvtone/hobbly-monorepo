@@ -27,10 +27,13 @@ export class AuthService {
   ) {}
 
   async validateUser({
-    email,
+    identifier,
     password,
   }: AuthPayloadDto): Promise<PayloadEntity> {
-    const user = await this.userService.findUserByEmail(email);
+    const isEmail = identifier.includes('@');
+    const user = isEmail
+      ? await this.userService.findUserByEmail(identifier)
+      : await this.userService.findUserByUsername(identifier);
 
     if (
       user &&
@@ -40,7 +43,7 @@ export class AuthService {
         sub: user.id,
         displayName: user.displayName,
         username: user.username,
-        email,
+        email: user.email,
         role: user.role,
         visibility: user.visibility,
         type: 'ACCESS',
