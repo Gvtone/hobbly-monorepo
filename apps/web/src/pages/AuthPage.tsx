@@ -10,10 +10,10 @@ import { useAuth } from "../context/auth/useAuth";
 function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [searchParams] = useSearchParams();
-  const [mode, setMode] = useState<"login" | "signup">(() => {
-    const modeParam = searchParams.get("mode");
-    return modeParam === "signup" ? "signup" : "login";
-  });
+  const mode = searchParams.get("mode") === "signup" ? "signup" : "login";
+  const handleModeChange = (m: "login" | "signup") => {
+    navigate(`/auth?mode=${m}`, { replace: true });
+  };
   const { login, register } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
@@ -75,7 +75,7 @@ function AuthPage() {
               return (
                 <Button
                   key={m}
-                  onClick={() => setMode(m)}
+                  onClick={() => handleModeChange(m)}
                   variant={mode === m ? "default" : "transparent"}
                   shape="pill"
                   className="border-none"
@@ -100,6 +100,7 @@ function AuthPage() {
                   shape="pill"
                   fullWidth
                   placeholder="starweaver"
+                  textCase="lowercase"
                 />
               </div>
             )}

@@ -35,7 +35,7 @@ function LandingNavbar() {
           )}
         </Button>
         <LinkButton
-          to="/auth"
+          to="/auth?mode=login"
           variant="transparent"
           shape="pill"
           className="hidden md:inline-flex"

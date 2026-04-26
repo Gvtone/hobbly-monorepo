@@ -1,8 +1,9 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/utils";
+import { useState } from "react";
 
 const inputVariants = cva(
-  "transition focus:outline-none focus:ring-1 focus:ring-ring",
+  "transition focus:outline-none focus:ring-1 focus:ring-ring transform",
   {
     variants: {
       variant: {
@@ -35,7 +36,9 @@ const inputVariants = cva(
 interface InputProps
   extends
     React.InputHTMLAttributes<HTMLInputElement>,
-    VariantProps<typeof inputVariants> {}
+    VariantProps<typeof inputVariants> {
+  textCase?: "lowercase" | "uppercase" | "normal";
+}
 
 function Input({
   className,
@@ -44,8 +47,25 @@ function Input({
   fullWidth,
   scale,
   type = "text",
+  textCase = "normal",
   ...props
 }: InputProps) {
+  const [value, setValue] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    switch (textCase) {
+      case "lowercase":
+        setValue(e.target.value.toLowerCase());
+        break;
+      case "uppercase":
+        setValue(e.target.value.toUpperCase());
+        break;
+      default:
+        setValue(e.target.value);
+        break;
+    }
+  };
+
   return (
     <input
       {...props}
@@ -54,6 +74,8 @@ function Input({
         inputVariants({ variant, shape, scale, fullWidth }),
         className
       )}
+      onChange={handleChange}
+      value={value}
     />
   );
 }
