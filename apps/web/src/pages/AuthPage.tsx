@@ -6,6 +6,7 @@ import Input from "../components/ui/Input";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/auth/useAuth";
+import { showToast } from "../utils/toast";
 
 function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,12 +17,10 @@ function AuthPage() {
   };
   const { login, register } = useAuth();
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
     setIsSubmitting(true);
 
     const form = e.currentTarget;
@@ -32,15 +31,19 @@ function AuthPage() {
     try {
       if (mode === "login") {
         await login(email, password);
+        showToast.success("Welcome back! ✨");
       } else {
         const username = (
           form.elements.namedItem("username") as HTMLInputElement
         ).value;
         await register(username, email, password);
+        showToast.success("Your space is ready 🌸");
       }
       navigate("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      showToast.error(
+        err instanceof Error ? err.message : "Something went wrong"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -160,12 +163,6 @@ function AuthPage() {
             >
               {mode === "login" ? "Log in to Hobbly" : "Create my space"}
             </Button>
-
-            {error && (
-              <p className="text-destructive text-sm text-center mb-4">
-                {error}
-              </p>
-            )}
           </form>
 
           <div className="w-full flex justify-center items-center mb-8">

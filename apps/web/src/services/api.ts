@@ -11,7 +11,13 @@ const api = axios.create({
 api.interceptors.response.use(
   response => response,
   error => {
-    const message = error.response?.data?.message ?? "Something went wrong";
+    const data = error.response?.data;
+    const raw = data?.message;
+
+    const message = Array.isArray(raw)
+      ? raw[0] // just the first one
+      : (raw ?? "Something went wrong");
+
     return Promise.reject(new Error(message));
   }
 );
