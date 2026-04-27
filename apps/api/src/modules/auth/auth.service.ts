@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { HashService } from '../../common/utils/hash.service';
 import { AuthPayloadDto } from './dto/auth.dto';
@@ -95,6 +99,55 @@ export class AuthService {
     });
 
     return payload;
+  }
+
+  async refreshToken(response: Response, request: Request) {
+    const refreshToken = request.cookies?.refresh_token as string;
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token not found');
+    }
+
+    let payload: PayloadEntity;
+    try {
+      payload = this.jwtService.verify<PayloadEntity>(refreshToken, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+      });
+    } catch {
+      response.clearCookie('access_token');
+      response.clearCookie('refresh_token');
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    if (payload.type !== 'REFRESH') {
+      throw new UnauthorizedException('Invalid token type');
+    }
+
+    const user = await this.userService.findUserById(payload.sub);
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const jwtAccessTokenExpiration = this.configService.get(
+      'JWT_ACCESS_TOKEN_EXPIRATION',
+      '15m',
+    ) as StringValue;
+
+    const newPayload: PayloadEntity = {
+      sub: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      visibility: user.visibility,
+      type: 'ACCESS',
+    };
+
+    response.cookie('access_token', newPayload, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: ms(jwtAccessTokenExpiration),
+    });
+
+    return newPayload;
   }
 
   async register(createUserDto: CreateUserDto): Promise<UserEntity> {

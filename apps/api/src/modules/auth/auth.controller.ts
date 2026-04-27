@@ -63,6 +63,17 @@ export class AuthController {
     return await this.authService.register(createUserDto);
   }
 
+  @Public()
+  @Post('refresh-token')
+  @ApiOperation({ summary: 'Refreshes access token in cookies' })
+  @ApiOkResponse({ description: 'Refresh Successful', type: PayloadEntity })
+  async refreshToken(
+    @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
+  ) {
+    return await this.authService.refreshToken(res, req);
+  }
+
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Log out the current user' })
