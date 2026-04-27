@@ -11,7 +11,13 @@ import {
 import { HobbyService } from './hobby.service';
 import { CreateHobbyDto } from './dto/create-hobby.dto';
 import { UpdateHobbyDto } from './dto/update-hobby.dto';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../../generated/prisma/enums';
 import { HobbyEntity } from './entities/hobby.entity';
@@ -25,7 +31,7 @@ export class HobbyController {
   @Post()
   @ApiOperation({ summary: 'Creates new hobby' })
   @ApiBody({ type: CreateHobbyDto })
-  @ApiOkResponse({ description: 'Login successful', type: HobbyEntity })
+  @ApiOkResponse({ description: 'Create successful', type: HobbyEntity })
   async create(@Body() createHobbyDto: CreateHobbyDto) {
     return await this.hobbyService.create(createHobbyDto);
   }
@@ -42,6 +48,7 @@ export class HobbyController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Fetch hobby based on ID' })
+  @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Fetch successful', type: HobbyEntity })
   async findById(@Param('id', ParseIntPipe) id: number) {
     return await this.hobbyService.findById(id);
@@ -49,6 +56,7 @@ export class HobbyController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Updates a hobby' })
+  @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateHobbyDto })
   @ApiOkResponse({ description: 'Update successful', type: HobbyEntity })
   async update(
@@ -60,6 +68,7 @@ export class HobbyController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Deletes a hobby' })
+  @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Delete successful', type: HobbyEntity })
   async delete(@Param('id', ParseIntPipe) id: number) {
     return await this.hobbyService.delete(id);

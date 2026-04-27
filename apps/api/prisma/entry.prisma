@@ -1,0 +1,25 @@
+model Entry {
+  id           Int        @id @default(autoincrement())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  userHobbyId  Int
+  title        String?
+  image        String?
+  moodId       Int?
+  note         String?
+  activityDate DateTime   @default(now())
+  visibility   Visibility @default(PRIVATE)
+  metadata     Json?
+  mood         EntryMood? @relation(fields: [moodId], references: [id], onDelete: SetNull)
+  hobby        UserHobby  @relation(fields: [userHobbyId], references: [id], onDelete: Cascade)
+}
+
+model EntryMood {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  name      String
+  icon      String
+  entries   Entry[]
+}
