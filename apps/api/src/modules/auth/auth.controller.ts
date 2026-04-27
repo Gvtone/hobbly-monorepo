@@ -17,7 +17,6 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ResendVerification } from './dto/resend-verification.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
-import { JwtAuthGuard } from './guard/jwt.guard';
 import {
   ApiBody,
   ApiConflictResponse,
@@ -32,12 +31,14 @@ import { AuthPayloadDto } from './dto/auth.dto';
 import { PayloadEntity } from './entities/payload.entity';
 import { UserEntity } from '../user/entities/user.entity';
 import { GenericOutputEntity } from '../../common/entities/generic-output.entity';
+import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('login')
   @UseGuards(LocalGuard)
   @HttpCode(HttpStatus.OK)
@@ -49,6 +50,7 @@ export class AuthController {
     return await this.authService.login(res, req);
   }
 
+  @Public()
   @Post('register')
   @ApiOperation({ summary: 'Register a new user account' })
   @ApiBody({ type: CreateUserDto })
@@ -62,7 +64,6 @@ export class AuthController {
   }
 
   @Post('logout')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Log out the current user' })
   @ApiOkResponse({
@@ -74,6 +75,7 @@ export class AuthController {
     return await this.authService.logout(res);
   }
 
+  @Public()
   @Post('forgot')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request a password reset email' })
@@ -87,6 +89,7 @@ export class AuthController {
     return await this.authService.forgot(email);
   }
 
+  @Public()
   @Post('resend-verification')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Resend the email verification link' })
@@ -99,6 +102,7 @@ export class AuthController {
     return await this.authService.resendVerificationEmail(email);
   }
 
+  @Public()
   @Post('verify')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verify a user email address with a token' })
@@ -111,6 +115,7 @@ export class AuthController {
     return await this.authService.verifyEmail(token);
   }
 
+  @Public()
   @Post('reset')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset the account password using a token' })
@@ -124,7 +129,6 @@ export class AuthController {
   }
 
   @Get('me')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get the current authenticated user' })
   @ApiOkResponse({ description: 'Current user payload', type: PayloadEntity })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })

@@ -8,6 +8,8 @@ import { MailModule } from './modules/mail/mail.module';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
 import { join } from 'path';
 import { TokenModule } from './modules/token/token.module';
+import { JwtAuthGuard } from './modules/auth/guard/jwt.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -46,6 +48,11 @@ import { TokenModule } from './modules/token/token.module';
     MailModule,
     TokenModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
