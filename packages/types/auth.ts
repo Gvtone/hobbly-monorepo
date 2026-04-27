@@ -1,7 +1,7 @@
 import type { UserRole, Visibility } from "./enums";
 
 export interface AuthPayloadDto {
-  email: string;
+  identifier: string;
   password: string;
 }
 
