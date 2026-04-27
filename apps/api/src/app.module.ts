@@ -10,6 +10,7 @@ import { join } from 'path';
 import { TokenModule } from './modules/token/token.module';
 import { JwtAuthGuard } from './modules/auth/guard/jwt.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './modules/auth/guard/roles.guard';
 
 @Module({
   imports: [
@@ -52,6 +53,10 @@ import { APP_GUARD } from '@nestjs/core';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })
