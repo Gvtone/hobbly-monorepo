@@ -140,7 +140,11 @@ export class AuthService {
       type: 'ACCESS',
     };
 
-    response.cookie('access_token', newPayload, {
+    const accessToken = this.jwtService.sign(newPayload, {
+      expiresIn: jwtAccessTokenExpiration,
+    });
+
+    response.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
