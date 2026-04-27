@@ -12,6 +12,11 @@ export class UserService {
     private readonly hashService: HashService,
   ) {}
 
+  async findAllUsers() {
+    const users = await this.databaseService.user.findMany();
+    return users.map((user) => new UserEntity(user));
+  }
+
   async findUserByEmail(email: string) {
     const user = await this.databaseService.user.findFirst({
       where: { email: { equals: email, mode: 'insensitive' } },
