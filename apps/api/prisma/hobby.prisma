@@ -1,0 +1,17 @@
+model Hobby {
+  id          Int         @id @default(autoincrement())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+  name        String
+  color       String
+  icon        String
+  description String?
+  status      HobbyStatus @default(DRAFT)
+}
+
+enum HobbyStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}

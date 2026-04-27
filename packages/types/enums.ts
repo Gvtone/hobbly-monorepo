@@ -11,3 +11,5 @@ export type UserStatus =
   | "DELETED";
 
 export type GenericOutputStatus = "SUCCESS" | "FAILED";
+
+export type HobbyStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
