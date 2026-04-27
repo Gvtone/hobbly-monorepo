@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -25,7 +26,7 @@ export class HobbyController {
   @ApiOperation({ summary: 'Creates new hobby' })
   @ApiBody({ type: CreateHobbyDto })
   @ApiOkResponse({ description: 'Login successful', type: HobbyEntity })
-  async create(createHobbyDto: CreateHobbyDto) {
+  async create(@Body() createHobbyDto: CreateHobbyDto) {
     return await this.hobbyService.create(createHobbyDto);
   }
 
@@ -52,7 +53,7 @@ export class HobbyController {
   @ApiOkResponse({ description: 'Update successful', type: HobbyEntity })
   async update(
     @Param('id', ParseIntPipe) id: number,
-    updateHobbyDto: UpdateHobbyDto,
+    @Body() updateHobbyDto: UpdateHobbyDto,
   ) {
     return await this.hobbyService.update(id, updateHobbyDto);
   }

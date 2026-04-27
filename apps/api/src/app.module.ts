@@ -12,6 +12,7 @@ import { JwtAuthGuard } from './modules/auth/guard/jwt.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './modules/auth/guard/roles.guard';
 import { HobbyModule } from './modules/hobby/hobby.module';
+import { UserHobbyModule } from './modules/user-hobby/user-hobby.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { HobbyModule } from './modules/hobby/hobby.module';
     MailModule,
     TokenModule,
     HobbyModule,
+    UserHobbyModule,
   ],
   providers: [
     {

@@ -1,21 +1,33 @@
 model User {
-  id             Int        @id @default(autoincrement())
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  id             Int         @id @default(autoincrement())
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
   deletedAt      DateTime?
   displayName    String?
-  username       String     @unique
-  email          String     @unique
+  username       String      @unique
+  email          String      @unique
   password       String
   profilePicture String?
   coverImage     String?
   bio            String?
-  role           UserRole   @default(HOBBYIST)
-  visibility     Visibility @default(PRIVATE)
-  status         UserStatus @default(VERIFY)
+  role           UserRole    @default(HOBBYIST)
+  visibility     Visibility  @default(PRIVATE)
+  status         UserStatus  @default(VERIFY)
   token          Token[]
+  chosenHobbies  UserHobby[]
 
   @@index([id, username])
+}
+
+model UserHobby {
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  userId          Int
+  hobbyId         Int
+  backgroundImage String?
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hobby           Hobby    @relation(fields: [hobbyId], references: [id], onDelete: Cascade)
 }
 
 enum UserRole {

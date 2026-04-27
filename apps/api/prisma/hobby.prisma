@@ -8,6 +8,7 @@ model Hobby {
   icon        String
   description String?
   status      HobbyStatus @default(DRAFT)
+  selections  UserHobby[]
 }
 
 enum HobbyStatus {
