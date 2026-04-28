@@ -4,64 +4,9 @@ import Button from "../components/ui/Button";
 import EntryCard from "../components/profile/EntryCard";
 import { HobbyCard, type HobbyCardProps } from "../components/ui/Card";
 import Carousel from "../components/ui/Carousel";
+import { useAuth } from "../context/auth/useAuth";
 
 const mockData: HobbyCardProps[] = [
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
   {
     bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
     tagColor: "bg-hobbly-sky",
@@ -81,6 +26,7 @@ function getGreeting() {
 
 function DashboardPage() {
   const greeting = getGreeting();
+  const { user } = useAuth();
 
   return (
     <AppLayout>
@@ -90,7 +36,7 @@ function DashboardPage() {
           {/* Right side */}
           <div className="flex flex-col gap-2">
             <p className="text-sm text-muted-foreground">
-              {greeting.emoji} {greeting.text}, Yuki
+              {greeting.emoji} {greeting.text}, {user?.username}
             </p>
             <h1 className="text-3xl">Your Hobby Board</h1>
             <p className="text-sm text-muted-foreground">

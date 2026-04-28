@@ -3,6 +3,8 @@ export interface CreateUserHobbyDto {
   backgroundImage?: string;
 }
 
+export interface UpdateUserHobbyDto extends Partial<CreateUserHobbyDto> {}
+
 export interface UserHobbyEntity {
   id: number;
   createdAt: Date;

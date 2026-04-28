@@ -6,6 +6,8 @@ export interface CreateUserDto {
   password: string;
 }
 
+export interface UpdateUserDto extends Partial<CreateUserDto> {}
+
 export interface UserEntity {
   id: number;
   createdAt: Date;

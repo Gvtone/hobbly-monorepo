@@ -16,6 +16,8 @@ export interface CreateEntryDto {
   metadata?: JsonValue;
 }
 
+export interface UpdateEntryDto extends Partial<CreateEntryDto> {}
+
 export interface EntryEntity {
   id: number;
   createdAt: Date;
