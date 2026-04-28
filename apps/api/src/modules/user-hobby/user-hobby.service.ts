@@ -15,7 +15,10 @@ export class UserHobbyService {
 
   async findAll(userId: number) {
     // TODO: Create query search
-    return await this.databaseService.userHobby.findMany({ where: { userId } });
+    return await this.databaseService.userHobby.findMany({
+      where: { userId },
+      include: { hobby: true },
+    });
   }
 
   async findById(id: number, userId: number) {
