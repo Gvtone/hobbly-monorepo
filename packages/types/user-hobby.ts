@@ -1,3 +1,5 @@
+import type { HobbyEntity } from "./hobby";
+
 export interface CreateUserHobbyDto {
   hobbyId: number;
   backgroundImage?: string;
@@ -12,4 +14,5 @@ export interface UserHobbyEntity {
   userId: number;
   hobbyId: number;
   backgroundImage: string;
+  hobby: HobbyEntity;
 }

@@ -12,6 +12,8 @@ model Entry {
   metadata     Json?
   mood         EntryMood? @relation(fields: [moodId], references: [id], onDelete: SetNull)
   hobby        UserHobby  @relation(fields: [userHobbyId], references: [id], onDelete: Cascade)
+
+  @@index([id, userHobbyId])
 }
 
 model EntryMood {
@@ -22,4 +24,6 @@ model EntryMood {
   name      String
   icon      String
   entries   Entry[]
+
+  @@index([id])
 }
