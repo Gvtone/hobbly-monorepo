@@ -13,3 +13,5 @@ export type UserStatus =
 export type GenericOutputStatus = "SUCCESS" | "FAILED";
 
 export type HobbyStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+
+export type HobbyCategory = "TRACKED" | "CREATIVE" | "JOURNAL" | "GENERAL";

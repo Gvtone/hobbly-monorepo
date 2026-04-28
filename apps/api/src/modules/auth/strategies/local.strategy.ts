@@ -11,8 +11,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(identifier: string, password: string): Promise<PayloadEntity> {
+    const normalizedIdentifier = identifier.trim().toLowerCase();
+
     const validatedUser = await this.authService.validateUser({
-      identifier,
+      identifier: normalizedIdentifier,
       password,
     });
 

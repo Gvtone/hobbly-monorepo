@@ -1,6 +1,6 @@
 import { HobbyEntity as IHobby } from '@hobbies-dashboard/types';
 import { ApiProperty } from '@nestjs/swagger';
-import { HobbyStatus } from '../../../generated/prisma/enums';
+import { HobbyCategory, HobbyStatus } from '../../../generated/prisma/enums';
 import { HobbyModel } from '../../../generated/prisma/models';
 
 export class HobbyEntity implements HobbyModel, IHobby {
@@ -24,6 +24,9 @@ export class HobbyEntity implements HobbyModel, IHobby {
 
   @ApiProperty({ type: String })
   description: string;
+
+  @ApiProperty({ enum: HobbyCategory })
+  category: HobbyCategory;
 
   @ApiProperty({ enum: HobbyStatus })
   status: HobbyStatus;

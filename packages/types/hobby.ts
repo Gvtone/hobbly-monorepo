@@ -1,4 +1,4 @@
-import { HobbyStatus } from "./enums";
+import { HobbyStatus, HobbyCategory } from "./enums";
 
 export interface CreateHobbyDto {
   name: string;
@@ -15,6 +15,7 @@ export interface HobbyEntity {
   color: string;
   icon: string;
   description: string;
+  category: HobbyCategory;
   status: HobbyStatus;
   id: number;
 }
