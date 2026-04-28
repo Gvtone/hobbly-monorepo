@@ -10,6 +10,8 @@ model Hobby {
   category    HobbyCategory @default(GENERAL)
   status      HobbyStatus   @default(DRAFT)
   selections  UserHobby[]
+
+  @@index([id, name])
 }
 
 enum HobbyStatus {
