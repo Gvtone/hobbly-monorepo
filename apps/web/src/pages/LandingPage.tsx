@@ -38,24 +38,24 @@ const infoCardData: InfoCardProps[] = [
 
 const previewCardData: HobbyCardProps[] = [
   {
-    hobbyTag: "Anime",
-    tagColor: "bg-hobbly-lavender/60",
+    hobby: "Anime",
+    hobbyColor: "bg-hobbly-lavender/60",
     bgImage: animeBg,
     trackedNumber: "8",
     trackedLabel: "series tracked",
     additional: "Celestial Chronicles"
   },
   {
-    hobbyTag: "Books",
-    tagColor: "bg-hobbly-peach/60",
+    hobby: "Books",
+    hobbyColor: "bg-hobbly-peach/60",
     bgImage: booksBg,
     trackedNumber: "23",
     trackedLabel: "books read",
     additional: "Currently reading 2"
   },
   {
-    hobbyTag: "Daily Journal",
-    tagColor: "bg-hobbly-cream/60",
+    hobby: "Daily Journal",
+    hobbyColor: "bg-hobbly-cream/60",
     bgImage: journalBg,
     trackedNumber: "142",
     trackedLabel: "entries written",
@@ -119,9 +119,9 @@ function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
               {previewCardData.map(data => (
                 <HobbyCard
-                  key={data.hobbyTag}
-                  hobbyTag={data.hobbyTag}
-                  tagColor={data.tagColor}
+                  key={data.hobby}
+                  hobby={data.hobby}
+                  hobbyColor={data.hobbyColor}
                   bgImage={data.bgImage}
                   trackedNumber={data.trackedNumber}
                   trackedLabel={data.trackedLabel}

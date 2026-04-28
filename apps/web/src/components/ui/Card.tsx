@@ -38,8 +38,8 @@ function InfoCard({
 }
 
 interface HobbyCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  hobbyTag: string;
-  tagColor: string;
+  hobby: string;
+  hobbyColor: string;
   bgImage?: string;
   trackedNumber: string;
   trackedLabel: string;
@@ -47,8 +47,8 @@ interface HobbyCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 function HobbyCard({
-  hobbyTag,
-  tagColor,
+  hobby,
+  hobbyColor,
   bgImage,
   trackedNumber,
   trackedLabel,
@@ -64,13 +64,13 @@ function HobbyCard({
       style={bgImage ? { backgroundImage: `url(${bgImage})` } : undefined}
     >
       <div className="flex justify-between z-10">
-        <div className={`${tagColor} rounded-full px-2 w-fit h-fit`}>
-          <span className="text-white text-sm font-semibold">{hobbyTag}</span>
+        <div
+          className={`${hobbyColor} rounded-full px-2 w-fit h-fit`}
+          style={{ backgroundColor: `#${hobbyColor}` }}
+        >
+          <span className="text-white text-sm font-semibold">{hobby}</span>
         </div>
         <div className="flex gap-2 justify-end items-center">
-          <div className="flex p-1 size-fit bg-white/30 rounded-full text-sm">
-            ✨
-          </div>
           <div className="flex p-1 size-fit bg-white/30 rounded-full">
             <Ellipsis size={12} className="text-white"></Ellipsis>
           </div>

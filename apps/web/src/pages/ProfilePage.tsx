@@ -9,48 +9,48 @@ import EntryCard from "../components/profile/EntryCard";
 const mockData: HobbyCardProps[] = [
   {
     bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
+    hobbyColor: "bg-hobbly-sky",
+    hobby: "Anime",
     trackedNumber: "8",
     trackedLabel: "series tracked",
     additional: "Celestial Chronicles"
   },
   {
     bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
+    hobbyColor: "bg-hobbly-sky",
+    hobby: "Anime",
     trackedNumber: "8",
     trackedLabel: "series tracked",
     additional: "Celestial Chronicles"
   },
   {
     bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
+    hobbyColor: "bg-hobbly-sky",
+    hobby: "Anime",
     trackedNumber: "8",
     trackedLabel: "series tracked",
     additional: "Celestial Chronicles"
   },
   {
     bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
+    hobbyColor: "bg-hobbly-sky",
+    hobby: "Anime",
     trackedNumber: "8",
     trackedLabel: "series tracked",
     additional: "Celestial Chronicles"
   },
   {
     bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
+    hobbyColor: "bg-hobbly-sky",
+    hobby: "Anime",
     trackedNumber: "8",
     trackedLabel: "series tracked",
     additional: "Celestial Chronicles"
   },
   {
     bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
+    hobbyColor: "bg-hobbly-sky",
+    hobby: "Anime",
     trackedNumber: "8",
     trackedLabel: "series tracked",
     additional: "Celestial Chronicles"
@@ -92,8 +92,8 @@ function ProfilePage() {
               <HobbyCard
                 key={index}
                 bgImage={data.bgImage}
-                tagColor={data.tagColor}
-                hobbyTag={data.hobbyTag}
+                hobbyColor={data.hobbyColor}
+                hobby={data.hobby}
                 trackedNumber={data.trackedNumber}
                 trackedLabel={data.trackedLabel}
                 additional={data.additional}

@@ -2,20 +2,10 @@ import { Plus, Settings } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
 import Button from "../components/ui/Button";
 import EntryCard from "../components/profile/EntryCard";
-import { HobbyCard, type HobbyCardProps } from "../components/ui/Card";
+import { HobbyCard } from "../components/ui/Card";
 import Carousel from "../components/ui/Carousel";
 import { useAuth } from "../context/auth/useAuth";
-
-const mockData: HobbyCardProps[] = [
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  }
-];
+import { useUserHobby } from "../hooks/useUserHobby";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -27,20 +17,22 @@ function getGreeting() {
 function DashboardPage() {
   const greeting = getGreeting();
   const { user } = useAuth();
+  const { userHobbies, isLoading: isUserHobbiesLoading } = useUserHobby();
 
   return (
     <AppLayout>
-      <div className="py-10 px-6 max-w-7xl mx-auto">
+      <div className="mx-auto max-w-7xl px-6 py-10">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="mb-8 flex items-center justify-between">
           {/* Right side */}
           <div className="flex flex-col gap-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {greeting.emoji} {greeting.text}, {user?.username}
             </p>
             <h1 className="text-3xl">Your Hobby Board</h1>
-            <p className="text-sm text-muted-foreground">
-              8 widgets · Drag to rearrange ✨
+            <p className="text-muted-foreground text-sm">
+              {userHobbies.length}{" "}
+              {userHobbies.length === 1 ? "widget" : "widgets"} ✨
             </p>
           </div>
 
@@ -57,29 +49,50 @@ function DashboardPage() {
         </div>
 
         <section>
-          <Carousel className="mb-8">
-            {mockData.map((data, i) => (
-              <HobbyCard
-                key={i}
-                hobbyTag={data.hobbyTag}
-                tagColor={data.tagColor}
-                bgImage={data.bgImage}
-                trackedNumber={data.trackedNumber}
-                trackedLabel={data.trackedLabel}
-                additional={data.additional}
-                className="size-56 shrink-0"
-              ></HobbyCard>
-            ))}
-          </Carousel>
+          {!isUserHobbiesLoading && userHobbies.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <span className="mb-4 text-6xl">🌱</span>
+              <h3 className="mb-2 text-2xl">Start your collection</h3>
+              <p className="text-muted-foreground mb-6 max-w-md">
+                Pick your first hobby to begin tracking your journey
+              </p>
+              <Button variant="gradient" shape="pill">
+                <Plus size={16} />
+                Add your first hobby
+              </Button>
+            </div>
+          ) : (
+            <Carousel className="mb-8">
+              {userHobbies.map((data) => (
+                <HobbyCard
+                  key={data.id}
+                  hobby={data.hobby.name}
+                  hobbyColor={data.hobby.color}
+                  bgImage={data.backgroundImage || undefined}
+                  // TODO: replace with real data
+                  trackedNumber="8"
+                  trackedLabel="series tracked"
+                  additional="Celestial Chronicles"
+                  className="size-56 shrink-0"
+                ></HobbyCard>
+              ))}
+              <button className="border-border bg-background text-muted-foreground hover:border-primary flex size-56 shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-4 border-dashed">
+                <div className="bg-muted flex size-12 items-center justify-center rounded-2xl">
+                  <Plus size={20} />
+                </div>
+                <span className="text-sm">Add a hobby</span>
+              </button>
+            </Carousel>
+          )}
         </section>
 
         <section>
-          <div className="flex justify-between items-baseline mb-4">
+          <div className="mb-4 flex items-baseline justify-between">
             <h3 className="text-xl">My Entries</h3>
-            <p className="text-sm text-muted-foreground">8 total</p>
+            <p className="text-muted-foreground text-sm">8 total</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <EntryCard
               coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
               mood="😭"
@@ -94,13 +107,6 @@ function DashboardPage() {
               title="Test"
               note="The ending hit different tonight. That scene with the lanterns in the rain..."
               dashboard
-            ></EntryCard>
-            <EntryCard
-              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
-              mood="😭"
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              title="Celestial Chronicles"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
             ></EntryCard>
           </div>
         </section>
