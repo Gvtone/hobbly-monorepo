@@ -1,0 +1,26 @@
+model Hobby {
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+  name        String
+  color       String
+  icon        String
+  description String?
+  category    HobbyCategory @default(GENERAL)
+  status      HobbyStatus   @default(DRAFT)
+  selections  UserHobby[]
+}
+
+enum HobbyStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum HobbyCategory {
+  TRACKED // has API search + status + progress (anime, gaming, books)
+  CREATIVE // image-focused, no API (art, cooking, photography)
+  JOURNAL // text-focused, no API (journal, music, travel)
+  GENERAL // fallback
+}

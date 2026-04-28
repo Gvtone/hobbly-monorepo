@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
 
 export class AuthPayloadDto {
@@ -8,6 +9,7 @@ export class AuthPayloadDto {
     example: 'starweaver or starweaver@hobbly.io',
     description: 'Email address or username',
   })
+  @Transform(({ value }: { value: string }) => value.trim().toLowerCase())
   @IsNotEmpty()
   @IsString()
   identifier: string;
