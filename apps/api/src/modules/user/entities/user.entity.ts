@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
   UserRole,
   UserStatus,
@@ -35,7 +35,7 @@ export class UserEntity implements UserModel, IUserEntity {
   email: string;
 
   @Exclude()
-  @ApiProperty({ type: String })
+  @ApiHideProperty()
   password: string;
 
   @ApiProperty({ type: String })

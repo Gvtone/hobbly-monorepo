@@ -15,8 +15,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       .finally(() => setIsLoading(false));
   }, []);
 
-  async function login(email: string, password: string) {
-    const user = await authService.login({ email, password });
+  async function login(identifier: string, password: string) {
+    const user = await authService.login({ identifier, password });
     setUser(user);
   }
 
