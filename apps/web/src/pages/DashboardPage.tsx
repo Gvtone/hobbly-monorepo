@@ -6,6 +6,7 @@ import { HobbyCard } from "../components/ui/Card";
 import Carousel from "../components/ui/Carousel";
 import { useAuth } from "../context/auth/useAuth";
 import { useUserHobby } from "../hooks/useUserHobby";
+// import { useEntry } from "../hooks/useEntry";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -18,6 +19,7 @@ function DashboardPage() {
   const greeting = getGreeting();
   const { user } = useAuth();
   const { userHobbies, isLoading: isUserHobbiesLoading } = useUserHobby();
+  // const {userEntries, isLoading: isEntriesLoading} = useEntry()
 
   return (
     <AppLayout>
@@ -66,9 +68,7 @@ function DashboardPage() {
               {userHobbies.map((data) => (
                 <HobbyCard
                   key={data.id}
-                  hobby={data.hobby.name}
-                  hobbyColor={data.hobby.color}
-                  bgImage={data.backgroundImage || undefined}
+                  data={data}
                   // TODO: replace with real data
                   trackedNumber="8"
                   trackedLabel="series tracked"

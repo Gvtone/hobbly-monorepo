@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { userHobbyService } from "../services/user-hobby";
-import type { UserHobbyEntity } from "@hobbies-dashboard/types";
+import type {
+  CreateUserHobbyDto,
+  UserHobbyEntity,
+} from "@hobbies-dashboard/types";
 import { showToast } from "../utils/toast";
 
 export function useUserHobby() {
@@ -23,22 +26,33 @@ export function useUserHobby() {
     fetchUserHobbies();
   }, []);
 
-  const addHobby = async (hobbyId: number) => {
-    const newHobby = await userHobbyService.create({ hobbyId });
-    setUserHobbies(prev => [...prev, newHobby]);
+  const addUserHobby = async (data: CreateUserHobbyDto) => {
+    const newHobby = await userHobbyService.create(data);
+    setUserHobbies((prev) => [...prev, newHobby]);
     return newHobby;
   };
 
-  const removeHobby = async (id: string) => {
+  const updateUserHobby = async (
+    id: number,
+    data: Partial<CreateUserHobbyDto>,
+  ) => {
+    const updatedHobby = await userHobbyService.update(id, data);
+    setUserHobbies((prev) =>
+      prev.map((userHobby) => (userHobby.id === id ? updatedHobby : userHobby)),
+    );
+  };
+
+  const removeUserHobby = async (id: number) => {
     await userHobbyService.delete(id);
-    setUserHobbies(prev => prev.filter(h => h.id !== Number(id)));
+    setUserHobbies((prev) => prev.filter((userHobby) => userHobby.id !== id));
   };
 
   return {
     userHobbies,
     isLoading,
-    addHobby,
-    removeHobby,
-    refresh: fetchUserHobbies
+    addUserHobby,
+    updateUserHobby,
+    removeUserHobby,
+    refresh: fetchUserHobbies,
   };
 }

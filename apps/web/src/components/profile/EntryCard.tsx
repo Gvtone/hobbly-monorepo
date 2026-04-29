@@ -20,17 +20,17 @@ function EntryCard({
   title,
   note,
   reference,
-  dashboard = false
+  dashboard = false,
 }: EntryCardProps) {
   return (
     <div className={cn("break-inside-avoid", dashboard && "h-full")}>
       <Card className={cn("p-0", dashboard && "h-full")}>
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
           <div
             className={cn(
-              "relative flex justify-between rounded-t-3xl overflow-hidden p-4",
-              coverImg && "flex-col aspect-4/3",
-              coverImg && dashboard ? "aspect-3/1" : ""
+              "relative flex justify-between overflow-hidden rounded-t-3xl p-4",
+              coverImg && "aspect-4/3 flex-col",
+              coverImg && dashboard ? "aspect-3/1" : "",
             )}
             style={
               !coverImg
@@ -42,13 +42,13 @@ function EntryCard({
               <img
                 src={coverImg}
                 alt=""
-                className="absolute top-0 left-0 object-cover size-full"
+                className="absolute top-0 left-0 size-full object-cover"
               />
             )}
 
             {mood && (
-              <div className="self-end z-10">
-                <div className="flex justify-center items-center bg-white rounded-full size-7">
+              <div className="z-10 self-end">
+                <div className="flex size-7 items-center justify-center rounded-full bg-white">
                   {mood}
                 </div>
               </div>
@@ -56,8 +56,8 @@ function EntryCard({
 
             <div
               className={cn(
-                "flex gap-2 px-2 py-1 text-xs z-10 size-fit rounded-full",
-                `${!coverImg && "-order-1"}`
+                "z-10 flex size-fit gap-2 rounded-full px-2 py-1 text-xs",
+                `${!coverImg && "-order-1"}`,
               )}
               style={{ backgroundColor: hobby.color }}
             >
@@ -66,16 +66,16 @@ function EntryCard({
             </div>
           </div>
 
-          <div className={"flex flex-col justify-between p-4 flex-1"}>
-            <div className="flex flex-col gap-1 mb-4">
-              <p className={cn("font-serif mb-2", dashboard && "text-xl")}>
+          <div className={"flex flex-1 flex-col justify-between p-4"}>
+            <div className="mb-4 flex flex-col gap-1">
+              <p className={cn("mb-2 font-serif", dashboard && "text-xl")}>
                 {title}
               </p>
               {note && (
                 <p
                   className={cn(
                     "text-muted-foreground leading-relaxed",
-                    dashboard ? "text-sm" : "text-xs "
+                    dashboard ? "text-sm" : "text-xs",
                   )}
                 >
                   {note}
@@ -85,7 +85,7 @@ function EntryCard({
             </div>
 
             <div>
-              {dashboard && <div className="border border-border my-2"></div>}
+              {dashboard && <div className="border-border my-2 border"></div>}
               <div
                 className={cn("flex text-xs", dashboard && "justify-between")}
               >

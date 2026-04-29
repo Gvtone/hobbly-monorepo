@@ -1,7 +1,7 @@
 import type {
   CreateUserHobbyDto,
   UpdateUserHobbyDto,
-  UserHobbyEntity
+  UserHobbyEntity,
 } from "@hobbies-dashboard/types";
 import api from "./api";
 
@@ -18,18 +18,18 @@ export const userHobbyService = {
     return res.data;
   },
 
-  async findById(id: string) {
+  async findById(id: number) {
     const res = await api.get<UserHobbyEntity>(`${serviceRoute}/${id}`);
     return res.data;
   },
 
-  async update(id: string, data: UpdateUserHobbyDto) {
+  async update(id: number, data: UpdateUserHobbyDto) {
     const res = await api.put<UserHobbyEntity>(`${serviceRoute}/${id}`, data);
     return res.data;
   },
 
-  async delete(id: string) {
+  async delete(id: number) {
     const res = await api.delete<UserHobbyEntity>(`${serviceRoute}/${id}`);
     return res.data;
-  }
+  },
 };
