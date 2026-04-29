@@ -34,7 +34,7 @@ function DashboardPage() {
             <h1 className="text-3xl">Your Hobby Board</h1>
             <p className="text-muted-foreground text-sm">
               {userHobbies.length}{" "}
-              {userHobbies.length === 1 ? "widget" : "widgets"} ✨
+              {userHobbies.length === 1 ? "hobby" : "hobbies"} ✨
             </p>
           </div>
 
