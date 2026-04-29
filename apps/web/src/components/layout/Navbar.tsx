@@ -86,7 +86,7 @@ function Navbar() {
 
           <Popover.Root>
             <Popover.Trigger asChild>
-              <button className="rounded-full border-2 border-hobbly-sky-light size-9 overflow-hidden hover:border-hobbly-sky transition-colors">
+              <button className="rounded-full border-2 border-hobbly-sky-light size-9 overflow-hidden hover:border-hobbly-sky transition-colors cursor-pointer">
                 {user?.profilePicture ? (
                   <img
                     src={user.profilePicture}

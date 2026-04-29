@@ -1,3 +1,4 @@
+import type { UserHobbyWithHobbyEntity } from "@hobbies-dashboard/types";
 import { cn } from "../../utils/utils";
 import { Ellipsis, Expand } from "lucide-react";
 
@@ -21,12 +22,12 @@ function InfoCard({
   iconBgColor,
   title,
   description,
-  children
+  children,
 }: InfoCardProps) {
   return (
     <Card className="flex-1 gap-2">
       <div
-        className={`flex justify-center items-center rounded-xl ${iconBgColor} size-12 shadow shadow-primary/30`}
+        className={`flex items-center justify-center rounded-xl ${iconBgColor} shadow-primary/30 size-12 shadow`}
       >
         {icon}
       </div>
@@ -38,59 +39,63 @@ function InfoCard({
 }
 
 interface HobbyCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  hobbyTag: string;
-  tagColor: string;
-  bgImage?: string;
+  data: UserHobbyWithHobbyEntity;
   trackedNumber: string;
   trackedLabel: string;
   additional?: string;
 }
 
 function HobbyCard({
-  hobbyTag,
-  tagColor,
-  bgImage,
+  data,
   trackedNumber,
   trackedLabel,
   additional,
-  className
+  className,
 }: HobbyCardProps) {
   const defaultClasses =
     "relative rounded-xl p-3 bg-cover bg-center justify-between";
 
+  const { hobby, backgroundImage } = data;
+
   return (
     <Card
       className={cn(defaultClasses, className)}
-      style={bgImage ? { backgroundImage: `url(${bgImage})` } : undefined}
+      style={
+        backgroundImage
+          ? { backgroundImage: `url(${backgroundImage})` }
+          : undefined
+      }
     >
-      <div className="flex justify-between z-10">
-        <div className={`${tagColor} rounded-full px-2 w-fit h-fit`}>
-          <span className="text-white text-sm font-semibold">{hobbyTag}</span>
+      <div className="z-10 flex justify-between">
+        <div
+          className={`h-fit w-fit rounded-full px-2`}
+          style={{ backgroundColor: `#${hobby.color}` }}
+        >
+          <span className="text-sm font-semibold text-white">
+            {hobby.icon} {hobby.name}
+          </span>
         </div>
-        <div className="flex gap-2 justify-end items-center">
-          <div className="flex p-1 size-fit bg-white/30 rounded-full text-sm">
-            ✨
-          </div>
-          <div className="flex p-1 size-fit bg-white/30 rounded-full">
+        <div className="flex items-center justify-end gap-2">
+          <div className="flex size-fit rounded-full bg-white/30 p-1">
             <Ellipsis size={12} className="text-white"></Ellipsis>
           </div>
         </div>
       </div>
-      <div className="flex justify-between items-end z-10">
+      <div className="z-10 flex items-end justify-between">
         <div className="flex flex-col">
-          <span className="text-white font-hobbly-serif font-bold text-2xl">
+          <span className="font-hobbly-serif text-2xl font-bold text-white">
             {trackedNumber}
           </span>
-          <span className="text-white/70 text-xs">{trackedLabel}</span>
+          <span className="text-xs text-white/70">{trackedLabel}</span>
           {additional && (
-            <span className="text-white/90 text-xs">{additional}</span>
+            <span className="text-xs text-white/90">{additional}</span>
           )}
         </div>
-        <div className="flex justify-center items-center p-2 size-fit rounded-full bg-white/30">
+        <div className="flex size-fit items-center justify-center rounded-full bg-white/30 p-2">
           <Expand size={12} className="text-white"></Expand>
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-full bg-linear-to-t from-black/50 to-transparent rounded-xl" />
+      <div className="absolute right-0 bottom-0 left-0 h-full rounded-xl bg-linear-to-t from-black/50 to-transparent" />
     </Card>
   );
 }

@@ -1,4 +1,4 @@
-import { EntryMoodEntity } from "./entry-mood";
+import type { EntryMoodEntity } from "./entry-mood";
 import type { Visibility } from "./enums";
 import type { UserHobbyWithHobbyEntity } from "./user-hobby";
 
@@ -17,6 +17,8 @@ export interface CreateEntryDto {
   visibility?: Visibility;
   metadata?: JsonValue;
 }
+
+export interface UpdateEntryDto extends Partial<CreateEntryDto> {}
 
 export interface EntryEntity {
   id: number;

@@ -1,4 +1,4 @@
-import { HobbyStatus, HobbyCategory } from "./enums";
+import type { HobbyStatus, HobbyCategory } from "./enums";
 
 export interface CreateHobbyDto {
   name: string;
@@ -6,6 +6,8 @@ export interface CreateHobbyDto {
   icon: string;
   description?: string | null;
 }
+
+export interface UpdateHobbyDto extends Partial<CreateHobbyDto> {}
 
 export interface HobbyEntity {
   createdAt: Date;

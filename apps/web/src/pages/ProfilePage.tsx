@@ -1,66 +1,25 @@
 import { MoveRight } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
-import { HobbyCard, type HobbyCardProps } from "../components/ui/Card";
+import { HobbyCard } from "../components/ui/Card";
 import MainProfileCard from "../components/profile/MainProfileCard";
 import ActivityCalendar from "../components/profile/ActivityCalendar";
 import ProfileEntriesLayout from "../components/profile/ProfileEntriesLayout";
 import EntryCard from "../components/profile/EntryCard";
-
-const mockData: HobbyCardProps[] = [
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  }
-];
+import { useUserHobby } from "../hooks/useUserHobby";
+import { useEntry } from "../hooks/useEntry";
 
 function ProfilePage() {
+  const { userHobbies } = useUserHobby();
+  const { userEntries } = useEntry();
+
+  const entryTabs = userHobbies.map((userHobby) => ({
+    emoji: userHobby.hobby.icon,
+    hobby: userHobby.hobby.name,
+  }));
+
   return (
     <AppLayout>
-      <div className="py-10 px-6 max-w-5xl mx-auto">
+      <div className="mx-auto max-w-5xl px-6 py-10">
         {/* Main profile card */}
         <MainProfileCard
           coverPhoto="https://images.unsplash.com/photo-1623594845764-13991ac51774"
@@ -76,74 +35,42 @@ function ProfilePage() {
         <ActivityCalendar />
 
         <section>
-          <div className="flex justify-between items-baseline mb-4">
+          <div className="mb-4 flex items-baseline justify-between">
             <h3 className="text-xl">My Hobby Board</h3>
             <a
               href=""
-              className="flex text-hobbly-sky-dark items-center text-sm gap-2"
+              className="text-hobbly-sky-dark flex items-center gap-2 text-sm"
             >
               Manage
               <MoveRight size={14}></MoveRight>
             </a>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-10">
-            {mockData.map((data, index) => (
+          <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {userHobbies.map((data) => (
               <HobbyCard
-                key={index}
-                bgImage={data.bgImage}
-                tagColor={data.tagColor}
-                hobbyTag={data.hobbyTag}
-                trackedNumber={data.trackedNumber}
-                trackedLabel={data.trackedLabel}
-                additional={data.additional}
+                key={data.id}
+                data={data}
+                trackedNumber="8"
+                trackedLabel="series tracked"
+                additional="Celestial Chronicles"
                 className="min-h-36"
-              ></HobbyCard>
+              />
             ))}
           </div>
         </section>
 
         <section>
-          <div className="flex justify-between items-baseline mb-4">
+          <div className="mb-4 flex items-baseline justify-between">
             <h3 className="text-xl">My Entries</h3>
-            <p className="text-sm text-muted-foreground">8 total</p>
+            <p className="text-muted-foreground text-sm">8 total</p>
           </div>
 
-          <ProfileEntriesLayout>
-            <EntryCard
-              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
-              mood="😭"
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              title="Celestial Chronicles"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
-            ></EntryCard>
-            <EntryCard
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              mood="😭"
-              title="Test"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
-            ></EntryCard>
-            <EntryCard
-              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
-              mood="😭"
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              title="Celestial Chronicles"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
-            ></EntryCard>
-            <EntryCard
-              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
-              mood="😭"
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              title="Celestial Chronicles"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
-            ></EntryCard>
-            <EntryCard
-              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
-              mood="😭"
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              title="Celestial Chronicles"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
-            ></EntryCard>
+          <ProfileEntriesLayout entryTabs={entryTabs}>
+            {/* TODO: Implement pagination and only show public entries */}
+            {userEntries.map((data) => (
+              <EntryCard key={data.id} data={data} dashboard />
+            ))}
           </ProfileEntriesLayout>
         </section>
       </div>
