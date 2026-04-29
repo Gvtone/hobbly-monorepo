@@ -1,4 +1,4 @@
-import type { UserHobbyEntity } from "@hobbies-dashboard/types";
+import type { UserHobbyWithHobbyEntity } from "@hobbies-dashboard/types";
 import { cn } from "../../utils/utils";
 import { Ellipsis, Expand } from "lucide-react";
 
@@ -39,7 +39,7 @@ function InfoCard({
 }
 
 interface HobbyCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  data: UserHobbyEntity;
+  data: UserHobbyWithHobbyEntity;
   trackedNumber: string;
   trackedLabel: string;
   additional?: string;

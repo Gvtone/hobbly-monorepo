@@ -2,6 +2,7 @@ import type {
   CreateUserHobbyDto,
   UpdateUserHobbyDto,
   UserHobbyEntity,
+  UserHobbyWithHobbyEntity,
 } from "@hobbies-dashboard/types";
 import api from "./api";
 
@@ -14,7 +15,9 @@ export const userHobbyService = {
   },
 
   async findAll() {
-    const res = await api.get<UserHobbyEntity[]>(`${serviceRoute}/find-all`);
+    const res = await api.get<UserHobbyWithHobbyEntity[]>(
+      `${serviceRoute}/find-all`,
+    );
     return res.data;
   },
 

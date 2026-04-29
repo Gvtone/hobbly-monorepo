@@ -6,7 +6,7 @@ import { HobbyCard } from "../components/ui/Card";
 import Carousel from "../components/ui/Carousel";
 import { useAuth } from "../context/auth/useAuth";
 import { useUserHobby } from "../hooks/useUserHobby";
-// import { useEntry } from "../hooks/useEntry";
+import { useEntry } from "../hooks/useEntry";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -19,7 +19,7 @@ function DashboardPage() {
   const greeting = getGreeting();
   const { user } = useAuth();
   const { userHobbies, isLoading: isUserHobbiesLoading } = useUserHobby();
-  // const {userEntries, isLoading: isEntriesLoading} = useEntry()
+  const { userEntries } = useEntry();
 
   return (
     <AppLayout>
@@ -93,21 +93,9 @@ function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <EntryCard
-              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
-              mood="😭"
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              title="Celestial Chronicles"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
-              dashboard
-            ></EntryCard>
-            <EntryCard
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              mood="😭"
-              title="Test"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
-              dashboard
-            ></EntryCard>
+            {userEntries.map((data) => (
+              <EntryCard key={data.id} data={data} dashboard />
+            ))}
           </div>
         </section>
       </div>

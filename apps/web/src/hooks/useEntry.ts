@@ -1,10 +1,15 @@
-import type { CreateEntryDto, EntryEntity } from "@hobbies-dashboard/types";
+import type {
+  CreateEntryDto,
+  EntryWithUserHobbyEntity,
+} from "@hobbies-dashboard/types";
 import { useEffect, useState } from "react";
 import { entryService } from "../services/entry";
 import { showToast } from "../utils/toast";
 
 export function useEntry() {
-  const [userEntries, setUserEntries] = useState<EntryEntity[]>([]);
+  const [userEntries, setUserEntries] = useState<EntryWithUserHobbyEntity[]>(
+    [],
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchEntries = async () => {
@@ -24,16 +29,13 @@ export function useEntry() {
   }, []);
 
   const addEntry = async (data: CreateEntryDto) => {
-    const newEntry = await entryService.create(data);
-    setUserEntries((prev) => [...prev, newEntry]);
-    return newEntry;
+    await entryService.create(data);
+    await fetchEntries();
   };
 
   const updateEntry = async (id: number, data: Partial<CreateEntryDto>) => {
-    const updatedEntry = await entryService.update(id, data);
-    setUserEntries((prev) =>
-      prev.map((entry) => (entry.id === id ? updatedEntry : entry)),
-    );
+    await entryService.update(id, data);
+    await fetchEntries();
   };
 
   const removeEntry = async (id: number) => {

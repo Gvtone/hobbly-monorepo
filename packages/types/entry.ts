@@ -1,4 +1,4 @@
-import { EntryMoodEntity } from "./entry-mood";
+import type { EntryMoodEntity } from "./entry-mood";
 import type { Visibility } from "./enums";
 import type { UserHobbyWithHobbyEntity } from "./user-hobby";
 

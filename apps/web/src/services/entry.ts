@@ -1,4 +1,8 @@
-import type { CreateEntryDto, EntryEntity } from "@hobbies-dashboard/types";
+import type {
+  CreateEntryDto,
+  EntryEntity,
+  EntryWithUserHobbyEntity,
+} from "@hobbies-dashboard/types";
 import api from "./api";
 
 const serviceRoute = "/entry";
@@ -10,7 +14,7 @@ export const entryService = {
   },
 
   async findAll() {
-    const res = await api.get<EntryEntity[]>(`${serviceRoute}`);
+    const res = await api.get<EntryWithUserHobbyEntity[]>(`${serviceRoute}`);
     return res.data;
   },
 
