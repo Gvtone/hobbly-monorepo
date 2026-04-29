@@ -1,4 +1,6 @@
+import { EntryMoodEntity } from "./entry-mood";
 import type { Visibility } from "./enums";
+import type { UserHobbyWithHobbyEntity } from "./user-hobby";
 
 type JsonPrimitive = string | number | boolean | null;
 type JsonObject = { [key: string]: JsonValue };
@@ -28,4 +30,9 @@ export interface EntryEntity {
   activityDate: Date;
   visibility: Visibility;
   metadata: JsonValue;
+}
+
+export interface EntryWithUserHobbyEntity extends EntryEntity {
+  userHobby: UserHobbyWithHobbyEntity;
+  mood: EntryMoodEntity;
 }

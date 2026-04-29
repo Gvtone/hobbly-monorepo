@@ -1,10 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Visibility } from '../../../generated/prisma/enums';
-import { EntryModel } from '../../../generated/prisma/models';
+import { EntryGetPayload, EntryModel } from '../../../generated/prisma/models';
 import type {
+  EntryWithUserHobbyEntity as IEntryWithUserHobbyEntity,
   EntryEntity as IEntryEntity,
   JsonValue,
 } from '@hobbies-dashboard/types';
+import { UserHobbyEntityWithHobby } from '../../user-hobby/entities/user-hobby.entity';
+import { EntryMoodEntity } from '../../entry-mood/entities/entry-mood.entity';
 
 export class EntryEntity implements EntryModel, IEntryEntity {
   @ApiProperty({ type: Number })
@@ -39,4 +42,19 @@ export class EntryEntity implements EntryModel, IEntryEntity {
 
   @ApiProperty({ type: Object })
   metadata: JsonValue;
+}
+
+export class EntryEntityWithUserHobby
+  extends EntryEntity
+  implements
+    EntryGetPayload<{
+      include: { userHobby: true; mood: true };
+    }>,
+    IEntryWithUserHobbyEntity
+{
+  @ApiProperty({ type: () => UserHobbyEntityWithHobby })
+  userHobby: UserHobbyEntityWithHobby;
+
+  @ApiProperty({ type: () => EntryMoodEntity })
+  mood: EntryMoodEntity;
 }
