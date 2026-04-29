@@ -11,7 +11,10 @@ import {
 import { UserHobbyService } from './user-hobby.service';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateUserHobbyDto } from './dto/create-user-hobby.dto';
-import { UserHobbyEntity } from './entities/user-hobby.entity';
+import {
+  UserHobbyEntity,
+  UserHobbyEntityWithHobby,
+} from './entities/user-hobby.entity';
 import { UpdateUserHobbyDto } from './dto/update-user-hobby.dto';
 import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { PayloadEntity } from '../auth/entities/payload.entity';
@@ -46,7 +49,10 @@ export class UserHobbyController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Fetch hobby based on ID' })
-  @ApiOkResponse({ description: 'Fetch successful', type: UserHobbyEntity })
+  @ApiOkResponse({
+    description: 'Fetch successful',
+    type: UserHobbyEntityWithHobby,
+  })
   async findById(
     @Param('id', ParseIntPipe) id: number,
     @AuthUser() userId: PayloadEntity,

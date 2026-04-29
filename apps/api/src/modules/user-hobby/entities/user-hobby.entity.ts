@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserHobbyGetPayload } from '../../../generated/prisma/models';
-import { UserHobbyEntity as IUserHobbyEntity } from '@hobbies-dashboard/types';
+import {
+  UserHobbyGetPayload,
+  UserHobbyModel,
+} from '../../../generated/prisma/models';
+import {
+  UserHobbyEntity as IUserHobbyEntity,
+  UserHobbyWithHobbyEntity as IUserHobbyWithHobbyEntity,
+} from '@hobbies-dashboard/types';
 import { HobbyEntity } from '../../hobby/entities/hobby.entity';
 
-export class UserHobbyEntity
-  implements
-    UserHobbyGetPayload<{
-      include: { hobby: true };
-    }>,
-    IUserHobbyEntity
-{
+export class UserHobbyEntity implements UserHobbyModel, IUserHobbyEntity {
   @ApiProperty({ type: Number })
   id: number;
 
@@ -27,7 +27,16 @@ export class UserHobbyEntity
 
   @ApiProperty({ type: String })
   backgroundImage: string;
+}
 
+export class UserHobbyEntityWithHobby
+  extends UserHobbyEntity
+  implements
+    UserHobbyGetPayload<{
+      include: { hobby: true };
+    }>,
+    IUserHobbyWithHobbyEntity
+{
   @ApiProperty({ type: () => HobbyEntity })
   hobby: HobbyEntity;
 }

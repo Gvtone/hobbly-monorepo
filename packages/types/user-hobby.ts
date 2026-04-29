@@ -14,5 +14,8 @@ export interface UserHobbyEntity {
   userId: number;
   hobbyId: number;
   backgroundImage: string;
+}
+
+export interface UserHobbyWithHobbyEntity extends UserHobbyEntity {
   hobby: HobbyEntity;
 }

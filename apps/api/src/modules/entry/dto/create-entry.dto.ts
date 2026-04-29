@@ -16,8 +16,8 @@ import type {
 import { Transform } from 'class-transformer';
 
 export class CreateEntryDto implements ICreateEntryDto {
-  @ApiProperty({ type: String })
-  @IsString()
+  @ApiProperty({ type: Number })
+  @IsNumber()
   @IsNotEmpty()
   userHobbyId: number;
 

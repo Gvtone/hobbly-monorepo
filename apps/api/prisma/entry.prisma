@@ -11,7 +11,7 @@ model Entry {
   visibility   Visibility @default(PRIVATE)
   metadata     Json?
   mood         EntryMood? @relation(fields: [moodId], references: [id], onDelete: SetNull)
-  hobby        UserHobby  @relation(fields: [userHobbyId], references: [id], onDelete: Cascade)
+  userHobby    UserHobby  @relation(fields: [userHobbyId], references: [id], onDelete: Cascade)
 
   @@index([id, userHobbyId])
 }
