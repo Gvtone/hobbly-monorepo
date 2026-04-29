@@ -14,6 +14,7 @@ import { RolesGuard } from './modules/auth/guard/roles.guard';
 import { HobbyModule } from './modules/hobby/hobby.module';
 import { UserHobbyModule } from './modules/user-hobby/user-hobby.module';
 import { EntryModule } from './modules/entry/entry.module';
+import { EntryMoodModule } from './modules/entry-mood/entry-mood.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { EntryModule } from './modules/entry/entry.module';
     HobbyModule,
     UserHobbyModule,
     EntryModule,
+    EntryMoodModule,
   ],
   providers: [
     {
