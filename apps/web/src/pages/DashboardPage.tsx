@@ -1,4 +1,4 @@
-import { Plus, Settings } from "lucide-react";
+import { Plus } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
 import Button from "../components/ui/Button";
 import EntryCard from "../components/profile/EntryCard";
@@ -7,6 +7,8 @@ import Carousel from "../components/ui/Carousel";
 import { useAuth } from "../context/auth/useAuth";
 import { useUserHobby } from "../hooks/useUserHobby";
 import { useEntry } from "../hooks/useEntry";
+import { useState } from "react";
+import LogEntryModal from "../components/dashboard/LogEntryModal";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -20,14 +22,15 @@ function DashboardPage() {
   const { user } = useAuth();
   const { userHobbies, isLoading: isUserHobbiesLoading } = useUserHobby();
   const { userEntries } = useEntry();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <AppLayout>
       <div className="mx-auto max-w-7xl px-6 py-10">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
           {/* Right side */}
-          <div className="flex flex-col gap-2">
+          <div className="mb-8 flex flex-col gap-2 md:mb-0">
             <p className="text-muted-foreground text-sm">
               {greeting.emoji} {greeting.text}, {user?.username}
             </p>
@@ -40,10 +43,11 @@ function DashboardPage() {
 
           {/* Left side */}
           <div className="flex gap-4">
-            <Button shape="pill" className="text-muted-foreground">
-              <Settings size={16} /> Customize
-            </Button>
-            <Button variant="gradient" shape="pill">
+            <Button
+              variant="gradient"
+              shape="pill"
+              onClick={() => setIsOpen(true)}
+            >
               <Plus size={16} />
               New Entry
             </Button>
@@ -98,6 +102,8 @@ function DashboardPage() {
             ))}
           </div>
         </section>
+
+        <LogEntryModal open={isOpen} onClose={() => setIsOpen(false)} />
       </div>
     </AppLayout>
   );

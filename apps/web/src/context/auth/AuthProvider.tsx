@@ -13,6 +13,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       .then(setUser)
       .catch(() => setUser(null))
       .finally(() => setIsLoading(false));
+
+    const handleSessionExpired = () => setUser(null);
+    window.addEventListener("auth:session-expired", handleSessionExpired);
+    return () => window.removeEventListener("auth:session-expired", handleSessionExpired);
   }, []);
 
   async function login(identifier: string, password: string) {
