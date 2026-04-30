@@ -1,34 +1,41 @@
 import { Sparkles } from "lucide-react";
 import { moonSky } from "../../assets";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../context/auth/useAuth";
 
 function AuthLayout({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+
+  if (user) {
+    return <Navigate to="/dashboard" />;
+  }
+
   return (
     <div className="flex min-h-screen">
       <div
-        className="sticky top-0 h-screen hidden lg:flex items-center justify-center 
-        w-1/2 text-white p-12 bg-center bg-cover"
+        className="sticky top-0 hidden h-screen w-1/2 items-center justify-center bg-cover bg-center p-12 text-white lg:flex"
         style={{ backgroundImage: `url(${moonSky})` }}
       >
-        <div className="flex flex-col gap-4 justify-center items-center z-10">
-          <div className="flex justify-center items-center bg-linear-to-br from from-hobbly-sky to-hobbly-lavender p-4 size-16 rounded-2xl">
+        <div className="z-10 flex flex-col items-center justify-center gap-4">
+          <div className="from from-hobbly-sky to-hobbly-lavender flex size-16 items-center justify-center rounded-2xl bg-linear-to-br p-4">
             <Sparkles></Sparkles>
           </div>
           <h1 className="text-5xl">Hobbly</h1>
-          <span className="text-xl text-center mb-4">
+          <span className="mb-4 text-center text-xl">
             "A cozy place for everything you love."
           </span>
           <div className="flex flex-wrap justify-center gap-4 text-3xl">
-            {["✨", "🎌", "📚", "🎮", "🎨", "🍜", "🎵", "🌿"].map(e => (
+            {["✨", "🎌", "📚", "🎮", "🎨", "🍜", "🎵", "🌿"].map((e) => (
               <span key={e} className="drop-shadow-xl drop-shadow-black/30">
                 {e}
               </span>
             ))}
           </div>
         </div>
-        <div className="absolute bg-linear-to-br from-[#0f1b35d9] to-[#5bb3d04d] size-full"></div>
+        <div className="absolute size-full bg-linear-to-br from-[#0f1b35d9] to-[#5bb3d04d]"></div>
       </div>
 
-      <div className="flex flex-col items-center justify-center w-full lg:w-1/2 bg-background p-12">
+      <div className="bg-background flex w-full flex-col items-center justify-center p-12 lg:w-1/2">
         {children}
       </div>
     </div>

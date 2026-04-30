@@ -27,7 +27,7 @@ api.interceptors.response.use(
         await api.post("/auth/refresh-token");
         return api(originalRequest); // retry the original request
       } catch {
-        window.location.href = "/auth";
+        window.dispatchEvent(new CustomEvent("auth:session-expired"));
       }
     }
 
