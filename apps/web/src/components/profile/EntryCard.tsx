@@ -31,7 +31,7 @@ function EntryCard({ data, dashboard = false }: EntryCardProps) {
             )}
             style={
               !image
-                ? { backgroundColor: `#${hobby.color}6f`, alignItems: "center" }
+                ? { backgroundColor: `${hobby.color}6f`, alignItems: "center" }
                 : undefined
             }
           >
@@ -56,7 +56,7 @@ function EntryCard({ data, dashboard = false }: EntryCardProps) {
                 "z-10 flex size-fit gap-2 rounded-full px-2 py-1 text-xs",
                 `${!image && "-order-1"}`,
               )}
-              style={{ backgroundColor: `#${hobby.color}` }}
+              style={{ backgroundColor: `${hobby.color}` }}
             >
               <span>{hobby.icon}</span>
               <span className="text-white">{hobby.name}</span>

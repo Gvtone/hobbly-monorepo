@@ -69,7 +69,7 @@ function HobbyCard({
       <div className="z-10 flex justify-between">
         <div
           className={`h-fit w-fit rounded-full px-2`}
-          style={{ backgroundColor: `#${hobby.color}` }}
+          style={{ backgroundColor: `${hobby.color}` }}
         >
           <span className="text-sm font-semibold text-white">
             {hobby.icon} {hobby.name}
