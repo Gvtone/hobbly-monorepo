@@ -9,6 +9,7 @@ import { useUserHobby } from "../hooks/useUserHobby";
 import { useEntry } from "../hooks/useEntry";
 import { useState } from "react";
 import LogEntryModal from "../components/dashboard/LogEntryModal";
+import AddUserHobbyModal from "../components/dashboard/AddUserHobbyModal";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -20,9 +21,10 @@ function getGreeting() {
 function DashboardPage() {
   const greeting = getGreeting();
   const { user } = useAuth();
-  const { userHobbies, isLoading: isUserHobbiesLoading } = useUserHobby();
+  const { userHobbies, isLoading: isUserHobbiesLoading, addUserHobby } = useUserHobby();
   const { userEntries } = useEntry();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
+  const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
 
   return (
     <AppLayout>
@@ -46,7 +48,7 @@ function DashboardPage() {
             <Button
               variant="gradient"
               shape="pill"
-              onClick={() => setIsOpen(true)}
+              onClick={() => setIsLogEntryOpen(true)}
             >
               <Plus size={16} />
               New Entry
@@ -80,7 +82,10 @@ function DashboardPage() {
                   className="size-56 shrink-0"
                 ></HobbyCard>
               ))}
-              <button className="border-border bg-background text-muted-foreground hover:border-primary flex size-56 shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-4 border-dashed">
+              <button
+                onClick={() => setIsAddHobbyOpen(true)}
+                className="border-border bg-background text-muted-foreground hover:border-primary flex size-56 shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-4 border-dashed"
+              >
                 <div className="bg-muted flex size-12 items-center justify-center rounded-2xl">
                   <Plus size={20} />
                 </div>
@@ -93,7 +98,9 @@ function DashboardPage() {
         <section>
           <div className="mb-4 flex items-baseline justify-between">
             <h3 className="text-xl">My Entries</h3>
-            <p className="text-muted-foreground text-sm">8 total</p>
+            <p className="text-muted-foreground text-sm">
+              {userEntries.length} total
+            </p>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -103,7 +110,16 @@ function DashboardPage() {
           </div>
         </section>
 
-        <LogEntryModal open={isOpen} onClose={() => setIsOpen(false)} />
+        <LogEntryModal
+          open={isLogEntryOpen}
+          onClose={() => setIsLogEntryOpen(false)}
+        />
+        <AddUserHobbyModal
+          open={isAddHobbyOpen}
+          onClose={() => setIsAddHobbyOpen(false)}
+          existingHobbyIds={userHobbies.map((userHobby) => userHobby.hobbyId)}
+          onAdd={addUserHobby}
+        />
       </div>
     </AppLayout>
   );

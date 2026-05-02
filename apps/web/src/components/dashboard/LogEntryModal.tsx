@@ -11,32 +11,6 @@ import { Globe, Lock } from "lucide-react";
 import { entryService } from "../../services/entry";
 import { showToast } from "../../utils/toast";
 
-function getStatusOptions(hobbyName: string): string[] {
-  switch (hobbyName.toLowerCase()) {
-    case "anime":
-      return ["Watching", "Completed", "Planned", "Dropped"];
-    case "gaming":
-      return ["Playing", "Completed", "Backlog", "Dropped"];
-    case "books":
-      return ["Reading", "Completed", "Planned", "Dropped"];
-    default:
-      return ["In Progress", "Completed"];
-  }
-}
-
-function getProgressLabel(hobbyName: string): string {
-  switch (hobbyName.toLowerCase()) {
-    case "anime":
-      return "Episode #";
-    case "gaming":
-      return "Hours played";
-    case "books":
-      return "Current page";
-    default:
-      return "Progress";
-  }
-}
-
 interface LogEntryModalProps {
   open: boolean;
   onClose: () => void;
@@ -53,13 +27,7 @@ function LogEntryModal({ open, onClose }: LogEntryModalProps) {
     reset,
     formState: { errors, isSubmitting },
     control,
-  } = useForm<
-    CreateEntryDto & {
-      status?: string;
-      progress?: string;
-      apiRef?: string;
-    }
-  >({
+  } = useForm<CreateEntryDto>({
     defaultValues: {
       activityDate: new Date(),
       visibility: "PRIVATE",
@@ -82,16 +50,6 @@ function LogEntryModal({ open, onClose }: LogEntryModalProps) {
     control,
   });
 
-  const { field: statusField } = useController({
-    name: "status",
-    control,
-  });
-
-  const { field: progressField } = useController({
-    name: "progress",
-    control,
-  });
-
   const { field: visibilityField } = useController({
     name: "visibility",
     control,
@@ -101,29 +59,9 @@ function LogEntryModal({ open, onClose }: LogEntryModalProps) {
 
   const handleHobbyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     hobbyField.onChange(e);
-    statusField.onChange(undefined);
-    progressField.onChange(undefined);
   };
 
-  const onSubmit = async (
-    data: CreateEntryDto & {
-      status?: string;
-      progress?: string;
-      apiRef?: string;
-    },
-  ) => {
-    // Build metadata based on hobby category
-    const metadata =
-      selectedHobby?.hobby.category === "TRACKED"
-        ? Object.fromEntries(
-            Object.entries({
-              status: data.status ?? null,
-              progress: data.progress ?? null,
-              apiRef: data.apiRef ?? null,
-            }).filter(([, v]) => v !== null),
-          )
-        : null;
-
+  const onSubmit = async (data: CreateEntryDto) => {
     const entryData: CreateEntryDto = {
       userHobbyId: data.userHobbyId,
       title: data.title,
@@ -132,7 +70,7 @@ function LogEntryModal({ open, onClose }: LogEntryModalProps) {
       activityDate: data.activityDate,
       visibility: data.visibility,
       image: data.image,
-      metadata,
+      metadata: null, // for future use with tracked hobbies
     };
 
     try {
@@ -256,35 +194,7 @@ function LogEntryModal({ open, onClose }: LogEntryModalProps) {
         </div>
 
         {/* Json */}
-        {selectedHobby?.hobby.category === "TRACKED" && (
-          <div className="flex flex-col gap-4">
-            {/* Status pills */}
-            <div>
-              <p className="text-muted-foreground pb-2 text-sm">Status</p>
-              <div className="flex flex-wrap gap-2">
-                {getStatusOptions(selectedHobby.hobby.name).map((status) => (
-                  <RadioPill
-                    key={status}
-                    label={status}
-                    {...statusField}
-                    value={status.toLowerCase()}
-                    activeColor={hobbyColor}
-                    isChecked={statusField.value === status.toLowerCase()}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Progress */}
-            <Input
-              type="number"
-              variant="auth"
-              shape="pill"
-              placeholder={getProgressLabel(selectedHobby.hobby.name)}
-              {...progressField}
-            />
-          </div>
-        )}
+        {/* {selectedHobby?.hobby.category === "TRACKED" && ())} */}
 
         {/* Mood */}
         <div>
@@ -352,7 +262,7 @@ function LogEntryModal({ open, onClose }: LogEntryModalProps) {
             type="date"
             variant="auth"
             shape="pill"
-            defaultValue={dateToday}
+            placeholder={dateToday}
             disabled={noHobby}
             {...register("activityDate")}
           />
