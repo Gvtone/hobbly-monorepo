@@ -1,0 +1,58 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Visibility } from '../../../generated/prisma/enums';
+import { IsArray, IsDate, IsInt, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+
+export class EntryFilterDto {
+  @ApiPropertyOptional({ type: String })
+  @IsString()
+  @IsOptional()
+  search?: string;
+
+  @ApiPropertyOptional({
+    type: [Number],
+    description: 'Comma-separated IDs, e.g. 1,2',
+  })
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  @Transform(({ value }) => {
+    return Array.isArray(value)
+      ? value.map(Number)
+      : value.split(',').map(Number);
+  })
+  hobbyId?: number[];
+
+  @ApiPropertyOptional({ type: [Number] })
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  @Transform(({ value }) => {
+    return Array.isArray(value)
+      ? value.map(Number)
+      : value.split(',').map(Number);
+  })
+  moodId?: number[];
+
+  @ApiPropertyOptional({ enum: Visibility })
+  @IsOptional()
+  visibility?: Visibility;
+
+  @ApiPropertyOptional({
+    type: Date,
+    example: '2026-04-27',
+  })
+  @IsDate()
+  @Transform(({ value }: { value: string | number | Date }) => new Date(value))
+  @IsOptional()
+  startDate?: Date;
+
+  @ApiPropertyOptional({
+    type: Date,
+    example: '2026-04-27',
+  })
+  @IsDate()
+  @Transform(({ value }: { value: string | number | Date }) => new Date(value))
+  @IsOptional()
+  endDate?: Date;
+}
