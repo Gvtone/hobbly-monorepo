@@ -14,10 +14,11 @@ import { showToast } from "../../utils/toast";
 interface LogEntryModalProps {
   open: boolean;
   onClose: () => void;
+  onRefresh: () => Promise<void>;
 }
 
-function LogEntryModal({ open, onClose }: LogEntryModalProps) {
-  const { userHobbies, refresh } = useUserHobby();
+function LogEntryModal({ open, onClose, onRefresh }: LogEntryModalProps) {
+  const { userHobbies } = useUserHobby();
   const { entryMoods } = useEntryMood();
   const dateToday = new Date().toISOString().split("T")[0];
 
@@ -76,7 +77,7 @@ function LogEntryModal({ open, onClose }: LogEntryModalProps) {
     try {
       await entryService.create(entryData);
       showToast.success("Entry created successfully!");
-      refresh();
+      await onRefresh();
       onClose();
       reset();
     } catch (error) {

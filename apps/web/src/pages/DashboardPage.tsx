@@ -11,7 +11,6 @@ import { useState } from "react";
 import LogEntryModal from "../components/dashboard/LogEntryModal";
 import AddUserHobbyModal from "../components/dashboard/AddUserHobbyModal";
 import EntryModal from "../components/profile/EntryModal";
-import type { EntryWithUserHobbyEntity } from "@hobbies-dashboard/types";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -28,10 +27,11 @@ function DashboardPage() {
     isLoading: isUserHobbiesLoading,
     addUserHobby,
   } = useUserHobby();
-  const { userEntries } = useEntry();
+  const { userEntries, refresh: refreshEntries } = useEntry();
   const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
   const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState<EntryWithUserHobbyEntity | null>(null);
+  const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
+  const selectedEntry = userEntries.find((e) => e.id === selectedEntryId) ?? null;
 
   return (
     <AppLayout>
@@ -116,7 +116,7 @@ function DashboardPage() {
                 key={data.id}
                 data={data}
                 dashboard
-                onClick={() => setSelectedEntry(data)}
+                onClick={() => setSelectedEntryId(data.id)}
               />
             ))}
           </div>
@@ -126,6 +126,7 @@ function DashboardPage() {
         <LogEntryModal
           open={isLogEntryOpen}
           onClose={() => setIsLogEntryOpen(false)}
+          onRefresh={refreshEntries}
         />
 
         <AddUserHobbyModal
@@ -138,8 +139,9 @@ function DashboardPage() {
         {selectedEntry && (
           <EntryModal
             open={!!selectedEntry}
-            onClose={() => setSelectedEntry(null)}
+            onClose={() => setSelectedEntryId(null)}
             data={selectedEntry}
+            onRefresh={refreshEntries}
           />
         )}
       </div>
