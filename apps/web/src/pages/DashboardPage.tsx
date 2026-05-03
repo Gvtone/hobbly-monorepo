@@ -10,6 +10,8 @@ import { useEntry } from "../hooks/useEntry";
 import { useState } from "react";
 import LogEntryModal from "../components/dashboard/LogEntryModal";
 import AddUserHobbyModal from "../components/dashboard/AddUserHobbyModal";
+import EntryModal from "../components/profile/EntryModal";
+import type { EntryWithUserHobbyEntity } from "@hobbies-dashboard/types";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -21,10 +23,15 @@ function getGreeting() {
 function DashboardPage() {
   const greeting = getGreeting();
   const { user } = useAuth();
-  const { userHobbies, isLoading: isUserHobbiesLoading, addUserHobby } = useUserHobby();
+  const {
+    userHobbies,
+    isLoading: isUserHobbiesLoading,
+    addUserHobby,
+  } = useUserHobby();
   const { userEntries } = useEntry();
   const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
   const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState<EntryWithUserHobbyEntity | null>(null);
 
   return (
     <AppLayout>
@@ -105,21 +112,36 @@ function DashboardPage() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {userEntries.map((data) => (
-              <EntryCard key={data.id} data={data} dashboard />
+              <EntryCard
+                key={data.id}
+                data={data}
+                dashboard
+                onClick={() => setSelectedEntry(data)}
+              />
             ))}
           </div>
         </section>
 
+        {/* Modals */}
         <LogEntryModal
           open={isLogEntryOpen}
           onClose={() => setIsLogEntryOpen(false)}
         />
+
         <AddUserHobbyModal
           open={isAddHobbyOpen}
           onClose={() => setIsAddHobbyOpen(false)}
           existingHobbyIds={userHobbies.map((userHobby) => userHobby.hobbyId)}
           onAdd={addUserHobby}
         />
+
+        {selectedEntry && (
+          <EntryModal
+            open={!!selectedEntry}
+            onClose={() => setSelectedEntry(null)}
+            data={selectedEntry}
+          />
+        )}
       </div>
     </AppLayout>
   );

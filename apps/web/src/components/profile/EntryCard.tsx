@@ -7,9 +7,10 @@ import type { EntryWithUserHobbyEntity } from "@hobbies-dashboard/types";
 interface EntryCardProps {
   data: EntryWithUserHobbyEntity;
   dashboard?: boolean;
+  onClick?: () => void;
 }
 
-function EntryCard({ data, dashboard = false }: EntryCardProps) {
+function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
   const {
     title,
     image,
@@ -20,7 +21,10 @@ function EntryCard({ data, dashboard = false }: EntryCardProps) {
   } = data;
 
   return (
-    <div className={cn("break-inside-avoid", dashboard && "h-full")}>
+    <div
+      className={cn("cursor-pointer break-inside-avoid", dashboard && "h-full")}
+      onClick={onClick}
+    >
       <Card className={cn("p-0", dashboard && "h-full")}>
         <div className="flex h-full flex-col">
           <div
