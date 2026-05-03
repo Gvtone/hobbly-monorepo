@@ -15,7 +15,7 @@ function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
     title,
     image,
     note,
-    metadata,
+    // metadata,
     userHobby: { hobby },
     mood,
   } = data;
@@ -77,12 +77,13 @@ function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
                   className={cn(
                     "text-muted-foreground leading-relaxed",
                     dashboard ? "text-sm" : "text-xs",
+                    image ? "line-clamp-2" : "line-clamp-5",
                   )}
                 >
                   {note}
                 </p>
               )}
-              {metadata && <p className="text-muted text-xs">metadata</p>}
+              {/* {metadata && <p className="text-muted text-xs">metadata</p>} */}
             </div>
 
             <div>
