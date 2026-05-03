@@ -10,6 +10,7 @@ import { useEntry } from "../hooks/useEntry";
 import { useState } from "react";
 import LogEntryModal from "../components/dashboard/LogEntryModal";
 import AddUserHobbyModal from "../components/dashboard/AddUserHobbyModal";
+import EntryModal from "../components/profile/EntryModal";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -21,10 +22,16 @@ function getGreeting() {
 function DashboardPage() {
   const greeting = getGreeting();
   const { user } = useAuth();
-  const { userHobbies, isLoading: isUserHobbiesLoading, addUserHobby } = useUserHobby();
-  const { userEntries } = useEntry();
+  const {
+    userHobbies,
+    isLoading: isUserHobbiesLoading,
+    addUserHobby,
+  } = useUserHobby();
+  const { userEntries, refresh: refreshEntries } = useEntry();
   const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
   const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
+  const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
+  const selectedEntry = userEntries.find((e) => e.id === selectedEntryId) ?? null;
 
   return (
     <AppLayout>
@@ -105,21 +112,38 @@ function DashboardPage() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {userEntries.map((data) => (
-              <EntryCard key={data.id} data={data} dashboard />
+              <EntryCard
+                key={data.id}
+                data={data}
+                dashboard
+                onClick={() => setSelectedEntryId(data.id)}
+              />
             ))}
           </div>
         </section>
 
+        {/* Modals */}
         <LogEntryModal
           open={isLogEntryOpen}
           onClose={() => setIsLogEntryOpen(false)}
+          onRefresh={refreshEntries}
         />
+
         <AddUserHobbyModal
           open={isAddHobbyOpen}
           onClose={() => setIsAddHobbyOpen(false)}
           existingHobbyIds={userHobbies.map((userHobby) => userHobby.hobbyId)}
           onAdd={addUserHobby}
         />
+
+        {selectedEntry && (
+          <EntryModal
+            open={!!selectedEntry}
+            onClose={() => setSelectedEntryId(null)}
+            data={selectedEntry}
+            onRefresh={refreshEntries}
+          />
+        )}
       </div>
     </AppLayout>
   );

@@ -7,20 +7,24 @@ import type { EntryWithUserHobbyEntity } from "@hobbies-dashboard/types";
 interface EntryCardProps {
   data: EntryWithUserHobbyEntity;
   dashboard?: boolean;
+  onClick?: () => void;
 }
 
-function EntryCard({ data, dashboard = false }: EntryCardProps) {
+function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
   const {
     title,
     image,
     note,
-    metadata,
+    // metadata,
     userHobby: { hobby },
     mood,
   } = data;
 
   return (
-    <div className={cn("break-inside-avoid", dashboard && "h-full")}>
+    <div
+      className={cn("cursor-pointer break-inside-avoid", dashboard && "h-full")}
+      onClick={onClick}
+    >
       <Card className={cn("p-0", dashboard && "h-full")}>
         <div className="flex h-full flex-col">
           <div
@@ -73,12 +77,13 @@ function EntryCard({ data, dashboard = false }: EntryCardProps) {
                   className={cn(
                     "text-muted-foreground leading-relaxed",
                     dashboard ? "text-sm" : "text-xs",
+                    image ? "line-clamp-2" : "line-clamp-5",
                   )}
                 >
                   {note}
                 </p>
               )}
-              {metadata && <p className="text-muted text-xs">metadata</p>}
+              {/* {metadata && <p className="text-muted text-xs">metadata</p>} */}
             </div>
 
             <div>
