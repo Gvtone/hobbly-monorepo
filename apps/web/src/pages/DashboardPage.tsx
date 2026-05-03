@@ -1,4 +1,4 @@
-import { Plus, Settings } from "lucide-react";
+import { Plus } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
 import Button from "../components/ui/Button";
 import EntryCard from "../components/profile/EntryCard";
@@ -7,6 +7,10 @@ import Carousel from "../components/ui/Carousel";
 import { useAuth } from "../context/auth/useAuth";
 import { useUserHobby } from "../hooks/useUserHobby";
 import { useEntry } from "../hooks/useEntry";
+import { useState } from "react";
+import LogEntryModal from "../components/dashboard/LogEntryModal";
+import AddUserHobbyModal from "../components/dashboard/AddUserHobbyModal";
+import EntryModal from "../components/profile/EntryModal";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -18,32 +22,41 @@ function getGreeting() {
 function DashboardPage() {
   const greeting = getGreeting();
   const { user } = useAuth();
-  const { userHobbies, isLoading: isUserHobbiesLoading } = useUserHobby();
-  const { userEntries } = useEntry();
+  const {
+    userHobbies,
+    isLoading: isUserHobbiesLoading,
+    addUserHobby,
+  } = useUserHobby();
+  const { userEntries, refresh: refreshEntries } = useEntry();
+  const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
+  const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
+  const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
+  const selectedEntry = userEntries.find((e) => e.id === selectedEntryId) ?? null;
 
   return (
     <AppLayout>
       <div className="mx-auto max-w-7xl px-6 py-10">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
           {/* Right side */}
-          <div className="flex flex-col gap-2">
+          <div className="mb-8 flex flex-col gap-2 md:mb-0">
             <p className="text-muted-foreground text-sm">
               {greeting.emoji} {greeting.text}, {user?.username}
             </p>
             <h1 className="text-3xl">Your Hobby Board</h1>
             <p className="text-muted-foreground text-sm">
               {userHobbies.length}{" "}
-              {userHobbies.length === 1 ? "widget" : "widgets"} ✨
+              {userHobbies.length === 1 ? "hobby" : "hobbies"} ✨
             </p>
           </div>
 
           {/* Left side */}
           <div className="flex gap-4">
-            <Button shape="pill" className="text-muted-foreground">
-              <Settings size={16} /> Customize
-            </Button>
-            <Button variant="gradient" shape="pill">
+            <Button
+              variant="gradient"
+              shape="pill"
+              onClick={() => setIsLogEntryOpen(true)}
+            >
               <Plus size={16} />
               New Entry
             </Button>
@@ -76,7 +89,10 @@ function DashboardPage() {
                   className="size-56 shrink-0"
                 ></HobbyCard>
               ))}
-              <button className="border-border bg-background text-muted-foreground hover:border-primary flex size-56 shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-4 border-dashed">
+              <button
+                onClick={() => setIsAddHobbyOpen(true)}
+                className="border-border bg-background text-muted-foreground hover:border-primary flex size-56 shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-4 border-dashed"
+              >
                 <div className="bg-muted flex size-12 items-center justify-center rounded-2xl">
                   <Plus size={20} />
                 </div>
@@ -89,15 +105,45 @@ function DashboardPage() {
         <section>
           <div className="mb-4 flex items-baseline justify-between">
             <h3 className="text-xl">My Entries</h3>
-            <p className="text-muted-foreground text-sm">8 total</p>
+            <p className="text-muted-foreground text-sm">
+              {userEntries.length} total
+            </p>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {userEntries.map((data) => (
-              <EntryCard key={data.id} data={data} dashboard />
+              <EntryCard
+                key={data.id}
+                data={data}
+                dashboard
+                onClick={() => setSelectedEntryId(data.id)}
+              />
             ))}
           </div>
         </section>
+
+        {/* Modals */}
+        <LogEntryModal
+          open={isLogEntryOpen}
+          onClose={() => setIsLogEntryOpen(false)}
+          onRefresh={refreshEntries}
+        />
+
+        <AddUserHobbyModal
+          open={isAddHobbyOpen}
+          onClose={() => setIsAddHobbyOpen(false)}
+          existingHobbyIds={userHobbies.map((userHobby) => userHobby.hobbyId)}
+          onAdd={addUserHobby}
+        />
+
+        {selectedEntry && (
+          <EntryModal
+            open={!!selectedEntry}
+            onClose={() => setSelectedEntryId(null)}
+            data={selectedEntry}
+            onRefresh={refreshEntries}
+          />
+        )}
       </div>
     </AppLayout>
   );

@@ -63,7 +63,9 @@ function ProfilePage() {
         <section>
           <div className="mb-4 flex items-baseline justify-between">
             <h3 className="text-xl">My Entries</h3>
-            <p className="text-muted-foreground text-sm">8 total</p>
+            <p className="text-muted-foreground text-sm">
+              {userEntries.length} total
+            </p>
           </div>
 
           <ProfileEntriesLayout entryTabs={entryTabs}>

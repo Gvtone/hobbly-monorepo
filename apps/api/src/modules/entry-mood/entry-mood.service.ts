@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEntryMoodDto } from './dto/create-entry-mood.dto';
 import { UpdateEntryMoodDto } from './dto/update-entry-mood.dto';
+import { DatabaseService } from '../../common/database/database.service';
 
 @Injectable()
 export class EntryMoodService {
-  create(createEntryMoodDto: CreateEntryMoodDto) {
-    return 'This action adds a new entryMood';
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async create(createEntryMoodDto: CreateEntryMoodDto) {
+    return await this.databaseService.entryMood.create({
+      data: createEntryMoodDto,
+    });
   }
 
-  findAll() {
-    return `This action returns all entryMood`;
+  async findAll() {
+    return await this.databaseService.entryMood.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} entryMood`;
+  async findOne(id: number) {
+    return await this.databaseService.entryMood.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: number, updateEntryMoodDto: UpdateEntryMoodDto) {
-    return `This action updates a #${id} entryMood`;
+  async update(id: number, updateEntryMoodDto: UpdateEntryMoodDto) {
+    return await this.databaseService.entryMood.update({
+      where: { id },
+      data: updateEntryMoodDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} entryMood`;
+  async remove(id: number) {
+    return await this.databaseService.entryMood.delete({
+      where: { id },
+    });
   }
 }

@@ -63,13 +63,18 @@ function HobbyCard({
       style={
         backgroundImage
           ? { backgroundImage: `url(${backgroundImage})` }
-          : undefined
+          : { backgroundColor: `${hobby.color}22` }
       }
     >
+      {!backgroundImage && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-6xl opacity-25">{hobby.icon}</span>
+        </div>
+      )}
       <div className="z-10 flex justify-between">
         <div
           className={`h-fit w-fit rounded-full px-2`}
-          style={{ backgroundColor: `#${hobby.color}` }}
+          style={{ backgroundColor: `${hobby.color}` }}
         >
           <span className="text-sm font-semibold text-white">
             {hobby.icon} {hobby.name}

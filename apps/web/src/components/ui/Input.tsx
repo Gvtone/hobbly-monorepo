@@ -10,27 +10,27 @@ const inputVariants = cva(
         default: [
           "bg-card text-card-foreground",
           "border-2 border-border",
-          "shadow-lg shadow-card/30"
+          "shadow-lg shadow-card/30",
         ],
-        auth: "bg-accent text-accent-foreground"
+        auth: "bg-accent text-accent-foreground",
       },
       shape: {
         rounded: "rounded-2xl",
-        pill: "rounded-full"
+        pill: "rounded-full",
       },
       scale: {
-        default: "px-4 py-3 text-base"
+        default: "px-4 py-3 text-base",
       },
       fullWidth: {
-        true: "w-full"
-      }
+        true: "w-full",
+      },
     },
     defaultVariants: {
       variant: "default",
       shape: "rounded",
-      scale: "default"
-    }
-  }
+      scale: "default",
+    },
+  },
 );
 
 interface InputProps
@@ -53,7 +53,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       onChange,
       ...props
     },
-    ref
+    ref,
   ) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (textCase !== "normal") {
@@ -64,7 +64,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
         Object.defineProperty(e.target, "value", {
           writable: true,
-          value: converted
+          value: converted,
         });
       }
 
@@ -79,11 +79,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         onChange={handleChange}
         className={cn(
           inputVariants({ variant, shape, scale, fullWidth }),
-          className
+          className,
         )}
       />
     );
-  }
+  },
 );
 
 Input.displayName = "Input";
