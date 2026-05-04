@@ -4,5 +4,6 @@ export * from "./entry-mood";
 export * from "./entry";
 export * from "./enums";
 export * from "./hobby";
-export * from "./user";
+export * from "./like";
 export * from "./user-hobby";
+export * from "./user";

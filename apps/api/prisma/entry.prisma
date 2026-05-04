@@ -12,6 +12,8 @@ model Entry {
   metadata     Json?
   mood         EntryMood? @relation(fields: [moodId], references: [id], onDelete: SetNull)
   userHobby    UserHobby  @relation(fields: [userHobbyId], references: [id], onDelete: Cascade)
+  likes        Like[]
+  comments     Comment[]
 
   @@index([id, userHobbyId])
 }
@@ -26,4 +28,25 @@ model EntryMood {
   entries   Entry[]
 
   @@index([id])
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  entryId   Int
+  userId    Int
+  entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  entryId   Int
+  userId    Int
+  content   String
+  entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

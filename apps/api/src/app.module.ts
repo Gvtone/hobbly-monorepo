@@ -15,6 +15,7 @@ import { HobbyModule } from './modules/hobby/hobby.module';
 import { UserHobbyModule } from './modules/user-hobby/user-hobby.module';
 import { EntryModule } from './modules/entry/entry.module';
 import { EntryMoodModule } from './modules/entry-mood/entry-mood.module';
+import { LikeModule } from './modules/like/like.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { EntryMoodModule } from './modules/entry-mood/entry-mood.module';
     UserHobbyModule,
     EntryModule,
     EntryMoodModule,
+    LikeModule,
   ],
   providers: [
     {

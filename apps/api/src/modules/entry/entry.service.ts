@@ -103,6 +103,10 @@ export class EntryService {
       .withPages({ page, limit });
   }
 
+  async findById(id: number) {
+    return await this.databaseService.entry.findFirst({ where: { id } });
+  }
+
   async update(id: number, userId: number, updateEntryDto: UpdateEntryDto) {
     return await this.databaseService.entry.update({
       where: { id, userHobby: { userId } },
