@@ -15,6 +15,8 @@ model User {
   status         UserStatus  @default(VERIFY)
   token          Token[]
   chosenHobbies  UserHobby[]
+  likes          Like[]
+  comments       Comment[]
 
   @@index([id, username])
 }

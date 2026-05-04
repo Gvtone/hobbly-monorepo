@@ -6,8 +6,10 @@ import {
 import {
   UserHobbyEntity as IUserHobbyEntity,
   UserHobbyWithHobbyEntity as IUserHobbyWithHobbyEntity,
+  UserHobbyWithHobbyAndUserEntity as IUserHobbyWithHobbyAndUserEntity,
 } from '@hobbies-dashboard/types';
 import { HobbyEntity } from '../../hobby/entities/hobby.entity';
+import { PublicUserEntity } from '../../user/entities/user.entity';
 
 export class UserHobbyEntity implements UserHobbyModel, IUserHobbyEntity {
   @ApiProperty({ type: Number })
@@ -39,4 +41,28 @@ export class UserHobbyEntityWithHobby
 {
   @ApiProperty({ type: () => HobbyEntity })
   hobby: HobbyEntity;
+}
+
+export class UserHobbyEntityWithHobbyAndUser
+  extends UserHobbyEntityWithHobby
+  implements
+    UserHobbyGetPayload<{
+      include: {
+        hobby: true;
+        user: {
+          select: {
+            displayName: true;
+            username: true;
+            profilePicture: true;
+            coverImage: true;
+            bio: true;
+            visibility: true;
+          };
+        };
+      };
+    }>,
+    IUserHobbyWithHobbyAndUserEntity
+{
+  @ApiProperty({ type: () => PublicUserEntity })
+  user: PublicUserEntity;
 }
