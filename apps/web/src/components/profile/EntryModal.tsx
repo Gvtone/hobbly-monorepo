@@ -22,6 +22,7 @@ import { useState } from "react";
 import { entryService } from "../../services/entry";
 import { showToast } from "../../utils/toast";
 import { useEntryMood } from "../../hooks/useEntryMood";
+import { useLike } from "../../hooks/useLike";
 import RadioPill from "../ui/RadioPill";
 import Textarea from "../ui/TextArea";
 
@@ -36,8 +37,11 @@ interface LogEntryModalProps {
 
 function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
   const hobby = data.userHobby.hobby;
+  const user = data.userHobby.user;
   const hasImage = !!data.image;
   const { entryMoods } = useEntryMood();
+
+  const { liked, count, isToggling, toggle } = useLike(data.id);
 
   const [view, setView] = useState<View>("default");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -230,25 +234,45 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
 
                       <div className="flex flex-col">
                         <div className="mb-2 flex items-center gap-4">
-                          <img
-                            src="https://images.unsplash.com/photo-1621036189456-895776ffe69f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100"
-                            alt=""
-                            className="size-8 shrink-0 rounded-full"
-                          />
+                          {user?.profilePicture ? (
+                            <img
+                              src={user.profilePicture}
+                              className="size-8 shrink-0 rounded-full"
+                              alt={user.username}
+                            />
+                          ) : (
+                            <div className="from-hobbly-sky to-hobbly-lavender flex size-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
+                              {user?.username?.[0].toUpperCase()}
+                            </div>
+                          )}
                           <div>
                             <p className="text-sm font-medium">
-                              hobbly_user123
+                              {user.displayName ?? user.username}
                             </p>
                             <p className="text-muted-foreground text-xs">
-                              @user123
+                              @{user.username}
                             </p>
                           </div>
                         </div>
 
                         <div className="flex gap-2">
-                          <Button variant="transparent" className="p-2">
-                            <Heart size={16} />
-                            <span>like</span>
+                          <Button
+                            variant="transparent"
+                            className={cn(
+                              "p-2",
+                              liked ? "text-destructive" : "",
+                            )}
+                            disabled={isToggling}
+                            onClick={toggle}
+                          >
+                            <Heart
+                              size={16}
+                              fill={liked ? "currentColor" : "none"}
+                            />
+                            <span>
+                              {count > 0 && count}{" "}
+                              {count > 1 ? "likes" : "like"}
+                            </span>
                           </Button>
                           <Button variant="transparent" className="p-2">
                             <MessageCircleIcon size={16} />

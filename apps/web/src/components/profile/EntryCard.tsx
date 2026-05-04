@@ -3,6 +3,7 @@ import { Card } from "../ui/Card";
 import Button from "../ui/Button";
 import { cn } from "../../utils/utils";
 import type { EntryWithUserHobbyEntity } from "@hobbies-dashboard/types";
+import { useLike } from "../../hooks/useLike";
 
 interface EntryCardProps {
   data: EntryWithUserHobbyEntity;
@@ -19,6 +20,8 @@ function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
     userHobby: { hobby },
     mood,
   } = data;
+
+  const { liked, count, isToggling, toggle } = useLike(data.id);
 
   return (
     <div
@@ -95,9 +98,14 @@ function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
                   <p className="text-muted-foreground">Yesterday</p>
                 )}
                 <div className="flex gap-2">
-                  <Button variant="transparent" size="sm" className="p-0">
-                    <Heart size={12}></Heart>
-                    <span>31</span>
+                  <Button
+                    variant="transparent"
+                    className={cn("p-0", liked ? "text-destructive" : "")}
+                    disabled={isToggling}
+                    onClick={(e) => { e.stopPropagation(); toggle(); }}
+                  >
+                    <Heart size={12} fill={liked ? "currentColor" : "none"} />
+                    <span>{count > 0 && count}</span>
                   </Button>
                   <Button variant="transparent" size="sm" className="p-0">
                     <MessageCircleIcon size={12}></MessageCircleIcon>

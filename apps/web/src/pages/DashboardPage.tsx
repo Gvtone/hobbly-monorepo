@@ -31,7 +31,8 @@ function DashboardPage() {
   const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
   const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
-  const selectedEntry = userEntries.find((e) => e.id === selectedEntryId) ?? null;
+  const selectedEntry =
+    userEntries.find((e) => e.id === selectedEntryId) ?? null;
 
   return (
     <AppLayout>
