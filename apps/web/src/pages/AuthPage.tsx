@@ -158,13 +158,22 @@ function AuthPage() {
                 shape="pill"
                 type="text"
                 fullWidth
-                placeholder={mode === "login" ? "you@example.com or username" : "you@example.com"}
+                placeholder={
+                  mode === "login"
+                    ? "you@example.com or username"
+                    : "you@example.com"
+                }
                 {...register("email", {
                   required: "Email or username is required",
-                  validate: (value) => {
+                  validate: value => {
                     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
                     const isUsername = /^[^\s]{3,}$/.test(value);
-                    if (mode === "login") return isEmail || isUsername || "Enter a valid email or username";
+                    if (mode === "login")
+                      return (
+                        isEmail ||
+                        isUsername ||
+                        "Enter a valid email or username"
+                      );
                     return isEmail || "Enter a valid email";
                   }
                 })}
@@ -189,14 +198,25 @@ function AuthPage() {
                   fullWidth
                   placeholder="••••••••"
                   className="w-full pr-12"
-                  {...register("password", {
-                    required: "Password is required",
-                    minLength: { value: 8, message: "At least 8 characters" },
-                    pattern: {
-                      value: /(?=.*[A-Z])/,
-                      message: "Must contain at least one uppercase letter"
-                    }
-                  })}
+                  {...register(
+                    "password",
+                    mode === "signup"
+                      ? {
+                          required: "Password is required",
+                          minLength: {
+                            value: 8,
+                            message: "At least 8 characters"
+                          },
+                          pattern: {
+                            value: /(?=.*[A-Z])/,
+                            message:
+                              "Must contain at least one uppercase letter"
+                          }
+                        }
+                      : {
+                          required: "Password is required"
+                        }
+                  )}
                 />
                 <Button
                   type="button"

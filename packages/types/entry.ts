@@ -1,6 +1,6 @@
-import { EntryMoodEntity } from "./entry-mood";
+import type { EntryMoodEntity } from "./entry-mood";
 import type { Visibility } from "./enums";
-import type { UserHobbyWithHobbyEntity } from "./user-hobby";
+import type { UserHobbyWithHobbyAndUserEntity } from "./user-hobby";
 
 type JsonPrimitive = string | number | boolean | null;
 type JsonObject = { [key: string]: JsonValue };
@@ -18,6 +18,8 @@ export interface CreateEntryDto {
   metadata?: JsonValue;
 }
 
+export interface UpdateEntryDto extends Partial<CreateEntryDto> {}
+
 export interface EntryEntity {
   id: number;
   createdAt: Date;
@@ -33,6 +35,6 @@ export interface EntryEntity {
 }
 
 export interface EntryWithUserHobbyEntity extends EntryEntity {
-  userHobby: UserHobbyWithHobbyEntity;
+  userHobby: UserHobbyWithHobbyAndUserEntity;
   mood: EntryMoodEntity;
 }

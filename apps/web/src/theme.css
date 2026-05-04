@@ -166,3 +166,27 @@
     font-family: "Nunito", sans-serif;
   }
 }
+
+.scrollbar-custom {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--border) transparent;
+  overflow-y: overlay;
+}
+
+/* Chrome/Safari/Edge */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 999px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-foreground);
+}

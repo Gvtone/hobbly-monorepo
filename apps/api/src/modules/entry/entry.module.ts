@@ -5,5 +5,6 @@ import { EntryController } from './entry.controller';
 @Module({
   controllers: [EntryController],
   providers: [EntryService],
+  exports: [EntryService],
 })
 export class EntryModule {}

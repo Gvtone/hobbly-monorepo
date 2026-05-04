@@ -6,7 +6,7 @@ import type {
   EntryEntity as IEntryEntity,
   JsonValue,
 } from '@hobbies-dashboard/types';
-import { UserHobbyEntityWithHobby } from '../../user-hobby/entities/user-hobby.entity';
+import { UserHobbyEntityWithHobbyAndUser } from '../../user-hobby/entities/user-hobby.entity';
 import { EntryMoodEntity } from '../../entry-mood/entities/entry-mood.entity';
 
 export class EntryEntity implements EntryModel, IEntryEntity {
@@ -48,12 +48,29 @@ export class EntryEntityWithUserHobby
   extends EntryEntity
   implements
     EntryGetPayload<{
-      include: { userHobby: true; mood: true };
+      include: {
+        userHobby: {
+          include: {
+            hobby: true;
+            user: {
+              select: {
+                displayName: true;
+                username: true;
+                profilePicture: true;
+                coverImage: true;
+                bio: true;
+                visibility: true;
+              };
+            };
+          };
+        };
+        mood: true;
+      };
     }>,
     IEntryWithUserHobbyEntity
 {
-  @ApiProperty({ type: () => UserHobbyEntityWithHobby })
-  userHobby: UserHobbyEntityWithHobby;
+  @ApiProperty({ type: () => UserHobbyEntityWithHobbyAndUser })
+  userHobby: UserHobbyEntityWithHobbyAndUser;
 
   @ApiProperty({ type: () => EntryMoodEntity })
   mood: EntryMoodEntity;
