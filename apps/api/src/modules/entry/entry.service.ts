@@ -23,7 +23,16 @@ export class EntryService {
 
   async findAll(
     userId: number,
-    { search, hobbyId, moodId, visibility, startDate, endDate }: EntryFilterDto,
+    {
+      search,
+      hobbyId,
+      moodId,
+      visibility,
+      startDate,
+      endDate,
+      page,
+      limit = 10,
+    }: EntryFilterDto,
   ) {
     const whereClause: Prisma.EntryWhereInput = {
       userHobby: { userId },
@@ -66,14 +75,32 @@ export class EntryService {
         : {}),
     };
 
-    return await this.databaseService.entry.findMany({
-      where: whereClause,
-      include: {
-        userHobby: { include: { hobby: true, user: true } },
-        mood: true,
-      },
-      orderBy: { activityDate: 'desc' },
-    });
+    const paginatedDatabase = await this.databaseService.paginateModel();
+
+    return paginatedDatabase.entry
+      .paginate({
+        where: whereClause,
+        include: {
+          userHobby: {
+            include: {
+              hobby: true,
+              user: {
+                select: {
+                  displayName: true,
+                  username: true,
+                  profilePicture: true,
+                  coverImage: true,
+                  bio: true,
+                  visibility: true,
+                },
+              },
+            },
+          },
+          mood: true,
+        },
+        orderBy: { activityDate: 'desc' },
+      })
+      .withPages({ page, limit });
   }
 
   async update(id: number, userId: number, updateEntryDto: UpdateEntryDto) {

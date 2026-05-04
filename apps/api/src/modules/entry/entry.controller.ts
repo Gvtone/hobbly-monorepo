@@ -21,8 +21,9 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { EntryEntity } from './entities/entry.entity';
+import { EntryEntity, EntryEntityWithUserHobby } from './entities/entry.entity';
 import { EntryFilterDto } from './dto/entry-filter.dto';
+import { PaginatedEntity } from '../../common/entities/paginated.entity';
 
 @ApiTags('Entry')
 @Controller('entry')
@@ -39,12 +40,16 @@ export class EntryController {
 
   @Get()
   @ApiOperation({ summary: 'Fetch all entries' })
-  @ApiOkResponse({ description: 'Fetch successful', type: EntryEntity })
+  @ApiOkResponse({
+    description: 'Fetch successful',
+    type: PaginatedEntity(EntryEntityWithUserHobby),
+  })
   async findAll(
     @AuthUser() user: PayloadEntity,
     @Query() filter: EntryFilterDto,
   ) {
-    return await this.entryService.findAll(user.sub, filter);
+    const [data, meta] = await this.entryService.findAll(user.sub, filter);
+    return { data, ...meta };
   }
 
   @Patch(':id')

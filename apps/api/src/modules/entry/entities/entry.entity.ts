@@ -49,7 +49,21 @@ export class EntryEntityWithUserHobby
   implements
     EntryGetPayload<{
       include: {
-        userHobby: { include: { hobby: true; user: true } };
+        userHobby: {
+          include: {
+            hobby: true;
+            user: {
+              select: {
+                displayName: true;
+                username: true;
+                profilePicture: true;
+                coverImage: true;
+                bio: true;
+                visibility: true;
+              };
+            };
+          };
+        };
         mood: true;
       };
     }>,

@@ -1,6 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Visibility } from '../../../generated/prisma/enums';
-import { IsArray, IsDate, IsInt, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDate,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class EntryFilterDto {
@@ -55,4 +62,14 @@ export class EntryFilterDto {
   @Transform(({ value }: { value: string | number | Date }) => new Date(value))
   @IsOptional()
   endDate?: Date;
+
+  @ApiPropertyOptional({ type: Number })
+  @IsNumber()
+  @IsOptional()
+  page?: number;
+
+  @ApiPropertyOptional({ type: Number })
+  @IsNumber()
+  @IsOptional()
+  limit?: number;
 }

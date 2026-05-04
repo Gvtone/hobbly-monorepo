@@ -1,5 +1,5 @@
 import type { HobbyEntity } from "./hobby";
-import type { UserEntity } from "./user";
+import type { PublicUserEntity } from "./user";
 
 export interface CreateUserHobbyDto {
   hobbyId: number;
@@ -22,5 +22,5 @@ export interface UserHobbyWithHobbyEntity extends UserHobbyEntity {
 }
 
 export interface UserHobbyWithHobbyAndUserEntity extends UserHobbyWithHobbyEntity {
-  user: UserEntity;
+  user: PublicUserEntity;
 }
