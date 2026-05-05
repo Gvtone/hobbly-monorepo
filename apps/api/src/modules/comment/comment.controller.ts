@@ -22,7 +22,10 @@ import {
 import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { PayloadEntity } from '../auth/entities/payload.entity';
 import { CommentFilterDto } from './dto/comment-filter.dto';
-import { CommentEntity } from './entities/comment.entity';
+import {
+  CommentEntity,
+  CommentWithUserEntity,
+} from './entities/comment.entity';
 import { PaginatedEntity } from '../../common/entities/paginated.entity';
 
 @ApiTags('Comment')
@@ -34,7 +37,10 @@ export class CommentController {
   @ApiOperation({ summary: 'Creates new comment in entry' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: CreateCommentDto })
-  @ApiOkResponse({ description: 'Create successful', type: CommentEntity })
+  @ApiOkResponse({
+    description: 'Create successful',
+    type: CommentWithUserEntity,
+  })
   async create(
     @Param('id', ParseIntPipe) id: number,
     @AuthUser() user: PayloadEntity,
@@ -49,7 +55,7 @@ export class CommentController {
   @ApiBody({ type: CreateCommentDto })
   @ApiOkResponse({
     description: 'Fetch successful',
-    type: PaginatedEntity(CommentEntity),
+    type: PaginatedEntity(CommentWithUserEntity),
   })
   async findAll(
     @Param('id', ParseIntPipe) id: number,
@@ -64,7 +70,10 @@ export class CommentController {
   @ApiParam({ name: 'id', type: Number })
   @ApiParam({ name: 'commentId', type: Number })
   @ApiBody({ type: UpdateCommentDto })
-  @ApiOkResponse({ description: 'Update successful', type: CommentEntity })
+  @ApiOkResponse({
+    description: 'Update successful',
+    type: CommentWithUserEntity,
+  })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Param('commentId', ParseIntPipe) commentId: number,
