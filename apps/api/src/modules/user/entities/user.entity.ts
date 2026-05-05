@@ -12,6 +12,9 @@ import type {
 } from '@hobbies-dashboard/types';
 
 export class PublicUserEntity implements IPublicUserEntity {
+  @ApiProperty({ type: Number })
+  id: number;
+
   @ApiProperty({ type: String })
   displayName: string | null;
 

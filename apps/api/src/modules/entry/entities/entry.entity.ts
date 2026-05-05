@@ -54,6 +54,7 @@ export class EntryEntityWithUserHobby
             hobby: true;
             user: {
               select: {
+                id: true;
                 displayName: true;
                 username: true;
                 profilePicture: true;
