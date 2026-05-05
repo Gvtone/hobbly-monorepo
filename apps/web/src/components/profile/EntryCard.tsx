@@ -4,6 +4,7 @@ import Button from "../ui/Button";
 import { cn } from "../../utils/utils";
 import type { EntryWithUserHobbyEntity } from "@hobbies-dashboard/types";
 import { useLike } from "../../hooks/useLike";
+import { useComment } from "../../hooks/useComment";
 
 interface EntryCardProps {
   data: EntryWithUserHobbyEntity;
@@ -22,6 +23,7 @@ function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
   } = data;
 
   const { liked, count, isToggling, toggle } = useLike(data.id);
+  const { comments } = useComment(data.id);
 
   return (
     <div
@@ -102,14 +104,17 @@ function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
                     variant="transparent"
                     className={cn("p-0", liked ? "text-destructive" : "")}
                     disabled={isToggling}
-                    onClick={(e) => { e.stopPropagation(); toggle(); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggle();
+                    }}
                   >
                     <Heart size={12} fill={liked ? "currentColor" : "none"} />
                     <span>{count > 0 && count}</span>
                   </Button>
                   <Button variant="transparent" size="sm" className="p-0">
                     <MessageCircleIcon size={12}></MessageCircleIcon>
-                    <span>31</span>
+                    <span>{comments.length > 0 && comments.length}</span>
                   </Button>
                 </div>
               </div>

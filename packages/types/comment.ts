@@ -1,3 +1,5 @@
+import type { PublicUserEntity } from "./user";
+
 export interface CommentEntity {
   id: number;
   createdAt: Date;
@@ -12,3 +14,7 @@ export interface CreateCommentDto {
 }
 
 export interface UpdateCommentDto extends Partial<CreateCommentDto> {}
+
+export interface CommentWithUserEntity extends CommentEntity {
+  user: PublicUserEntity;
+}

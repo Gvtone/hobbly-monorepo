@@ -1,5 +1,6 @@
 import type {
   CommentEntity,
+  CommentWithUserEntity,
   CreateCommentDto,
   PaginatedEntity,
   UpdateCommentDto,
@@ -10,7 +11,7 @@ const serviceRoute = "/entry";
 
 export const commentService = {
   async create(id: number, data: CreateCommentDto) {
-    const res = await api.post<CommentEntity>(
+    const res = await api.post<CommentWithUserEntity>(
       `${serviceRoute}/${id}/comment`,
       data,
     );
@@ -22,7 +23,7 @@ export const commentService = {
     id: number,
     { page = 1, limit = 10 }: { page?: number; limit?: number } = {},
   ) {
-    const res = await api.get<PaginatedEntity<CommentEntity>>(
+    const res = await api.get<PaginatedEntity<CommentWithUserEntity>>(
       `${serviceRoute}/${id}/comment`,
       { params: { page, limit } },
     );
@@ -31,7 +32,7 @@ export const commentService = {
   },
 
   async update(id: number, commentId: number, data: UpdateCommentDto) {
-    const res = await api.patch<CommentEntity>(
+    const res = await api.patch<CommentWithUserEntity>(
       `${serviceRoute}/${id}/comment/${commentId}`,
       data,
     );

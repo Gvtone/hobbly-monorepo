@@ -1,10 +1,10 @@
-import type { CommentEntity } from "@hobbies-dashboard/types";
+import type { CommentWithUserEntity } from "@hobbies-dashboard/types";
 import { useEffect, useState } from "react";
 import { commentService } from "../services/comment";
 import { showToast } from "../utils/toast";
 
 export function useComment(entryId: number) {
-  const [comments, setComments] = useState<CommentEntity[]>([]);
+  const [comments, setComments] = useState<CommentWithUserEntity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

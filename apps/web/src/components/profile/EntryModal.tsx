@@ -13,10 +13,11 @@ import {
 import { cn } from "../../utils/utils";
 import { Card } from "../ui/Card";
 import type {
+  CreateCommentDto,
   CreateEntryDto,
   EntryWithUserHobbyEntity,
 } from "@hobbies-dashboard/types";
-import { format } from "date-fns";
+import { format, formatDate, formatRelative, subDays } from "date-fns";
 import Input from "../ui/Input";
 import { useState } from "react";
 import { entryService } from "../../services/entry";
@@ -27,6 +28,7 @@ import RadioPill from "../ui/RadioPill";
 import Textarea from "../ui/TextArea";
 import { useAuth } from "../../context/auth/useAuth";
 import { useComment } from "../../hooks/useComment";
+import { useForm } from "react-hook-form";
 
 type View = "default" | "delete" | "visibility" | "edit";
 
@@ -44,7 +46,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
 
   const { entryMoods } = useEntryMood();
   const { liked, count, isToggling, toggle } = useLike(data.id);
-  const { comments } = useComment(data.id);
+  const { comments, isSubmitting: isSubmittingComment, addComment } = useComment(data.id);
   const { user } = useAuth();
 
   const [view, setView] = useState<View>("default");
@@ -122,6 +124,18 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const {
+    handleSubmit,
+    register,
+    reset,
+    formState: { errors },
+  } = useForm<CreateCommentDto>();
+
+  const onSubmit = async (formData: CreateCommentDto) => {
+    await addComment(formData.content);
+    reset();
   };
 
   const isPublic = data.visibility === "PUBLIC";
@@ -254,7 +268,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                               {entryUser.displayName ?? entryUser.username}
                             </p>
                             <p className="text-muted-foreground text-xs">
-                              @entryUser123
+                              @{entryUser.username}
                             </p>
                           </div>
                         </div>
@@ -283,8 +297,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                           </Button>
                         </div>
 
-                        {/* TODO: Expose id in entryUser and use that to compare */}
-                        {user?.username === entryUser.username && (
+                        {user?.id === entryUser.id && (
                           <>
                             <div className="border-border mb-4 border" />
                             <div className="flex justify-between">
@@ -526,54 +539,88 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                 </div>
 
                 {/* Comment collection */}
-                <div className="mb-4 flex items-center gap-2">
-                  <img
-                    src="https://images.unsplash.com/photo-1621036189456-895776ffe69f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100"
-                    alt=""
-                    className="size-10 shrink-0 self-start rounded-full"
-                  />
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span>Leo M.</span>
-                      <span className="text-muted-foreground text-xs">
-                        1 hour ago
-                      </span>
-                    </div>
-                    <div className="text-sm">
-                      The ending hit different tonight. That scene with the
-                      lanterns in the rain... I was not prepared 😭 This show
-                      keeps getting better. The animation studio really outdid
-                      themselves with the lighting this episode — every frame
-                      felt like a painting. I need to rewatch this whole arc
-                      again.
+                {comments.map((comment) => (
+                  <div className="mb-4 flex items-center gap-2">
+                    {comment.user.profilePicture ? (
+                      <img
+                        src={comment.user.profilePicture}
+                        alt=""
+                        className="size-10 shrink-0 self-start rounded-full"
+                      />
+                    ) : (
+                      <div className="from-hobbly-sky to-hobbly-lavender flex size-10 shrink-0 items-center justify-center self-start rounded-full bg-linear-to-br text-sm font-bold text-white">
+                        {user?.username?.[0].toUpperCase()}
+                      </div>
+                    )}
+
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span>
+                          {comment.user.displayName ??
+                            `@${comment.user.username}`}
+                        </span>
+                        <span className="text-muted-foreground text-xs">
+                          {comment.createdAt < subDays(new Date(), 6)
+                            ? formatDate(comment.createdAt, "PPp")
+                            : formatRelative(comment.createdAt, new Date())}
+                        </span>
+                      </div>
+                      <div className="text-sm">{comment.content}</div>
                     </div>
                   </div>
-                </div>
+                ))}
 
                 <div className="border-border my-4 border" />
 
                 {/* Comment Input */}
-                <div className="flex items-center justify-center gap-2">
-                  <img
-                    src="https://images.unsplash.com/photo-1621036189456-895776ffe69f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100"
-                    alt=""
-                    className="size-10 shrink-0 rounded-full"
-                  />
-                  <Input
-                    variant="auth"
-                    shape="pill"
-                    fullWidth
-                    placeholder="Write a comment..."
-                  />
-                  <Button
-                    variant="secondary"
-                    shape="pill"
-                    size="icon"
-                    className="size-10 shrink-0"
+                <div className="flex items-center gap-2">
+                  {user?.profilePicture ? (
+                    <img
+                      src={user.profilePicture}
+                      alt=""
+                      className="size-10 shrink-0 rounded-full"
+                    />
+                  ) : (
+                    <div className="from-hobbly-sky to-hobbly-lavender flex size-10 shrink-0 items-center justify-center self-start rounded-full bg-linear-to-br text-sm font-bold text-white">
+                      {user?.username?.[0].toUpperCase()}
+                    </div>
+                  )}
+
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="flex w-full items-center justify-center gap-2"
                   >
-                    <Send size={20} />
-                  </Button>
+                    <Input
+                      variant="auth"
+                      shape="pill"
+                      fullWidth
+                      placeholder="Write a comment..."
+                      autoComplete="off"
+                      disabled={isSubmittingComment}
+                      {...register("content", {
+                        maxLength: {
+                          value: 8000,
+                          message: "Title cannot exceed 8000 characters",
+                        },
+                      })}
+                    />
+                    <Button
+                      type="submit"
+                      variant="secondary"
+                      shape="pill"
+                      size="icon"
+                      className="size-10 shrink-0"
+                      disabled={isSubmittingComment}
+                    >
+                      <Send size={20} />
+                    </Button>
+                  </form>
                 </div>
+                {errors.content && (
+                  <p className="text-destructive mt-2 text-center text-xs">
+                    {errors.content.message}
+                  </p>
+                )}
               </Card>
             </div>
           </div>

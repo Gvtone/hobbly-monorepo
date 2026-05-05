@@ -263,4 +263,9 @@ export class AuthService {
 
     return { message: 'Password reset successfully' };
   }
+
+  async me(request: Request) {
+    const user = request.user as PayloadEntity;
+    return await this.userService.findUserById(user.sub);
+  }
 }
