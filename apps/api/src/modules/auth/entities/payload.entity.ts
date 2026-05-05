@@ -6,13 +6,13 @@ export class PayloadEntity implements JwtPayload {
   @ApiProperty({ type: Number })
   sub: number;
 
-  @ApiProperty({ type: Number })
+  @ApiProperty({ type: String })
   displayName?: string | null;
 
-  @ApiProperty({ type: Number })
+  @ApiProperty({ type: String })
   username: string;
 
-  @ApiProperty({ type: Number })
+  @ApiProperty({ type: String })
   email: string;
 
   @ApiProperty({ enum: UserRole })

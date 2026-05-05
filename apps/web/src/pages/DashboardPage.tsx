@@ -1,76 +1,16 @@
-import { Plus, Settings } from "lucide-react";
+import { Plus } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
 import Button from "../components/ui/Button";
 import EntryCard from "../components/profile/EntryCard";
-import { HobbyCard, type HobbyCardProps } from "../components/ui/Card";
+import { HobbyCard } from "../components/ui/Card";
 import Carousel from "../components/ui/Carousel";
-
-const mockData: HobbyCardProps[] = [
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  },
-  {
-    bgImage: "https://images.unsplash.com/photo-1574236170880-fbbca132d83d",
-    tagColor: "bg-hobbly-sky",
-    hobbyTag: "Anime",
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles"
-  }
-];
+import { useAuth } from "../context/auth/useAuth";
+import { useUserHobby } from "../hooks/useUserHobby";
+import { useEntry } from "../hooks/useEntry";
+import { useState } from "react";
+import LogEntryModal from "../components/dashboard/LogEntryModal";
+import AddUserHobbyModal from "../components/dashboard/AddUserHobbyModal";
+import EntryModal from "../components/profile/EntryModal";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -81,29 +21,50 @@ function getGreeting() {
 
 function DashboardPage() {
   const greeting = getGreeting();
+  const { user } = useAuth();
+  const {
+    userHobbies,
+    isLoading: isUserHobbiesLoading,
+    addUserHobby,
+  } = useUserHobby();
+  const {
+    userEntries,
+    isLoading: isEntriesLoading,
+    loadMore,
+    hasMore,
+    meta,
+    refresh: refreshEntries,
+  } = useEntry();
+  const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
+  const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
+  const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
+  const selectedEntry =
+    userEntries.find((e) => e.id === selectedEntryId) ?? null;
 
   return (
     <AppLayout>
-      <div className="py-10 px-6 max-w-7xl mx-auto">
+      <div className="mx-auto max-w-7xl px-6 py-10">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
           {/* Right side */}
-          <div className="flex flex-col gap-2">
-            <p className="text-sm text-muted-foreground">
-              {greeting.emoji} {greeting.text}, Yuki
+          <div className="mb-8 flex flex-col gap-2 md:mb-0">
+            <p className="text-muted-foreground text-sm">
+              {greeting.emoji} {greeting.text}, {user?.username}
             </p>
             <h1 className="text-3xl">Your Hobby Board</h1>
-            <p className="text-sm text-muted-foreground">
-              8 widgets · Drag to rearrange ✨
+            <p className="text-muted-foreground text-sm">
+              {userHobbies.length}{" "}
+              {userHobbies.length === 1 ? "hobby" : "hobbies"} ✨
             </p>
           </div>
 
           {/* Left side */}
           <div className="flex gap-4">
-            <Button shape="pill" className="text-muted-foreground">
-              <Settings size={16} /> Customize
-            </Button>
-            <Button variant="gradient" shape="pill">
+            <Button
+              variant="gradient"
+              shape="pill"
+              onClick={() => setIsLogEntryOpen(true)}
+            >
               <Plus size={16} />
               New Entry
             </Button>
@@ -111,53 +72,99 @@ function DashboardPage() {
         </div>
 
         <section>
-          <Carousel className="mb-8">
-            {mockData.map((data, i) => (
-              <HobbyCard
-                key={i}
-                hobbyTag={data.hobbyTag}
-                tagColor={data.tagColor}
-                bgImage={data.bgImage}
-                trackedNumber={data.trackedNumber}
-                trackedLabel={data.trackedLabel}
-                additional={data.additional}
-                className="size-56 shrink-0"
-              ></HobbyCard>
-            ))}
-          </Carousel>
+          {!isUserHobbiesLoading && userHobbies.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <span className="mb-4 text-6xl">🌱</span>
+              <h3 className="mb-2 text-2xl">Start your collection</h3>
+              <p className="text-muted-foreground mb-6 max-w-md">
+                Pick your first hobby to begin tracking your journey
+              </p>
+              <Button variant="gradient" shape="pill">
+                <Plus size={16} />
+                Add your first hobby
+              </Button>
+            </div>
+          ) : (
+            <Carousel className="mb-8">
+              {userHobbies.map((data) => (
+                <HobbyCard
+                  key={data.id}
+                  data={data}
+                  // TODO: replace with real data
+                  trackedNumber="8"
+                  trackedLabel="series tracked"
+                  additional="Celestial Chronicles"
+                  className="size-56 shrink-0"
+                ></HobbyCard>
+              ))}
+              <button
+                onClick={() => setIsAddHobbyOpen(true)}
+                className="border-border bg-background text-muted-foreground hover:border-primary flex size-56 shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-4 border-dashed"
+              >
+                <div className="bg-muted flex size-12 items-center justify-center rounded-2xl">
+                  <Plus size={20} />
+                </div>
+                <span className="text-sm">Add a hobby</span>
+              </button>
+            </Carousel>
+          )}
         </section>
 
         <section>
-          <div className="flex justify-between items-baseline mb-4">
+          <div className="mb-4 flex items-baseline justify-between">
             <h3 className="text-xl">My Entries</h3>
-            <p className="text-sm text-muted-foreground">8 total</p>
+            <p className="text-muted-foreground text-sm">
+              {meta.totalCount} total
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <EntryCard
-              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
-              mood="😭"
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              title="Celestial Chronicles"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
-              dashboard
-            ></EntryCard>
-            <EntryCard
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              mood="😭"
-              title="Test"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
-              dashboard
-            ></EntryCard>
-            <EntryCard
-              coverImg="https://images.unsplash.com/photo-1567790389105-197dbd865922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800"
-              mood="😭"
-              hobby={{ emoji: "🎌", name: "Anime", color: "#c8a2e3" }}
-              title="Celestial Chronicles"
-              note="The ending hit different tonight. That scene with the lanterns in the rain..."
-            ></EntryCard>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {userEntries.map((data) => (
+              <EntryCard
+                key={data.id}
+                data={data}
+                dashboard
+                onClick={() => setSelectedEntryId(data.id)}
+              />
+            ))}
           </div>
+
+          {hasMore && (
+            <div className="mt-6 flex justify-center">
+              <Button
+                variant="outline"
+                shape="pill"
+                onClick={loadMore}
+                disabled={isEntriesLoading}
+              >
+                {isEntriesLoading ? "Loading..." : "Load more"}
+              </Button>
+            </div>
+          )}
         </section>
+
+        {/* Modals */}
+        <LogEntryModal
+          open={isLogEntryOpen}
+          onClose={() => setIsLogEntryOpen(false)}
+          onRefresh={refreshEntries}
+        />
+
+        <AddUserHobbyModal
+          open={isAddHobbyOpen}
+          onClose={() => setIsAddHobbyOpen(false)}
+          existingHobbyIds={userHobbies.map((userHobby) => userHobby.hobbyId)}
+          onAdd={addUserHobby}
+        />
+
+        {selectedEntry && (
+          <EntryModal
+            open={!!selectedEntry}
+            onClose={() => setSelectedEntryId(null)}
+            data={selectedEntry}
+            onRefresh={refreshEntries}
+          />
+        )}
       </div>
     </AppLayout>
   );

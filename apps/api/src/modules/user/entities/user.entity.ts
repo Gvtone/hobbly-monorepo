@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
   UserRole,
   UserStatus,
@@ -6,7 +6,33 @@ import {
 } from '../../../generated/prisma/enums';
 import { UserModel } from '../../../generated/prisma/models';
 import { Exclude } from 'class-transformer';
-import type { UserEntity as IUserEntity } from '@hobbies-dashboard/types';
+import type {
+  UserEntity as IUserEntity,
+  PublicUserEntity as IPublicUserEntity,
+} from '@hobbies-dashboard/types';
+
+export class PublicUserEntity implements IPublicUserEntity {
+  @ApiProperty({ type: Number })
+  id: number;
+
+  @ApiProperty({ type: String })
+  displayName: string | null;
+
+  @ApiProperty({ type: String })
+  username: string;
+
+  @ApiProperty({ type: String })
+  profilePicture: string | null;
+
+  @ApiProperty({ type: String })
+  coverImage: string;
+
+  @ApiProperty({ type: String })
+  bio: string;
+
+  @ApiProperty({ enum: Visibility })
+  visibility: Visibility;
+}
 
 export class UserEntity implements UserModel, IUserEntity {
   constructor(data: Partial<UserEntity>) {
@@ -35,7 +61,7 @@ export class UserEntity implements UserModel, IUserEntity {
   email: string;
 
   @Exclude()
-  @ApiProperty({ type: String })
+  @ApiHideProperty()
   password: string;
 
   @ApiProperty({ type: String })

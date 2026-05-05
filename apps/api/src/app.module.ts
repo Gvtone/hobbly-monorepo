@@ -8,6 +8,15 @@ import { MailModule } from './modules/mail/mail.module';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
 import { join } from 'path';
 import { TokenModule } from './modules/token/token.module';
+import { JwtAuthGuard } from './modules/auth/guard/jwt.guard';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './modules/auth/guard/roles.guard';
+import { HobbyModule } from './modules/hobby/hobby.module';
+import { UserHobbyModule } from './modules/user-hobby/user-hobby.module';
+import { EntryModule } from './modules/entry/entry.module';
+import { EntryMoodModule } from './modules/entry-mood/entry-mood.module';
+import { LikeModule } from './modules/like/like.module';
+import { CommentModule } from './modules/comment/comment.module';
 
 @Module({
   imports: [
@@ -45,7 +54,22 @@ import { TokenModule } from './modules/token/token.module';
     UserModule,
     MailModule,
     TokenModule,
+    HobbyModule,
+    UserHobbyModule,
+    EntryModule,
+    EntryMoodModule,
+    LikeModule,
+    CommentModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

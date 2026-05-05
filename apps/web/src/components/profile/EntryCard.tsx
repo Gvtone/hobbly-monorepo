@@ -2,90 +2,97 @@ import { Heart, MessageCircleIcon } from "lucide-react";
 import { Card } from "../ui/Card";
 import Button from "../ui/Button";
 import { cn } from "../../utils/utils";
+import type { EntryWithUserHobbyEntity } from "@hobbies-dashboard/types";
+import { useLike } from "../../hooks/useLike";
+import { useComment } from "../../hooks/useComment";
 
 interface EntryCardProps {
-  coverImg?: string;
-  mood?: string;
-  hobby: { emoji: string; name: string; color: string };
-  title: string;
-  note?: string;
-  reference?: string;
+  data: EntryWithUserHobbyEntity;
   dashboard?: boolean;
+  onClick?: () => void;
 }
 
-function EntryCard({
-  coverImg,
-  mood,
-  hobby,
-  title,
-  note,
-  reference,
-  dashboard = false
-}: EntryCardProps) {
+function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
+  const {
+    title,
+    image,
+    note,
+    // metadata,
+    userHobby: { hobby },
+    mood,
+  } = data;
+
+  const { liked, count, isToggling, toggle } = useLike(data.id);
+  const { comments } = useComment(data.id);
+
   return (
-    <div className={cn("break-inside-avoid", dashboard && "h-full")}>
+    <div
+      className={cn("cursor-pointer break-inside-avoid", dashboard && "h-full")}
+      onClick={onClick}
+    >
       <Card className={cn("p-0", dashboard && "h-full")}>
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
           <div
             className={cn(
-              "relative flex justify-between rounded-t-3xl overflow-hidden p-4",
-              coverImg && "flex-col aspect-4/3",
-              coverImg && dashboard ? "aspect-3/1" : ""
+              "relative flex justify-between overflow-hidden rounded-t-3xl p-4",
+              image && "aspect-4/3 flex-col",
+              image && dashboard ? "aspect-3/1" : "",
             )}
             style={
-              !coverImg
+              !image
                 ? { backgroundColor: `${hobby.color}6f`, alignItems: "center" }
                 : undefined
             }
           >
-            {coverImg && (
+            {image && (
               <img
-                src={coverImg}
+                src={image}
                 alt=""
-                className="absolute top-0 left-0 object-cover size-full"
+                className="absolute top-0 left-0 size-full object-cover"
               />
             )}
 
             {mood && (
-              <div className="self-end z-10">
-                <div className="flex justify-center items-center bg-white rounded-full size-7">
-                  {mood}
+              <div className="z-10 self-end">
+                <div className="flex size-7 items-center justify-center rounded-full bg-white">
+                  {mood.icon}
                 </div>
               </div>
             )}
 
             <div
               className={cn(
-                "flex gap-2 px-2 py-1 text-xs z-10 size-fit rounded-full",
-                `${!coverImg && "-order-1"}`
+                "z-10 flex size-fit gap-2 rounded-full px-2 py-1 text-xs",
+                `${!image && "-order-1"}`,
               )}
-              style={{ backgroundColor: hobby.color }}
+              style={{ backgroundColor: `${hobby.color}` }}
             >
-              <span>{hobby.emoji}</span>
+              <span>{hobby.icon}</span>
               <span className="text-white">{hobby.name}</span>
             </div>
           </div>
 
-          <div className={"flex flex-col justify-between p-4 flex-1"}>
-            <div className="flex flex-col gap-1 mb-4">
-              <p className={cn("font-serif mb-2", dashboard && "text-xl")}>
+          <div className={"flex flex-1 flex-col justify-between p-4"}>
+            <div className="mb-4 flex flex-col gap-1">
+              <p className={cn("mb-2 font-serif", dashboard && "text-xl")}>
                 {title}
               </p>
               {note && (
                 <p
                   className={cn(
                     "text-muted-foreground leading-relaxed",
-                    dashboard ? "text-sm" : "text-xs "
+                    dashboard ? "text-sm" : "text-xs",
+                    image ? "line-clamp-2" : "line-clamp-5",
                   )}
                 >
                   {note}
                 </p>
               )}
-              {reference && <p className="text-muted text-xs">{reference}</p>}
+              {/* {metadata && <p className="text-muted text-xs">metadata</p>} */}
             </div>
 
             <div>
-              {dashboard && <div className="border border-border my-2"></div>}
+              {dashboard && <div className="border-border my-2 border"></div>}
               <div
                 className={cn("flex text-xs", dashboard && "justify-between")}
               >
@@ -93,13 +100,21 @@ function EntryCard({
                   <p className="text-muted-foreground">Yesterday</p>
                 )}
                 <div className="flex gap-2">
-                  <Button variant="transparent" size="sm" className="p-0">
-                    <Heart size={12}></Heart>
-                    <span>31</span>
+                  <Button
+                    variant="transparent"
+                    className={cn("p-0", liked ? "text-destructive" : "")}
+                    disabled={isToggling}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggle();
+                    }}
+                  >
+                    <Heart size={12} fill={liked ? "currentColor" : "none"} />
+                    <span>{count > 0 && count}</span>
                   </Button>
                   <Button variant="transparent" size="sm" className="p-0">
                     <MessageCircleIcon size={12}></MessageCircleIcon>
-                    <span>31</span>
+                    <span>{comments.length > 0 && comments.length}</span>
                   </Button>
                 </div>
               </div>

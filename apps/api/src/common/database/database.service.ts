@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../../generated/prisma/client';
+import { pagination } from 'prisma-extension-pagination';
 
 @Global()
 @Injectable()
@@ -34,5 +35,11 @@ export class DatabaseService
     } catch (error) {
       console.error('Failed to disconnect from database:', error);
     }
+  }
+
+  async paginateModel() {
+    return this.$extends(
+      pagination({ pages: { limit: 10, includePageCount: true } }),
+    );
   }
 }

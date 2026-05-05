@@ -4,11 +4,11 @@ import type { UserEntity } from "@hobbies-dashboard/types";
 interface AuthContextType {
   user: UserEntity | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<void>;
   register: (
     username: string,
     email: string,
-    password: string
+    password: string,
   ) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   login: async () => {},
   register: async () => {},
-  logout: async () => {}
+  logout: async () => {},
 });
 
 export default AuthContext;

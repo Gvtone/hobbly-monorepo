@@ -1,0 +1,52 @@
+model Entry {
+  id           Int        @id @default(autoincrement())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  userHobbyId  Int
+  title        String?
+  image        String?
+  moodId       Int?
+  note         String?
+  activityDate DateTime   @default(now())
+  visibility   Visibility @default(PRIVATE)
+  metadata     Json?
+  mood         EntryMood? @relation(fields: [moodId], references: [id], onDelete: SetNull)
+  userHobby    UserHobby  @relation(fields: [userHobbyId], references: [id], onDelete: Cascade)
+  likes        Like[]
+  comments     Comment[]
+
+  @@index([id, userHobbyId])
+}
+
+model EntryMood {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  name      String
+  icon      String
+  entries   Entry[]
+
+  @@index([id])
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  entryId   Int
+  userId    Int
+  entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  entryId   Int
+  userId    Int
+  content   String
+  entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

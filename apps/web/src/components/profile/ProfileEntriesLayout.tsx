@@ -1,41 +1,36 @@
 import Masonry from "react-masonry-css";
 import Button from "../ui/Button";
 
-const entryTabs = [
-  { emoji: "🎌", hobby: "Anime" },
-  { emoji: "📚", hobby: "Books" },
-  { emoji: "🎮", hobby: "Gaming" },
-  { emoji: "🎨", hobby: "Art" },
-  { emoji: "🍜", hobby: "Cooking" },
-  { emoji: "🎵", hobby: "Music" },
-  { emoji: "📖", hobby: "Journal" }
-];
-
 interface ProfileEntriesLayoutProps {
+  entryTabs: { emoji: string; hobby: string }[];
   children: React.ReactNode;
 }
 
-function ProfileEntriesLayout({ children }: ProfileEntriesLayoutProps) {
+function ProfileEntriesLayout({
+  entryTabs,
+  children,
+}: ProfileEntriesLayoutProps) {
   return (
     <div>
-      <div className="flex gap-2 mb-4">
+      <div className="mb-4 flex gap-2">
         <Button
           variant="secondary"
           shape="pill"
           size="sm"
-          className="border-none text-muted-foreground text-sm"
+          className="text-muted-foreground border-none text-sm"
           active
         >
           <span>✨</span>
           <span>All</span>
         </Button>
 
-        {entryTabs.map(tab => (
+        {entryTabs.map((tab) => (
           <Button
+            key={tab.hobby}
             variant="secondary"
             shape="pill"
             size="sm"
-            className="border-none text-muted-foreground text-sm"
+            className="text-muted-foreground border-none text-sm"
           >
             <span>{tab.emoji}</span>
             <span>{tab.hobby}</span>
