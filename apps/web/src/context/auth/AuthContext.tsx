@@ -8,7 +8,7 @@ interface AuthContextType {
   register: (
     username: string,
     email: string,
-    password: string
+    password: string,
   ) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   login: async () => {},
   register: async () => {},
-  logout: async () => {}
+  logout: async () => {},
 });
 
 export default AuthContext;

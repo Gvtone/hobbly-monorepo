@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { EntryService } from './entry.service';
 import { CreateEntryDto } from './dto/create-entry.dto';
@@ -20,7 +21,9 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { EntryEntity } from './entities/entry.entity';
+import { EntryEntity, EntryEntityWithUserHobby } from './entities/entry.entity';
+import { EntryFilterDto } from './dto/entry-filter.dto';
+import { PaginatedEntity } from '../../common/entities/paginated.entity';
 
 @ApiTags('Entry')
 @Controller('entry')
@@ -37,9 +40,16 @@ export class EntryController {
 
   @Get()
   @ApiOperation({ summary: 'Fetch all entries' })
-  @ApiOkResponse({ description: 'Fetch successful', type: EntryEntity })
-  async findAll(@AuthUser() user: PayloadEntity) {
-    return await this.entryService.findAll(user.sub);
+  @ApiOkResponse({
+    description: 'Fetch successful',
+    type: PaginatedEntity(EntryEntityWithUserHobby),
+  })
+  async findAll(
+    @AuthUser() user: PayloadEntity,
+    @Query() filter: EntryFilterDto,
+  ) {
+    const [data, meta] = await this.entryService.findAll(user.sub, filter);
+    return { data, ...meta };
   }
 
   @Patch(':id')

@@ -3,24 +3,33 @@ import { Card } from "../ui/Card";
 import Button from "../ui/Button";
 import { cn } from "../../utils/utils";
 import type { EntryWithUserHobbyEntity } from "@hobbies-dashboard/types";
+import { useLike } from "../../hooks/useLike";
+import { useComment } from "../../hooks/useComment";
 
 interface EntryCardProps {
   data: EntryWithUserHobbyEntity;
   dashboard?: boolean;
+  onClick?: () => void;
 }
 
-function EntryCard({ data, dashboard = false }: EntryCardProps) {
+function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
   const {
     title,
     image,
     note,
-    metadata,
+    // metadata,
     userHobby: { hobby },
     mood,
   } = data;
 
+  const { liked, count, isToggling, toggle } = useLike(data.id);
+  const { comments } = useComment(data.id);
+
   return (
-    <div className={cn("break-inside-avoid", dashboard && "h-full")}>
+    <div
+      className={cn("cursor-pointer break-inside-avoid", dashboard && "h-full")}
+      onClick={onClick}
+    >
       <Card className={cn("p-0", dashboard && "h-full")}>
         <div className="flex h-full flex-col">
           <div
@@ -31,7 +40,7 @@ function EntryCard({ data, dashboard = false }: EntryCardProps) {
             )}
             style={
               !image
-                ? { backgroundColor: `#${hobby.color}6f`, alignItems: "center" }
+                ? { backgroundColor: `${hobby.color}6f`, alignItems: "center" }
                 : undefined
             }
           >
@@ -56,7 +65,7 @@ function EntryCard({ data, dashboard = false }: EntryCardProps) {
                 "z-10 flex size-fit gap-2 rounded-full px-2 py-1 text-xs",
                 `${!image && "-order-1"}`,
               )}
-              style={{ backgroundColor: `#${hobby.color}` }}
+              style={{ backgroundColor: `${hobby.color}` }}
             >
               <span>{hobby.icon}</span>
               <span className="text-white">{hobby.name}</span>
@@ -73,12 +82,13 @@ function EntryCard({ data, dashboard = false }: EntryCardProps) {
                   className={cn(
                     "text-muted-foreground leading-relaxed",
                     dashboard ? "text-sm" : "text-xs",
+                    image ? "line-clamp-2" : "line-clamp-5",
                   )}
                 >
                   {note}
                 </p>
               )}
-              {metadata && <p className="text-muted text-xs">metadata</p>}
+              {/* {metadata && <p className="text-muted text-xs">metadata</p>} */}
             </div>
 
             <div>
@@ -90,13 +100,21 @@ function EntryCard({ data, dashboard = false }: EntryCardProps) {
                   <p className="text-muted-foreground">Yesterday</p>
                 )}
                 <div className="flex gap-2">
-                  <Button variant="transparent" size="sm" className="p-0">
-                    <Heart size={12}></Heart>
-                    <span>31</span>
+                  <Button
+                    variant="transparent"
+                    className={cn("p-0", liked ? "text-destructive" : "")}
+                    disabled={isToggling}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggle();
+                    }}
+                  >
+                    <Heart size={12} fill={liked ? "currentColor" : "none"} />
+                    <span>{count > 0 && count}</span>
                   </Button>
                   <Button variant="transparent" size="sm" className="p-0">
                     <MessageCircleIcon size={12}></MessageCircleIcon>
-                    <span>31</span>
+                    <span>{comments.length > 0 && comments.length}</span>
                   </Button>
                 </div>
               </div>

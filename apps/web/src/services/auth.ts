@@ -2,7 +2,7 @@ import api from "./api";
 import type {
   AuthPayloadDto,
   CreateUserDto,
-  UserEntity
+  UserEntity,
 } from "@hobbies-dashboard/types";
 
 const serviceRoute = "/auth";
@@ -25,5 +25,5 @@ export const authService = {
   async me() {
     const res = await api.get<UserEntity>(`${serviceRoute}/me`);
     return res.data;
-  }
+  },
 };
