@@ -6,3 +6,9 @@ export interface CommentEntity {
   userId: number;
   content: string;
 }
+
+export interface CreateCommentDto {
+  content: string;
+}
+
+export interface UpdateCommentDto extends Partial<CreateCommentDto> {}

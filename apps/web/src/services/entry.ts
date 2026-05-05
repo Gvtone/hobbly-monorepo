@@ -3,6 +3,7 @@ import type {
   EntryEntity,
   EntryWithUserHobbyEntity,
   PaginatedEntity,
+  UpdateEntryDto,
 } from "@hobbies-dashboard/types";
 import api from "./api";
 
@@ -14,7 +15,10 @@ export const entryService = {
     return res.data;
   },
 
-  async findAll({ page = 1, limit = 10 }: { page?: number; limit?: number } = {}) {
+  async findAll({
+    page = 1,
+    limit = 10,
+  }: { page?: number; limit?: number } = {}) {
     const res = await api.get<PaginatedEntity<EntryWithUserHobbyEntity>>(
       `${serviceRoute}`,
       { params: { page, limit } },
@@ -22,7 +26,7 @@ export const entryService = {
     return res.data;
   },
 
-  async update(id: number, data: Partial<CreateEntryDto>) {
+  async update(id: number, data: UpdateEntryDto) {
     const res = await api.patch<EntryEntity>(`${serviceRoute}/${id}`, data);
     return res.data;
   },

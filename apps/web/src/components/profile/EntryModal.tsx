@@ -25,6 +25,8 @@ import { useEntryMood } from "../../hooks/useEntryMood";
 import { useLike } from "../../hooks/useLike";
 import RadioPill from "../ui/RadioPill";
 import Textarea from "../ui/TextArea";
+import { useAuth } from "../../context/auth/useAuth";
+import { useComment } from "../../hooks/useComment";
 
 type View = "default" | "delete" | "visibility" | "edit";
 
@@ -37,11 +39,13 @@ interface LogEntryModalProps {
 
 function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
   const hobby = data.userHobby.hobby;
-  const user = data.userHobby.user;
+  const entryUser = data.userHobby.user;
   const hasImage = !!data.image;
-  const { entryMoods } = useEntryMood();
 
+  const { entryMoods } = useEntryMood();
   const { liked, count, isToggling, toggle } = useLike(data.id);
+  const { comments } = useComment(data.id);
+  const { user } = useAuth();
 
   const [view, setView] = useState<View>("default");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -234,27 +238,26 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
 
                       <div className="flex flex-col">
                         <div className="mb-2 flex items-center gap-4">
-                          {user?.profilePicture ? (
+                          {entryUser?.profilePicture ? (
                             <img
-                              src={user.profilePicture}
+                              src={entryUser.profilePicture}
                               className="size-8 shrink-0 rounded-full"
-                              alt={user.username}
+                              alt={entryUser.username}
                             />
                           ) : (
                             <div className="from-hobbly-sky to-hobbly-lavender flex size-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
-                              {user?.username?.[0].toUpperCase()}
+                              {entryUser?.username?.[0].toUpperCase()}
                             </div>
                           )}
                           <div>
                             <p className="text-sm font-medium">
-                              {user.displayName ?? user.username}
+                              {entryUser.displayName ?? entryUser.username}
                             </p>
                             <p className="text-muted-foreground text-xs">
-                              @{user.username}
+                              @entryUser123
                             </p>
                           </div>
                         </div>
-
                         <div className="flex gap-2">
                           <Button
                             variant="transparent"
@@ -280,45 +283,50 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                           </Button>
                         </div>
 
-                        <div className="border-border mb-4 border" />
-                        <div className="flex justify-between">
-                          <div className="flex gap-2">
-                            <Button
-                              shape="pill"
-                              size="sm"
-                              onClick={() => setView("visibility")}
-                              className={cn(
-                                isPublic
-                                  ? "bg-hobbly-green/10 text-hobbly-green hover:bg-hobbly-green/20"
-                                  : "bg-foreground text-background hover:bg-foreground/90",
-                              )}
-                            >
-                              {isPublic ? (
-                                <Globe size={12} />
-                              ) : (
-                                <Lock size={12} />
-                              )}
-                              {isPublic ? "Public" : "Private"}
-                            </Button>
-                            <Button
-                              variant="secondary"
-                              shape="pill"
-                              size="sm"
-                              className="text-muted-foreground"
-                              onClick={enterEdit}
-                            >
-                              Edit
-                            </Button>
-                          </div>
-                          <Button
-                            shape="pill"
-                            size="sm"
-                            className="bg-destructive/10 text-destructive hover:bg-destructive/20"
-                            onClick={() => setView("delete")}
-                          >
-                            Delete
-                          </Button>
-                        </div>
+                        {/* TODO: Expose id in entryUser and use that to compare */}
+                        {user?.username === entryUser.username && (
+                          <>
+                            <div className="border-border mb-4 border" />
+                            <div className="flex justify-between">
+                              <div className="flex gap-2">
+                                <Button
+                                  shape="pill"
+                                  size="sm"
+                                  onClick={() => setView("visibility")}
+                                  className={cn(
+                                    isPublic
+                                      ? "bg-hobbly-green/10 text-hobbly-green hover:bg-hobbly-green/20"
+                                      : "bg-foreground text-background hover:bg-foreground/90",
+                                  )}
+                                >
+                                  {isPublic ? (
+                                    <Globe size={12} />
+                                  ) : (
+                                    <Lock size={12} />
+                                  )}
+                                  {isPublic ? "Public" : "Private"}
+                                </Button>
+                                <Button
+                                  variant="secondary"
+                                  shape="pill"
+                                  size="sm"
+                                  className="text-muted-foreground"
+                                  onClick={enterEdit}
+                                >
+                                  Edit
+                                </Button>
+                              </div>
+                              <Button
+                                shape="pill"
+                                size="sm"
+                                className="bg-destructive/10 text-destructive hover:bg-destructive/20"
+                                onClick={() => setView("delete")}
+                              >
+                                Delete
+                              </Button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </>
                   )}
@@ -513,7 +521,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                 <div className="mb-2 flex items-center gap-2">
                   <h3>Comments</h3>
                   <div className="bg-accent rounded-full px-2 py-1 text-xs">
-                    3
+                    {comments.length}
                   </div>
                 </div>
 
