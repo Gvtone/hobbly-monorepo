@@ -51,6 +51,7 @@ export class UserHobbyEntityWithHobbyAndUser
         hobby: true;
         user: {
           select: {
+            id: true;
             displayName: true;
             username: true;
             profilePicture: true;
