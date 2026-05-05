@@ -29,6 +29,19 @@ export class CommentService {
 
     return await this.databaseService.comment.create({
       data: { userId, entryId, content },
+      include: {
+        user: {
+          select: {
+            id: true,
+            displayName: true,
+            username: true,
+            profilePicture: true,
+            coverImage: true,
+            bio: true,
+            visibility: true,
+          },
+        },
+      },
     });
   }
 
@@ -63,6 +76,19 @@ export class CommentService {
     return await this.databaseService.comment.update({
       where: { id, entryId },
       data: updateCommentDto,
+      include: {
+        user: {
+          select: {
+            id: true,
+            displayName: true,
+            username: true,
+            profilePicture: true,
+            coverImage: true,
+            bio: true,
+            visibility: true,
+          },
+        },
+      },
     });
   }
 
