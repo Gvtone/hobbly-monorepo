@@ -27,15 +27,16 @@ export function useEntry({ limit = 10 }: UseEntryParams = {}) {
     totalCount: 0,
   });
 
-  const fetchEntries = async (targetPage = page) => {
+  const fetchEntries = async (targetPage: number, append = false) => {
     setIsLoading(true);
     try {
       const { data, ...pagination } = await entryService.findAll({
         page: targetPage,
         limit,
       });
-      setUserEntries(data);
+      setUserEntries((prev) => (append ? [...prev, ...data] : data));
       setMeta(pagination);
+      setPage(targetPage);
     } catch (error) {
       showToast.error("Failed to load entries");
       console.log("Error fetching user entries:", error);
@@ -45,17 +46,22 @@ export function useEntry({ limit = 10 }: UseEntryParams = {}) {
   };
 
   useEffect(() => {
-    fetchEntries(page);
+    fetchEntries(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  }, []);
 
   const goToPage = (nextPage: number) => {
-    setPage(nextPage);
+    fetchEntries(nextPage);
+  };
+
+  const loadMore = async () => {
+    if (meta.isLastPage) return;
+    await fetchEntries(page + 1, true);
   };
 
   const addEntry = async (data: CreateEntryDto) => {
     await entryService.create(data);
-    await fetchEntries(page);
+    await fetchEntries(1);
   };
 
   const updateEntry = async (id: number, data: Partial<CreateEntryDto>) => {
@@ -65,15 +71,12 @@ export function useEntry({ limit = 10 }: UseEntryParams = {}) {
 
   const removeEntry = async (id: number) => {
     await entryService.delete(id);
-    // If we deleted the last item on a non-first page, go back one page
     const isLastItemOnPage = userEntries.length === 1 && page > 1;
-    const targetPage = isLastItemOnPage ? page - 1 : page;
-    if (isLastItemOnPage) setPage(targetPage);
-    await fetchEntries(targetPage);
+    await fetchEntries(isLastItemOnPage ? page - 1 : page);
   };
 
   const refresh = async () => {
-    await fetchEntries(page);
+    await fetchEntries(1);
   };
 
   return {
@@ -81,6 +84,8 @@ export function useEntry({ limit = 10 }: UseEntryParams = {}) {
     isLoading,
     page,
     goToPage,
+    loadMore,
+    hasMore: !meta.isLastPage,
     meta,
     addEntry,
     updateEntry,

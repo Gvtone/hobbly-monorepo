@@ -46,7 +46,11 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
 
   const { entryMoods } = useEntryMood();
   const { liked, count, isToggling, toggle } = useLike(data.id);
-  const { comments, isSubmitting: isSubmittingComment, addComment } = useComment(data.id);
+  const {
+    comments,
+    isSubmitting: isSubmittingComment,
+    addComment,
+  } = useComment(data.id);
   const { user } = useAuth();
 
   const [view, setView] = useState<View>("default");
@@ -225,10 +229,12 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                       <span>{hobby.icon}</span>
                       <span className="text-white">{hobby.name}</span>
                     </div>
-                    <div className="text-muted-foreground flex items-center justify-center gap-2">
-                      <span className="text-md">{data.mood.icon}</span>
-                      <span className="text-xs">{data.mood.name}</span>
-                    </div>
+                    {data.mood && (
+                      <div className="text-muted-foreground flex items-center justify-center gap-2">
+                        <span className="text-md">{data.mood.icon}</span>
+                        <span className="text-xs">{data.mood.name}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* --- DEFAULT VIEW --- */}

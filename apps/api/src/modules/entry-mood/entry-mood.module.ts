@@ -5,5 +5,6 @@ import { EntryMoodController } from './entry-mood.controller';
 @Module({
   controllers: [EntryMoodController],
   providers: [EntryMoodService],
+  exports: [EntryMoodService],
 })
 export class EntryMoodModule {}
