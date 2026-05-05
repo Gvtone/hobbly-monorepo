@@ -144,6 +144,6 @@ export class AuthController {
   @ApiOkResponse({ description: 'Current user payload', type: PayloadEntity })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   me(@Req() req: Request) {
-    return req.user;
+    return this.authService.me(req);
   }
 }

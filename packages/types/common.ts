@@ -14,3 +14,7 @@ export interface PaginatedOutputEntity {
   pageCount: number;
   totalCount: number;
 }
+
+export interface PaginatedEntity<T> extends PaginatedOutputEntity {
+  data: T[];
+}

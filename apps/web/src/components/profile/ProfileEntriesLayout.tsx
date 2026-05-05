@@ -26,6 +26,7 @@ function ProfileEntriesLayout({
 
         {entryTabs.map((tab) => (
           <Button
+            key={tab.hobby}
             variant="secondary"
             shape="pill"
             size="sm"

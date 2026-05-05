@@ -27,11 +27,19 @@ function DashboardPage() {
     isLoading: isUserHobbiesLoading,
     addUserHobby,
   } = useUserHobby();
-  const { userEntries, refresh: refreshEntries } = useEntry();
+  const {
+    userEntries,
+    isLoading: isEntriesLoading,
+    loadMore,
+    hasMore,
+    meta,
+    refresh: refreshEntries,
+  } = useEntry();
   const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
   const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
-  const selectedEntry = userEntries.find((e) => e.id === selectedEntryId) ?? null;
+  const selectedEntry =
+    userEntries.find((e) => e.id === selectedEntryId) ?? null;
 
   return (
     <AppLayout>
@@ -106,7 +114,7 @@ function DashboardPage() {
           <div className="mb-4 flex items-baseline justify-between">
             <h3 className="text-xl">My Entries</h3>
             <p className="text-muted-foreground text-sm">
-              {userEntries.length} total
+              {meta.totalCount} total
             </p>
           </div>
 
@@ -120,6 +128,19 @@ function DashboardPage() {
               />
             ))}
           </div>
+
+          {hasMore && (
+            <div className="mt-6 flex justify-center">
+              <Button
+                variant="outline"
+                shape="pill"
+                onClick={loadMore}
+                disabled={isEntriesLoading}
+              >
+                {isEntriesLoading ? "Loading..." : "Load more"}
+              </Button>
+            </div>
+          )}
         </section>
 
         {/* Modals */}

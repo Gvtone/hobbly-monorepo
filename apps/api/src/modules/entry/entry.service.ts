@@ -4,18 +4,24 @@ import { UpdateEntryDto } from './dto/update-entry.dto';
 import { DatabaseService } from '../../common/database/database.service';
 import { EntryFilterDto } from './dto/entry-filter.dto';
 import { Prisma } from '../../generated/prisma/client';
+import { EntryMoodService } from '../entry-mood/entry-mood.service';
 
 @Injectable()
 export class EntryService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly entryMoodService: EntryMoodService,
+  ) {}
 
   async create(createEntryDto: CreateEntryDto) {
-    const mood = await this.databaseService.entryMood.findUnique({
-      where: { id: createEntryDto.moodId },
-    });
+    if (createEntryDto.moodId) {
+      const entryMood = await this.entryMoodService.findOne(
+        createEntryDto.moodId,
+      );
 
-    if (!mood) {
-      throw new NotFoundException('Mood does not exist');
+      if (!entryMood) {
+        throw new NotFoundException('Mood does not exist');
+      }
     }
 
     return await this.databaseService.entry.create({ data: createEntryDto });

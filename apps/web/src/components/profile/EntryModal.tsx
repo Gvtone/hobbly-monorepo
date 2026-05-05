@@ -13,17 +13,22 @@ import {
 import { cn } from "../../utils/utils";
 import { Card } from "../ui/Card";
 import type {
+  CreateCommentDto,
   CreateEntryDto,
   EntryWithUserHobbyEntity,
 } from "@hobbies-dashboard/types";
-import { format } from "date-fns";
+import { format, formatDate, formatRelative, subDays } from "date-fns";
 import Input from "../ui/Input";
 import { useState } from "react";
 import { entryService } from "../../services/entry";
 import { showToast } from "../../utils/toast";
 import { useEntryMood } from "../../hooks/useEntryMood";
+import { useLike } from "../../hooks/useLike";
 import RadioPill from "../ui/RadioPill";
 import Textarea from "../ui/TextArea";
+import { useAuth } from "../../context/auth/useAuth";
+import { useComment } from "../../hooks/useComment";
+import { useForm } from "react-hook-form";
 
 type View = "default" | "delete" | "visibility" | "edit";
 
@@ -36,8 +41,17 @@ interface LogEntryModalProps {
 
 function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
   const hobby = data.userHobby.hobby;
+  const entryUser = data.userHobby.user;
   const hasImage = !!data.image;
+
   const { entryMoods } = useEntryMood();
+  const { liked, count, isToggling, toggle } = useLike(data.id);
+  const {
+    comments,
+    isSubmitting: isSubmittingComment,
+    addComment,
+  } = useComment(data.id);
+  const { user } = useAuth();
 
   const [view, setView] = useState<View>("default");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -114,6 +128,18 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const {
+    handleSubmit,
+    register,
+    reset,
+    formState: { errors },
+  } = useForm<CreateCommentDto>();
+
+  const onSubmit = async (formData: CreateCommentDto) => {
+    await addComment(formData.content);
+    reset();
   };
 
   const isPublic = data.visibility === "PUBLIC";
@@ -203,10 +229,12 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                       <span>{hobby.icon}</span>
                       <span className="text-white">{hobby.name}</span>
                     </div>
-                    <div className="text-muted-foreground flex items-center justify-center gap-2">
-                      <span className="text-md">{data.mood.icon}</span>
-                      <span className="text-xs">{data.mood.name}</span>
-                    </div>
+                    {data.mood && (
+                      <div className="text-muted-foreground flex items-center justify-center gap-2">
+                        <span className="text-md">{data.mood.icon}</span>
+                        <span className="text-xs">{data.mood.name}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* --- DEFAULT VIEW --- */}
@@ -230,25 +258,44 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
 
                       <div className="flex flex-col">
                         <div className="mb-2 flex items-center gap-4">
-                          <img
-                            src="https://images.unsplash.com/photo-1621036189456-895776ffe69f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100"
-                            alt=""
-                            className="size-8 shrink-0 rounded-full"
-                          />
+                          {entryUser?.profilePicture ? (
+                            <img
+                              src={entryUser.profilePicture}
+                              className="size-8 shrink-0 rounded-full"
+                              alt={entryUser.username}
+                            />
+                          ) : (
+                            <div className="from-hobbly-sky to-hobbly-lavender flex size-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
+                              {entryUser?.username?.[0].toUpperCase()}
+                            </div>
+                          )}
                           <div>
                             <p className="text-sm font-medium">
-                              hobbly_user123
+                              {entryUser.displayName ?? entryUser.username}
                             </p>
                             <p className="text-muted-foreground text-xs">
-                              @user123
+                              @{entryUser.username}
                             </p>
                           </div>
                         </div>
-
                         <div className="flex gap-2">
-                          <Button variant="transparent" className="p-2">
-                            <Heart size={16} />
-                            <span>like</span>
+                          <Button
+                            variant="transparent"
+                            className={cn(
+                              "p-2",
+                              liked ? "text-destructive" : "",
+                            )}
+                            disabled={isToggling}
+                            onClick={toggle}
+                          >
+                            <Heart
+                              size={16}
+                              fill={liked ? "currentColor" : "none"}
+                            />
+                            <span>
+                              {count > 0 && count}{" "}
+                              {count > 1 ? "likes" : "like"}
+                            </span>
                           </Button>
                           <Button variant="transparent" className="p-2">
                             <MessageCircleIcon size={16} />
@@ -256,45 +303,49 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                           </Button>
                         </div>
 
-                        <div className="border-border mb-4 border" />
-                        <div className="flex justify-between">
-                          <div className="flex gap-2">
-                            <Button
-                              shape="pill"
-                              size="sm"
-                              onClick={() => setView("visibility")}
-                              className={cn(
-                                isPublic
-                                  ? "bg-hobbly-green/10 text-hobbly-green hover:bg-hobbly-green/20"
-                                  : "bg-foreground text-background hover:bg-foreground/90",
-                              )}
-                            >
-                              {isPublic ? (
-                                <Globe size={12} />
-                              ) : (
-                                <Lock size={12} />
-                              )}
-                              {isPublic ? "Public" : "Private"}
-                            </Button>
-                            <Button
-                              variant="secondary"
-                              shape="pill"
-                              size="sm"
-                              className="text-muted-foreground"
-                              onClick={enterEdit}
-                            >
-                              Edit
-                            </Button>
-                          </div>
-                          <Button
-                            shape="pill"
-                            size="sm"
-                            className="bg-destructive/10 text-destructive hover:bg-destructive/20"
-                            onClick={() => setView("delete")}
-                          >
-                            Delete
-                          </Button>
-                        </div>
+                        {user?.id === entryUser.id && (
+                          <>
+                            <div className="border-border mb-4 border" />
+                            <div className="flex justify-between">
+                              <div className="flex gap-2">
+                                <Button
+                                  shape="pill"
+                                  size="sm"
+                                  onClick={() => setView("visibility")}
+                                  className={cn(
+                                    isPublic
+                                      ? "bg-hobbly-green/10 text-hobbly-green hover:bg-hobbly-green/20"
+                                      : "bg-foreground text-background hover:bg-foreground/90",
+                                  )}
+                                >
+                                  {isPublic ? (
+                                    <Globe size={12} />
+                                  ) : (
+                                    <Lock size={12} />
+                                  )}
+                                  {isPublic ? "Public" : "Private"}
+                                </Button>
+                                <Button
+                                  variant="secondary"
+                                  shape="pill"
+                                  size="sm"
+                                  className="text-muted-foreground"
+                                  onClick={enterEdit}
+                                >
+                                  Edit
+                                </Button>
+                              </div>
+                              <Button
+                                shape="pill"
+                                size="sm"
+                                className="bg-destructive/10 text-destructive hover:bg-destructive/20"
+                                onClick={() => setView("delete")}
+                              >
+                                Delete
+                              </Button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </>
                   )}
@@ -489,59 +540,93 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                 <div className="mb-2 flex items-center gap-2">
                   <h3>Comments</h3>
                   <div className="bg-accent rounded-full px-2 py-1 text-xs">
-                    3
+                    {comments.length}
                   </div>
                 </div>
 
                 {/* Comment collection */}
-                <div className="mb-4 flex items-center gap-2">
-                  <img
-                    src="https://images.unsplash.com/photo-1621036189456-895776ffe69f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100"
-                    alt=""
-                    className="size-10 shrink-0 self-start rounded-full"
-                  />
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span>Leo M.</span>
-                      <span className="text-muted-foreground text-xs">
-                        1 hour ago
-                      </span>
-                    </div>
-                    <div className="text-sm">
-                      The ending hit different tonight. That scene with the
-                      lanterns in the rain... I was not prepared 😭 This show
-                      keeps getting better. The animation studio really outdid
-                      themselves with the lighting this episode — every frame
-                      felt like a painting. I need to rewatch this whole arc
-                      again.
+                {comments.map((comment) => (
+                  <div className="mb-4 flex items-center gap-2">
+                    {comment.user.profilePicture ? (
+                      <img
+                        src={comment.user.profilePicture}
+                        alt=""
+                        className="size-10 shrink-0 self-start rounded-full"
+                      />
+                    ) : (
+                      <div className="from-hobbly-sky to-hobbly-lavender flex size-10 shrink-0 items-center justify-center self-start rounded-full bg-linear-to-br text-sm font-bold text-white">
+                        {user?.username?.[0].toUpperCase()}
+                      </div>
+                    )}
+
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span>
+                          {comment.user.displayName ??
+                            `@${comment.user.username}`}
+                        </span>
+                        <span className="text-muted-foreground text-xs">
+                          {comment.createdAt < subDays(new Date(), 6)
+                            ? formatDate(comment.createdAt, "PPp")
+                            : formatRelative(comment.createdAt, new Date())}
+                        </span>
+                      </div>
+                      <div className="text-sm">{comment.content}</div>
                     </div>
                   </div>
-                </div>
+                ))}
 
                 <div className="border-border my-4 border" />
 
                 {/* Comment Input */}
-                <div className="flex items-center justify-center gap-2">
-                  <img
-                    src="https://images.unsplash.com/photo-1621036189456-895776ffe69f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100"
-                    alt=""
-                    className="size-10 shrink-0 rounded-full"
-                  />
-                  <Input
-                    variant="auth"
-                    shape="pill"
-                    fullWidth
-                    placeholder="Write a comment..."
-                  />
-                  <Button
-                    variant="secondary"
-                    shape="pill"
-                    size="icon"
-                    className="size-10 shrink-0"
+                <div className="flex items-center gap-2">
+                  {user?.profilePicture ? (
+                    <img
+                      src={user.profilePicture}
+                      alt=""
+                      className="size-10 shrink-0 rounded-full"
+                    />
+                  ) : (
+                    <div className="from-hobbly-sky to-hobbly-lavender flex size-10 shrink-0 items-center justify-center self-start rounded-full bg-linear-to-br text-sm font-bold text-white">
+                      {user?.username?.[0].toUpperCase()}
+                    </div>
+                  )}
+
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="flex w-full items-center justify-center gap-2"
                   >
-                    <Send size={20} />
-                  </Button>
+                    <Input
+                      variant="auth"
+                      shape="pill"
+                      fullWidth
+                      placeholder="Write a comment..."
+                      autoComplete="off"
+                      disabled={isSubmittingComment}
+                      {...register("content", {
+                        maxLength: {
+                          value: 8000,
+                          message: "Title cannot exceed 8000 characters",
+                        },
+                      })}
+                    />
+                    <Button
+                      type="submit"
+                      variant="secondary"
+                      shape="pill"
+                      size="icon"
+                      className="size-10 shrink-0"
+                      disabled={isSubmittingComment}
+                    >
+                      <Send size={20} />
+                    </Button>
+                  </form>
                 </div>
+                {errors.content && (
+                  <p className="text-destructive mt-2 text-center text-xs">
+                    {errors.content.message}
+                  </p>
+                )}
               </Card>
             </div>
           </div>

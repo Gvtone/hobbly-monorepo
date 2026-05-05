@@ -30,7 +30,7 @@ function LogEntryModal({ open, onClose, onRefresh }: LogEntryModalProps) {
     control,
   } = useForm<CreateEntryDto>({
     defaultValues: {
-      activityDate: new Date(),
+      activityDate: new Date().toISOString().split("T")[0] as unknown as Date,
       visibility: "PRIVATE",
     },
   });
@@ -56,6 +56,11 @@ function LogEntryModal({ open, onClose, onRefresh }: LogEntryModalProps) {
     control,
   });
 
+  const { field: dateField } = useController({
+    name: "activityDate",
+    control,
+  });
+
   const noHobby = !hobbyField.value;
 
   const handleHobbyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +73,9 @@ function LogEntryModal({ open, onClose, onRefresh }: LogEntryModalProps) {
       title: data.title,
       note: data.note,
       moodId: data.moodId,
-      activityDate: data.activityDate,
+      activityDate: data.activityDate
+        ? new Date(data.activityDate as unknown as string)
+        : new Date(),
       visibility: data.visibility,
       image: data.image,
       metadata: null, // for future use with tracked hobbies
@@ -263,9 +270,14 @@ function LogEntryModal({ open, onClose, onRefresh }: LogEntryModalProps) {
             type="date"
             variant="auth"
             shape="pill"
-            placeholder={dateToday}
             disabled={noHobby}
-            {...register("activityDate")}
+            {...dateField}
+            value={
+              dateField.value
+                ? new Date(dateField.value).toISOString().split("T")[0]
+                : dateToday
+            }
+            onChange={(e) => dateField.onChange(e.target.value)}
           />
         </div>
 
