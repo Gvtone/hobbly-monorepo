@@ -36,7 +36,22 @@ export class CommentService {
     const paginatedDatabase = await this.databaseService.paginateModel();
 
     return await paginatedDatabase.comment
-      .paginate({ where: { entryId } })
+      .paginate({
+        where: { entryId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              displayName: true,
+              username: true,
+              profilePicture: true,
+              coverImage: true,
+              bio: true,
+              visibility: true,
+            },
+          },
+        },
+      })
       .withPages({ page, limit });
   }
 
