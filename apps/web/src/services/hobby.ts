@@ -14,7 +14,7 @@ export const hobbyService = {
   },
 
   async findAll() {
-    const res = await api.get<HobbyEntity[]>(`${serviceRoute}/find-all`);
+    const res = await api.get<HobbyEntity[]>(`${serviceRoute}`);
     return res.data;
   },
 
