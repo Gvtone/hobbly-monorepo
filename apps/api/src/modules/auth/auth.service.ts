@@ -131,6 +131,11 @@ export class AuthService {
       '15m',
     ) as StringValue;
 
+    const jwtRefreshTokenExpiration = this.configService.get(
+      'JWT_REFRESH_TOKEN_EXPIRATION',
+      '7d',
+    ) as StringValue;
+
     const newPayload: PayloadEntity = {
       sub: user.id,
       username: user.username,
@@ -144,11 +149,25 @@ export class AuthService {
       expiresIn: jwtAccessTokenExpiration,
     });
 
+    const newRefreshToken = this.jwtService.sign(
+      { ...payload, type: 'REFRESH' },
+      {
+        expiresIn: jwtRefreshTokenExpiration,
+      },
+    );
+
     response.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
       maxAge: ms(jwtAccessTokenExpiration),
+    });
+
+    response.cookie('refresh_token', newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: ms(jwtRefreshTokenExpiration),
     });
 
     return newPayload;
