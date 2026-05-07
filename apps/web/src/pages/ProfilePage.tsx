@@ -7,10 +7,15 @@ import ProfileEntriesLayout from "../components/profile/ProfileEntriesLayout";
 import EntryCard from "../components/profile/EntryCard";
 import { useUserHobby } from "../hooks/useUserHobby";
 import { useEntry } from "../hooks/useEntry";
+import Modal from "../components/layout/Modal";
+import { useState } from "react";
+import Button from "../components/ui/Button";
 
 function ProfilePage() {
   const { userHobbies } = useUserHobby();
   const { userEntries } = useEntry();
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const entryTabs = userHobbies.map((userHobby) => ({
     emoji: userHobby.hobby.icon,
@@ -22,14 +27,9 @@ function ProfilePage() {
       <div className="mx-auto max-w-5xl px-6 py-10">
         {/* Main profile card */}
         <MainProfileCard
-          coverPhoto="https://images.unsplash.com/photo-1623594845764-13991ac51774"
-          profilePhoto="https://images.unsplash.com/photo-1621036189456-895776ffe69f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=100"
-          currentStatus={{ emoji: "🌿", bgColor: "#8baf8b" }}
-          displayname="Jade"
-          handle="@starweaver"
-          bio="Anime lover 🎌 · Watercolor artist 🎨 · Cozy gamer 🎮 · Always reading 📚"
           className="mb-10"
-        ></MainProfileCard>
+          setVisibility={() => setIsOpen(true)}
+        />
 
         {/* Activity calendar */}
         <ActivityCalendar />
@@ -76,6 +76,25 @@ function ProfilePage() {
           </ProfileEntriesLayout>
         </section>
       </div>
+
+      <Modal
+        onClose={() => setIsOpen(false)}
+        open={isOpen}
+        title="Make your account public? "
+        icon="🌏"
+      >
+        <div className="mb-4">
+          <p className="text-center">
+            People can visit your profile and will appear on search.
+          </p>
+          <p className="text-muted-foreground text-center text-sm">
+            You can change it back if you change your mind.
+          </p>
+        </div>
+        <Button fullWidth variant="gradient" shape="pill" size="lg">
+          Set profile to public
+        </Button>
+      </Modal>
     </AppLayout>
   );
 }
