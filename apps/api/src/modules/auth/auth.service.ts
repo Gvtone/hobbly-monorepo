@@ -150,7 +150,7 @@ export class AuthService {
     });
 
     const newRefreshToken = this.jwtService.sign(
-      { ...payload, type: 'REFRESH' },
+      { ...newPayload, type: 'REFRESH' },
       {
         expiresIn: jwtRefreshTokenExpiration,
       },
