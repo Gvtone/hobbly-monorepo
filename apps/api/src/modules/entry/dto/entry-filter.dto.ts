@@ -9,8 +9,14 @@ import {
   IsString,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { EntryFilterDto as IEntryFilterDto } from '@hobbies-dashboard/types';
 
-export class EntryFilterDto {
+export class EntryFilterDto implements IEntryFilterDto {
+  @ApiPropertyOptional({ type: Number })
+  @IsNumber()
+  @IsOptional()
+  userId?: number;
+
   @ApiPropertyOptional({ type: String })
   @IsString()
   @IsOptional()

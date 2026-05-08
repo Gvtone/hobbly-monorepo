@@ -35,7 +35,7 @@ export class UserHobbyController {
     return await this.userHobbyService.create(userId.sub, createHobbyDto);
   }
 
-  @Get('find-all')
+  @Get()
   @ApiOperation({
     summary: 'Finds all of existing user-hobby connection of the current user',
   })
