@@ -26,9 +26,9 @@ export class EntryMoodController {
     return this.entryMoodService.create(createEntryMoodDto);
   }
 
-  @Get('find-all')
+  @Get()
   @ApiOperation({ summary: 'Fetches all entry moods' })
-  @ApiOkResponse({ description: 'Fetch successful', type: EntryMoodEntity })
+  @ApiOkResponse({ description: 'Fetch successful', type: [EntryMoodEntity] })
   findAll() {
     return this.entryMoodService.findAll();
   }

@@ -36,7 +36,7 @@ export class HobbyController {
     return await this.hobbyService.create(createHobbyDto);
   }
 
-  @Get('find-all')
+  @Get()
   @ApiOperation({ summary: 'Finds all of existing hobbies' })
   @ApiOkResponse({
     description: 'Fetch successful',

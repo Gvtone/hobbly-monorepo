@@ -19,7 +19,12 @@ export class LikeController {
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({
     description: 'Toggle successful',
-    type: Promise<{ like: boolean }>,
+    schema: {
+      type: 'object',
+      properties: {
+        like: { type: 'boolean' },
+      },
+    },
   })
   async toggle(
     @Param('id', ParseIntPipe) id: number,
@@ -36,10 +41,13 @@ export class LikeController {
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({
     description: 'Fetch successful',
-    type: Promise<{
-      liked: boolean;
-      count: number;
-    }>,
+    schema: {
+      type: 'object',
+      properties: {
+        like: { type: 'boolean' },
+        count: { type: 'number' },
+      },
+    },
   })
   async status(
     @Param('id', ParseIntPipe) id: number,

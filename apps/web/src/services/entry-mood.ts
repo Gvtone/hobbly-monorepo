@@ -13,7 +13,7 @@ export const entryMoodService = {
   },
 
   async findAll() {
-    const res = await api.get<EntryMoodEntity[]>(`${serviceRoute}/find-all`);
+    const res = await api.get<EntryMoodEntity[]>(`${serviceRoute}`);
     return res.data;
   },
 

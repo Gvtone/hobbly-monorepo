@@ -44,11 +44,8 @@ export class EntryController {
     description: 'Fetch successful',
     type: PaginatedEntity(EntryEntityWithUserHobby),
   })
-  async findAll(
-    @AuthUser() user: PayloadEntity,
-    @Query() filter: EntryFilterDto,
-  ) {
-    const [data, meta] = await this.entryService.findAll(user.sub, filter);
+  async findAll(@Query() filter: EntryFilterDto) {
+    const [data, meta] = await this.entryService.findAll(filter);
     return { data, ...meta };
   }
 
