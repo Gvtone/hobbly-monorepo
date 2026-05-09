@@ -20,6 +20,17 @@ export interface CreateEntryDto {
 
 export interface UpdateEntryDto extends Partial<CreateEntryDto> {}
 
+export interface EntryFilterDto {
+  userId?: number;
+  search?: string;
+  hobbyId?: number[];
+  moodId?: number[];
+  startDate?: Date;
+  endDate?: Date;
+  page?: number;
+  limit?: number;
+}
+
 export interface EntryEntity {
   id: number;
   createdAt: Date;

@@ -27,21 +27,19 @@ export class EntryService {
     return await this.databaseService.entry.create({ data: createEntryDto });
   }
 
-  async findAll(
-    userId: number,
-    {
-      search,
-      hobbyId,
-      moodId,
-      visibility,
-      startDate,
-      endDate,
-      page,
-      limit = 10,
-    }: EntryFilterDto,
-  ) {
+  async findAll({
+    userId,
+    search,
+    hobbyId,
+    moodId,
+    visibility,
+    startDate,
+    endDate,
+    page,
+    limit = 10,
+  }: EntryFilterDto) {
     const whereClause: Prisma.EntryWhereInput = {
-      userHobby: { userId },
+      ...(userId && { userHobby: { userId } }),
 
       // Search across multiple fields
       ...(search && {

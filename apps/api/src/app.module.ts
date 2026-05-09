@@ -17,6 +17,8 @@ import { EntryModule } from './modules/entry/entry.module';
 import { EntryMoodModule } from './modules/entry-mood/entry-mood.module';
 import { LikeModule } from './modules/like/like.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { ProfileShareModule } from './modules/profile-share/profile-share.module';
+import { CurrentMoodModule } from './modules/current-mood/current-mood.module';
 
 @Module({
   imports: [
@@ -60,6 +62,8 @@ import { CommentModule } from './modules/comment/comment.module';
     EntryMoodModule,
     LikeModule,
     CommentModule,
+    ProfileShareModule,
+    CurrentMoodModule,
   ],
   providers: [
     {
