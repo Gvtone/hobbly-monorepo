@@ -7,15 +7,10 @@ import ProfileEntriesLayout from "../components/profile/ProfileEntriesLayout";
 import EntryCard from "../components/profile/EntryCard";
 import { useUserHobby } from "../hooks/useUserHobby";
 import { useEntry } from "../hooks/useEntry";
-import Modal from "../components/layout/Modal";
-import { useState } from "react";
-import Button from "../components/ui/Button";
 
 function ProfilePage() {
   const { userHobbies } = useUserHobby();
   const { userEntries } = useEntry();
-
-  const [isOpen, setIsOpen] = useState(false);
 
   const entryTabs = userHobbies.map((userHobby) => ({
     emoji: userHobby.hobby.icon,
@@ -26,10 +21,7 @@ function ProfilePage() {
     <AppLayout>
       <div className="mx-auto max-w-5xl px-6 py-10">
         {/* Main profile card */}
-        <MainProfileCard
-          className="mb-10"
-          setVisibility={() => setIsOpen(true)}
-        />
+        <MainProfileCard className="mb-10" />
 
         {/* Activity calendar */}
         <ActivityCalendar />
@@ -76,25 +68,6 @@ function ProfilePage() {
           </ProfileEntriesLayout>
         </section>
       </div>
-
-      <Modal
-        onClose={() => setIsOpen(false)}
-        open={isOpen}
-        title="Make your account public? "
-        icon="🌏"
-      >
-        <div className="mb-4">
-          <p className="text-center">
-            People can visit your profile and will appear on search.
-          </p>
-          <p className="text-muted-foreground text-center text-sm">
-            You can change it back if you change your mind.
-          </p>
-        </div>
-        <Button fullWidth variant="gradient" shape="pill" size="lg">
-          Set profile to public
-        </Button>
-      </Modal>
     </AppLayout>
   );
 }

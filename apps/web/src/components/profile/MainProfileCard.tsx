@@ -1,4 +1,4 @@
-import { Lock, PenLine, Share2, SmilePlus } from "lucide-react";
+import { Globe, Lock, PenLine, Share2, SmilePlus } from "lucide-react";
 import Button from "../ui/Button";
 import { Card } from "../ui/Card";
 import { cn } from "../../utils/utils";
@@ -10,29 +10,39 @@ import Input from "../ui/Input";
 import { useForm, useWatch } from "react-hook-form";
 import type { SetCurrentMoodDto } from "@hobbies-dashboard/types";
 import EmojiInput from "../ui/EmojiInput";
+import { userService } from "../../services/user";
+import { showToast } from "../../utils/toast";
 
 interface MainProfileCardProps {
-  setVisibility: () => void;
   className?: string;
   children?: React.ReactNode;
 }
 
-function MainProfileCard({
-  setVisibility,
-  className,
-  children,
-}: MainProfileCardProps) {
-  const { user } = useAuth();
+function MainProfileCard({ className, children }: MainProfileCardProps) {
+  const { user, updateUser } = useAuth();
   const { currentMood, setOrUpdateCurrentMood, removeCurrentMood } =
     useCurrentMood();
 
   const [isCurrentMoodOpen, setIsCurrentMoodOpen] = useState(false);
+  const [isVisibilityOpen, setIsVisibilityOpen] = useState(false);
+
+  const toggleVisibility = async () => {
+    const newVisibility = user?.visibility === "PRIVATE" ? "PUBLIC" : "PRIVATE";
+    const updated = await userService.updateCurrentUser({
+      visibility: newVisibility,
+    });
+    updateUser(updated);
+    setIsVisibilityOpen(false);
+    showToast.success(
+      `Profile visibility changed to ${newVisibility.toLowerCase()}`,
+    );
+  };
 
   const { register, handleSubmit, setValue, reset, control } =
     useForm<SetCurrentMoodDto>({
       defaultValues: {
         icon: currentMood?.icon ?? "😊",
-        color: currentMood?.color ?? "#C8A2E3",
+        color: currentMood?.color ?? "#c8a2e3",
         description: currentMood?.description ?? undefined,
       },
     });
@@ -40,7 +50,7 @@ function MainProfileCard({
   useEffect(() => {
     reset({
       icon: currentMood?.icon ?? "😊",
-      color: currentMood?.color ?? "#C8A2E3",
+      color: currentMood?.color ?? "#c8a2e3",
       description: currentMood?.description ?? "",
     });
   }, [currentMood, reset]);
@@ -149,13 +159,22 @@ function MainProfileCard({
                 Share
               </Button>
               <Button
-                onClick={() => setVisibility()}
+                onClick={() => setIsVisibilityOpen(true)}
                 variant="secondary"
                 shape="pill"
                 className="text-muted-foreground"
+                style={
+                  user?.visibility === "PUBLIC"
+                    ? { background: "var(--hobbly-green)", color: "white" }
+                    : undefined
+                }
               >
-                <Lock size={12}></Lock>
-                Private
+                {user?.visibility === "PUBLIC" ? (
+                  <Globe size={12} />
+                ) : (
+                  <Lock size={12} />
+                )}
+                {user?.visibility === "PUBLIC" ? "Public" : "Private"}
               </Button>
             </div>
           </div>
@@ -187,12 +206,42 @@ function MainProfileCard({
         </div>
 
         <Modal
+          title="Profile Visibility"
+          description="Set who can see your profile"
+          icon={user?.visibility === "PUBLIC" ? "🌏" : "🔒"}
+          open={isVisibilityOpen}
+          onClose={() => setIsVisibilityOpen(false)}
+        >
+          <div className="mb-4 flex flex-col gap-1">
+            <p className="text-center">
+              {user?.visibility === "PUBLIC"
+                ? "Making your profile private will hide it from search and other users."
+                : "People will be able to visit your profile and you'll appear in search."}
+            </p>
+            <p className="text-muted-foreground text-center text-sm">
+              You can change it back any time.
+            </p>
+          </div>
+          <Button
+            onClick={toggleVisibility}
+            fullWidth
+            variant="gradient"
+            shape="pill"
+          >
+            {user?.visibility === "PUBLIC"
+              ? "Make profile private"
+              : "Set profile to public"}
+          </Button>
+        </Modal>
+
+        <Modal
           title="Show your current mood!"
+          description="Set your mood"
           icon="🤍"
           open={isCurrentMoodOpen}
           onClose={() => {
             setIsCurrentMoodOpen(false);
-            reset();
+            reset({ color: undefined });
           }}
         >
           <form
