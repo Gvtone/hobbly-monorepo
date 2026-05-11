@@ -4,6 +4,7 @@ export interface CurrentMoodEntity {
   updatedAt: Date;
   icon: string;
   color: string;
+  description: string;
 }
 
 export interface SetCurrentMoodDto {
