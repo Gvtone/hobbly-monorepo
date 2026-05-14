@@ -21,25 +21,29 @@ export const router = createBrowserRouter([
           <ProtectedRoute>
             <DashboardPage />
           </ProtectedRoute>
-        )
+        ),
       },
-      {
-        path: "profile",
-        element: (
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        )
-      },
+      // {
+      //   path: "profile",
+      //   element: (
+      //     <ProtectedRoute>
+      //       <ProfilePage />
+      //     </ProtectedRoute>
+      //   ),
+      // },
       {
         path: "explore",
         element: (
           <ProtectedRoute>
             <ExplorePage />
           </ProtectedRoute>
-        )
+        ),
       },
-      { path: "*", Component: NotFoundPage }
-    ]
-  }
+      {
+        path: ":slug",
+        element: <ProfilePage />,
+      },
+      { path: "*", Component: NotFoundPage },
+    ],
+  },
 ]);

@@ -22,8 +22,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { EntryEntity, EntryEntityWithUserHobby } from './entities/entry.entity';
-import { EntryFilterDto } from './dto/entry-filter.dto';
+import { EntryFilterDto, PublicEntryFilterDto } from './dto/entry-filter.dto';
 import { PaginatedEntity } from '../../common/entities/paginated.entity';
+import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('Entry')
 @Controller('entry')
@@ -36,6 +37,21 @@ export class EntryController {
   @ApiOkResponse({ description: 'Create successful', type: EntryEntity })
   async create(@Body() createEntryDto: CreateEntryDto) {
     return await this.entryService.create(createEntryDto);
+  }
+
+  @Public()
+  @Get('public')
+  @ApiOperation({ summary: 'Fetch all entries' })
+  @ApiOkResponse({
+    description: 'Fetch successful',
+    type: PaginatedEntity(EntryEntityWithUserHobby),
+  })
+  async findAllPublic(@Query() filter: PublicEntryFilterDto) {
+    const [data, meta] = await this.entryService.findAll(
+      { ...filter, visibility: 'PUBLIC' },
+      true,
+    );
+    return { data, ...meta };
   }
 
   @Get()

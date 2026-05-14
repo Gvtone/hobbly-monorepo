@@ -35,6 +35,23 @@ export class UserService {
     return new UserEntity(user);
   }
 
+  async findUserByUsernamePublic(username: string) {
+    const user = await this.databaseService.user.findFirst({
+      where: { username },
+      select: {
+        id: true,
+        displayName: true,
+        username: true,
+        profilePicture: true,
+        coverImage: true,
+        bio: true,
+        visibility: true,
+      },
+    });
+
+    return user;
+  }
+
   async findUserByUsername(username: string) {
     const user = await this.databaseService.user.findFirst({
       where: { username },

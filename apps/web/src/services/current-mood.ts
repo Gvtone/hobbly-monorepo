@@ -13,8 +13,8 @@ export const currentMoodService = {
     return res.data;
   },
 
-  async findOne() {
-    const res = await api.get<CurrentMoodEntity>(`${serviceRoute}`);
+  async findOne(userId: number) {
+    const res = await api.get<CurrentMoodEntity>(`${serviceRoute}/${userId}`);
 
     return res.data;
   },

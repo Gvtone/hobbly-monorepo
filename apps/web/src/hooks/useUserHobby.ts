@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { userHobbyService } from "../services/user-hobby";
 import type {
   CreateUserHobbyDto,
@@ -6,15 +6,16 @@ import type {
 } from "@hobbies-dashboard/types";
 import { showToast } from "../utils/toast";
 
-export function useUserHobby() {
+export function useUserHobby(userId: number | null) {
   const [userHobbies, setUserHobbies] = useState<UserHobbyWithHobbyEntity[]>(
     [],
   );
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(userId !== null);
 
-  const fetchUserHobbies = async () => {
+  const fetchUserHobbies = useCallback(async () => {
+    if (userId === null) return;
     try {
-      const data = await userHobbyService.findAll();
+      const data = await userHobbyService.findAll(userId);
       setUserHobbies(data);
     } catch (error) {
       showToast.error("Failed to load hobbies");
@@ -22,11 +23,11 @@ export function useUserHobby() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     fetchUserHobbies();
-  }, []);
+  }, [fetchUserHobbies]);
 
   const addUserHobby = async (data: CreateUserHobbyDto) => {
     const newHobby = await userHobbyService.create(data);

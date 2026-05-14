@@ -27,6 +27,7 @@ import {
   CommentWithUserEntity,
 } from './entities/comment.entity';
 import { PaginatedEntity } from '../../common/entities/paginated.entity';
+import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('Comment')
 @Controller('entry/:id/comment')
@@ -49,6 +50,7 @@ export class CommentController {
     return await this.commentService.create(user.sub, id, createCommentDto);
   }
 
+  @Public()
   @Get()
   @ApiOperation({ summary: 'Fetch all comment in the entry' })
   @ApiParam({ name: 'id', type: Number })

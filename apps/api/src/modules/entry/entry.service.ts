@@ -27,21 +27,32 @@ export class EntryService {
     return await this.databaseService.entry.create({ data: createEntryDto });
   }
 
-  async findAll({
-    userId,
-    search,
-    hobbyId,
-    moodId,
-    visibility,
-    startDate,
-    endDate,
-    page,
-    limit = 10,
-  }: EntryFilterDto) {
-    const whereClause: Prisma.EntryWhereInput = {
-      ...(userId && { userHobby: { userId } }),
+  async findAll(
+    {
+      userId,
+      search,
+      hobbyId,
+      moodId,
+      visibility,
+      startDate,
+      endDate,
+      page,
+      limit = 10,
+    }: EntryFilterDto,
+    enforcePublicProfile = false,
+  ) {
+    // Merge all userHobby conditions into one object to avoid spread overwrites
+    const userHobbyCondition: Prisma.UserHobbyWhereInput = {
+      ...(userId && { userId }),
+      ...(hobbyId && { hobbyId: { in: hobbyId } }),
+      ...(enforcePublicProfile && userId && { user: { visibility: 'PUBLIC' } }),
+    };
 
-      // Search across multiple fields
+    const whereClause: Prisma.EntryWhereInput = {
+      ...(Object.keys(userHobbyCondition).length > 0 && {
+        userHobby: userHobbyCondition,
+      }),
+
       ...(search && {
         OR: [
           { title: { contains: search, mode: 'insensitive' } },
@@ -59,23 +70,10 @@ export class EntryService {
         ],
       }),
 
-      // Filter by hobbies
-      ...(hobbyId && { userHobby: { hobbyId: { in: hobbyId } } }),
-
-      // Filter by moods
       ...(moodId && { moodId: { in: moodId } }),
-
-      // Filter by visibility
       ...(visibility && { visibility }),
-
-      // Filter by date range
       ...(startDate || endDate
-        ? {
-            activityDate: {
-              gte: startDate,
-              lte: endDate,
-            },
-          }
+        ? { activityDate: { gte: startDate, lte: endDate } }
         : {}),
     };
 

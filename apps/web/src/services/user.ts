@@ -1,4 +1,8 @@
-import type { UpdateUserDto, UserEntity } from "@hobbies-dashboard/types";
+import type {
+  PublicUserEntity,
+  UpdateUserDto,
+  UserEntity,
+} from "@hobbies-dashboard/types";
 import api from "./api";
 
 const serviceRoute = "/user";
@@ -11,6 +15,11 @@ export const userService = {
 
   async findCurrentUser() {
     const res = await api.get<UserEntity>(`${serviceRoute}/current-user`);
+    return res.data;
+  },
+
+  async findUserByUsername(username: string) {
+    const res = await api.get<PublicUserEntity>(`${serviceRoute}/${username}`);
     return res.data;
   },
 

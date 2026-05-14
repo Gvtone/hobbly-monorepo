@@ -13,8 +13,14 @@ export const likeService = {
   async status(id: number) {
     const res = await api.get<{
       liked: boolean;
-      count: number;
     }>(`${serviceRoute}/${id}/like/status`);
+    return res.data;
+  },
+
+  async count(id: number) {
+    const res = await api.get<{
+      count: number;
+    }>(`${serviceRoute}/${id}/like/count`);
     return res.data;
   },
 };

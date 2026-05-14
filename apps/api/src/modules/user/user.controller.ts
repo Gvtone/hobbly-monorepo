@@ -10,12 +10,19 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { PayloadEntity } from '../auth/entities/payload.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity } from './entities/user.entity';
+import { PublicUserEntity, UserEntity } from './entities/user.entity';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('User')
 @Controller('user')
@@ -30,6 +37,20 @@ export class UserController {
   })
   async getCurrentUser(@AuthUser() user: PayloadEntity) {
     return await this.userService.findUserById(user.sub);
+  }
+
+  @Public()
+  @Get(':username')
+  @ApiOperation({
+    summary: 'Fetch the user based on username return public info',
+  })
+  @ApiParam({ name: 'username', type: 'string' })
+  @ApiOkResponse({
+    description: 'Fetch successful',
+    type: [PublicUserEntity],
+  })
+  async findUserByUsernamePublic(@Param('username') username: string) {
+    return await this.userService.findUserByUsernamePublic(username);
   }
 
   @Get()

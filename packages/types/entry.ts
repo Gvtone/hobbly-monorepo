@@ -25,6 +25,18 @@ export interface EntryFilterDto {
   search?: string;
   hobbyId?: number[];
   moodId?: number[];
+  visibility?: Visibility;
+  startDate?: Date;
+  endDate?: Date;
+  page?: number;
+  limit?: number;
+}
+
+export interface PublicEntryFilterDto {
+  userId?: number;
+  search?: string;
+  hobbyId?: number[];
+  moodId?: number[];
   startDate?: Date;
   endDate?: Date;
   page?: number;

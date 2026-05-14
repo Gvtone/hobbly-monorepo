@@ -2,68 +2,31 @@ import { Globe, Lock, PenLine, Share2, SmilePlus } from "lucide-react";
 import Button from "../ui/Button";
 import { Card } from "../ui/Card";
 import { cn } from "../../utils/utils";
-import { useAuth } from "../../context/auth/useAuth";
 import { useCurrentMood } from "../../hooks/userCurrentMood";
-import Modal from "../layout/Modal";
-import { useEffect, useState } from "react";
-import Input from "../ui/Input";
-import { useForm, useWatch } from "react-hook-form";
-import type { SetCurrentMoodDto } from "@hobbies-dashboard/types";
-import EmojiInput from "../ui/EmojiInput";
-import { userService } from "../../services/user";
-import { showToast } from "../../utils/toast";
+import { useState } from "react";
+import MoodModal from "./MoodModal";
+import VisibilityModal from "./VisibilityModal";
+import ProfileShareModal from "./ProfileShareModal";
+import type { PublicUserEntity, UserEntity } from "@hobbies-dashboard/types";
 
 interface MainProfileCardProps {
+  isOwnProfile?: boolean;
+  user: PublicUserEntity | UserEntity;
   className?: string;
   children?: React.ReactNode;
 }
 
-function MainProfileCard({ className, children }: MainProfileCardProps) {
-  const { user, updateUser } = useAuth();
-  const { currentMood, setOrUpdateCurrentMood, removeCurrentMood } =
-    useCurrentMood();
+function MainProfileCard({
+  isOwnProfile,
+  user,
+  className,
+  children,
+}: MainProfileCardProps) {
+  const { currentMood } = useCurrentMood(user.id);
 
   const [isCurrentMoodOpen, setIsCurrentMoodOpen] = useState(false);
   const [isVisibilityOpen, setIsVisibilityOpen] = useState(false);
-
-  const toggleVisibility = async () => {
-    const newVisibility = user?.visibility === "PRIVATE" ? "PUBLIC" : "PRIVATE";
-    const updated = await userService.updateCurrentUser({
-      visibility: newVisibility,
-    });
-    updateUser(updated);
-    setIsVisibilityOpen(false);
-    showToast.success(
-      `Profile visibility changed to ${newVisibility.toLowerCase()}`,
-    );
-  };
-
-  const { register, handleSubmit, setValue, reset, control } =
-    useForm<SetCurrentMoodDto>({
-      defaultValues: {
-        icon: currentMood?.icon ?? "😊",
-        color: currentMood?.color ?? "#c8a2e3",
-        description: currentMood?.description ?? undefined,
-      },
-    });
-
-  useEffect(() => {
-    reset({
-      icon: currentMood?.icon ?? "😊",
-      color: currentMood?.color ?? "#c8a2e3",
-      description: currentMood?.description ?? "",
-    });
-  }, [currentMood, reset]);
-
-  const icon = useWatch({ control, name: "icon" });
-  const color = useWatch({ control, name: "color" });
-  const description = useWatch({ control, name: "description" }) ?? "";
-
-  const onSubmit = async (data: SetCurrentMoodDto) => {
-    await setOrUpdateCurrentMood(data);
-    reset();
-    setIsCurrentMoodOpen(false);
-  };
+  const [isProfileShareOpen, setIsProfileShareOpen] = useState(false);
 
   return (
     <>
@@ -107,15 +70,17 @@ function MainProfileCard({ className, children }: MainProfileCardProps) {
                     "flex items-center justify-center gap-1",
                     "max-w-36 rounded-full border-2 px-1.5 py-1",
                     currentMood.description && "hover:pr-2.5",
-                    "drop-shadow-xl hover:cursor-pointer",
-                    "transition-all duration-300",
+                    isOwnProfile && "hover:cursor-pointer",
+                    "drop-shadow-xl transition-all duration-300",
                   )}
                   style={
                     currentMood.color
                       ? { backgroundColor: `${currentMood.color}` }
                       : undefined
                   }
-                  onClick={() => setIsCurrentMoodOpen(true)}
+                  onClick={
+                    isOwnProfile ? () => setIsCurrentMoodOpen(true) : undefined
+                  }
                 >
                   {currentMood.icon && <span>{currentMood.icon}</span>}
                   {currentMood.description && (
@@ -149,36 +114,40 @@ function MainProfileCard({ className, children }: MainProfileCardProps) {
               )}
             </div>
 
-            <div className="flex gap-4">
-              <Button
-                variant="secondary"
-                shape="pill"
-                className="text-muted-foreground"
-              >
-                <Share2 size={12}></Share2>
-                Share
-              </Button>
-              <Button
-                onClick={() => setIsVisibilityOpen(true)}
-                variant="secondary"
-                shape="pill"
-                className="text-muted-foreground"
-                style={
-                  user?.visibility === "PUBLIC"
-                    ? { background: "var(--hobbly-green)", color: "white" }
-                    : undefined
-                }
-              >
-                {user?.visibility === "PUBLIC" ? (
-                  <Globe size={12} />
-                ) : (
-                  <Lock size={12} />
-                )}
-                {user?.visibility === "PUBLIC" ? "Public" : "Private"}
-              </Button>
-            </div>
+            {isOwnProfile && (
+              <div className="flex gap-4">
+                <Button
+                  variant="secondary"
+                  shape="pill"
+                  className="text-muted-foreground"
+                  onClick={() => setIsProfileShareOpen(true)}
+                >
+                  <Share2 size={12} />
+                  Share
+                </Button>
+                <Button
+                  onClick={() => setIsVisibilityOpen(true)}
+                  variant="secondary"
+                  shape="pill"
+                  className="text-muted-foreground"
+                  style={
+                    user?.visibility === "PUBLIC"
+                      ? { background: "var(--hobbly-green)", color: "white" }
+                      : undefined
+                  }
+                >
+                  {user?.visibility === "PUBLIC" ? (
+                    <Globe size={12} />
+                  ) : (
+                    <Lock size={12} />
+                  )}
+                  {user?.visibility === "PUBLIC" ? "Public" : "Private"}
+                </Button>
+              </div>
+            )}
           </div>
 
+          {/* Username */}
           <div className="mb-4 flex flex-col">
             <h2 className="text-center text-3xl md:text-start">
               {user?.displayName ?? user?.username}
@@ -187,127 +156,45 @@ function MainProfileCard({ className, children }: MainProfileCardProps) {
               @{user?.username}
             </span>
 
+            {/* Bio */}
             {user?.bio && (
-              <div className="group flex items-center">
+              <div className="group relative">
                 <p className="text-center text-sm md:text-start">{user?.bio}</p>
-                <Button
-                  variant="transparent"
-                  shape="pill"
-                  size="icon"
-                  className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
-                >
-                  <PenLine size={14}></PenLine>
-                </Button>
+                {isOwnProfile && (
+                  <Button
+                    variant="transparent"
+                    shape="pill"
+                    size="icon"
+                    className="absolute top-1/2 right-0 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    <PenLine size={14} />
+                  </Button>
+                )}
               </div>
             )}
           </div>
 
           {children}
         </div>
-
-        <Modal
-          title="Profile Visibility"
-          description="Set who can see your profile"
-          icon={user?.visibility === "PUBLIC" ? "🌏" : "🔒"}
-          open={isVisibilityOpen}
-          onClose={() => setIsVisibilityOpen(false)}
-        >
-          <div className="mb-4 flex flex-col gap-1">
-            <p className="text-center">
-              {user?.visibility === "PUBLIC"
-                ? "Making your profile private will hide it from search and other users."
-                : "People will be able to visit your profile and you'll appear in search."}
-            </p>
-            <p className="text-muted-foreground text-center text-sm">
-              You can change it back any time.
-            </p>
-          </div>
-          <Button
-            onClick={toggleVisibility}
-            fullWidth
-            variant="gradient"
-            shape="pill"
-          >
-            {user?.visibility === "PUBLIC"
-              ? "Make profile private"
-              : "Set profile to public"}
-          </Button>
-        </Modal>
-
-        <Modal
-          title="Show your current mood!"
-          description="Set your mood"
-          icon="🤍"
-          open={isCurrentMoodOpen}
-          onClose={() => {
-            setIsCurrentMoodOpen(false);
-            reset({ color: undefined });
-          }}
-        >
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
-            {/* Emoji + Color + Description row */}
-            <div className="flex gap-1">
-              {/* Color picker */}
-              <input
-                type="color"
-                {...register("color")}
-                className="size-12 cursor-pointer appearance-none rounded-l-full border-none p-0"
-                style={{ backgroundColor: color }}
-              />
-
-              {/* Emoji picker */}
-              <EmojiInput
-                value={icon}
-                onChange={(emoji) => setValue("icon", emoji)}
-                className="rounded-none border-none"
-              />
-
-              {/* Description with character limit */}
-              <div className="flex flex-1 flex-col gap-1">
-                <Input
-                  type="text"
-                  variant="auth"
-                  shape="pill"
-                  placeholder="How are you feeling?"
-                  maxLength={100}
-                  autoComplete="off"
-                  className="rounded-l-none"
-                  {...register("description", { maxLength: 100 })}
-                />
-                <span
-                  className="text-muted-foreground text-right text-xs"
-                  style={
-                    description.length == 100 ? { color: "red" } : undefined
-                  }
-                >
-                  {description.length}/100
-                </span>
-              </div>
-            </div>
-
-            <Button type="submit" variant="gradient" shape="pill" fullWidth>
-              Save mood ✨
-            </Button>
-            {currentMood && (
-              <Button
-                type="button"
-                variant="secondary"
-                shape="pill"
-                fullWidth
-                onClick={async () => {
-                  await removeCurrentMood();
-                  setIsCurrentMoodOpen(false);
-                }}
-              >
-                Remove mood
-              </Button>
-            )}
-          </form>
-        </Modal>
       </Card>
+
+      {isOwnProfile && (
+        <>
+          <MoodModal
+            userId={user.id}
+            open={isCurrentMoodOpen}
+            onClose={() => setIsCurrentMoodOpen(false)}
+          />
+          <VisibilityModal
+            open={isVisibilityOpen}
+            onClose={() => setIsVisibilityOpen(false)}
+          />
+          <ProfileShareModal
+            open={isProfileShareOpen}
+            onClose={() => setIsProfileShareOpen(false)}
+          />
+        </>
+      )}
     </>
   );
 }

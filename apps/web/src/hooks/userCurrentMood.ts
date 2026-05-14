@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { currentMoodService } from "../services/current-mood";
 import { showToast } from "../utils/toast";
 
-export function useCurrentMood() {
+export function useCurrentMood(userId: number) {
   const [currentMood, setCurrentMood] = useState<CurrentMoodEntity | undefined>(
     undefined,
   );
@@ -15,18 +15,17 @@ export function useCurrentMood() {
   useEffect(() => {
     const fetchCurrentMood = async () => {
       try {
-        const data = await currentMoodService.findOne();
+        const data = await currentMoodService.findOne(userId);
         setCurrentMood(data);
-      } catch (error) {
-        showToast.error("Failed to load current mood");
-        console.error("Error fetching current mood:", error);
+      } catch {
+        // 404 means no mood set — valid state, nothing to show
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchCurrentMood();
-  }, []);
+  }, [userId]);
 
   const setOrUpdateCurrentMood = async (data: SetCurrentMoodDto) => {
     setIsLoading(true);

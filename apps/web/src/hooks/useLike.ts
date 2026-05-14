@@ -14,14 +14,14 @@ export function useLike(entryId: number) {
   }, [liked]);
 
   useEffect(() => {
-    likeService
-      .status(entryId)
-      .then(({ liked, count }) => {
-        setLiked(liked);
-        setCount(count);
-      })
-      .catch(() => showToast.error("Failed to load like status"))
-      .finally(() => setIsLoading(false));
+    Promise.allSettled([
+      likeService.count(entryId),
+      likeService.status(entryId),
+    ]).then(([countResult, statusResult]) => {
+      if (countResult.status === "fulfilled") setCount(countResult.value.count);
+      if (statusResult.status === "fulfilled") setLiked(statusResult.value.liked);
+      setIsLoading(false);
+    });
   }, [entryId]);
 
   const toggle = async () => {

@@ -20,20 +20,20 @@ export function useUser() {
     }
   };
 
-  const fetchCurrentUser = async () => {
-    try {
-      const data = await userService.findCurrentUser();
-      setCurretUser(data);
-    } catch (error) {
-      showToast.error("Failed to load users");
-      console.log("Error fetching user hobbies:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const fetchCurrentUser = async () => {
+  //   try {
+  //     const data = await userService.findCurrentUser();
+  //     setCurretUser(data);
+  //   } catch (error) {
+  //     showToast.error("Failed to load current user");
+  //     console.log("Error fetching user:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
-    fetchCurrentUser();
+    fetchUsers();
   }, []);
 
   const updateCurrentUser = async (data: UpdateUserDto) => {
