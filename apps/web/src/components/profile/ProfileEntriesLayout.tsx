@@ -11,7 +11,7 @@ function ProfileEntriesLayout({
   children,
 }: ProfileEntriesLayoutProps) {
   return (
-    <div>
+    <>
       <div className="mb-4 flex gap-2">
         <Button
           variant="secondary"
@@ -40,12 +40,12 @@ function ProfileEntriesLayout({
 
       <Masonry
         breakpointCols={{ default: 3, 768: 2, 480: 1 }}
-        className="flex gap-3"
+        className="mb-4 flex gap-3"
         columnClassName="flex flex-col gap-3"
       >
         {children}
       </Masonry>
-    </div>
+    </>
   );
 }
 

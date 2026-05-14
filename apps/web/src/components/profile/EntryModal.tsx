@@ -395,7 +395,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                     <>
                       <div className="flex flex-1 flex-col items-center justify-center gap-2 py-6 text-center">
                         <span className="mb-2 text-5xl">
-                          {switchingToPublic ? "🌍" : "🔒"}
+                          {switchingToPublic ? "🌏" : "🔒"}
                         </span>
                         <Dialog.Title className="text-xl">
                           {switchingToPublic

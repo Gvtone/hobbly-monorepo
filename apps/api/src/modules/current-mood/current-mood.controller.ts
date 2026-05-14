@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Delete,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { CurrentMoodService } from './current-mood.service';
 import { SetCurrentMoodDto } from './dto/create-current-mood.dto';
 import {
@@ -6,11 +14,13 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentMoodEntity } from './entities/current-mood.entity';
 import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { PayloadEntity } from '../auth/entities/payload.entity';
+import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('Current Mood')
 @Controller('current-mood')
@@ -24,7 +34,7 @@ export class CurrentMoodController {
     description: 'Mood created',
     type: CurrentMoodEntity,
   })
-  async create(
+  async setOrUpdate(
     @AuthUser() user: PayloadEntity,
     @Body() createCurrentMoodDto: SetCurrentMoodDto,
   ) {
@@ -34,15 +44,16 @@ export class CurrentMoodController {
     );
   }
 
-  @Get()
+  @Public()
+  @Get(':userId')
   @ApiOperation({ summary: 'Fetch mood' })
-  @ApiBody({ type: SetCurrentMoodDto })
+  @ApiParam({ name: 'userId', type: Number })
   @ApiOkResponse({
-    description: 'Updated Mood',
+    description: 'Fetch Mood',
     type: CurrentMoodEntity,
   })
-  async findOne(@AuthUser() user: PayloadEntity) {
-    return await this.currentMoodService.findOne(user.sub);
+  async findOne(@Param('userId', ParseIntPipe) userId: number) {
+    return await this.currentMoodService.findOne(userId);
   }
 
   @Delete()

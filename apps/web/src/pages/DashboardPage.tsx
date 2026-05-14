@@ -26,7 +26,7 @@ function DashboardPage() {
     userHobbies,
     isLoading: isUserHobbiesLoading,
     addUserHobby,
-  } = useUserHobby();
+  } = useUserHobby(user?.id ?? null);
   const {
     userEntries,
     isLoading: isEntriesLoading,
@@ -145,6 +145,7 @@ function DashboardPage() {
 
         {/* Modals */}
         <LogEntryModal
+          userId={user?.id ?? null}
           open={isLogEntryOpen}
           onClose={() => setIsLogEntryOpen(false)}
           onRefresh={refreshEntries}

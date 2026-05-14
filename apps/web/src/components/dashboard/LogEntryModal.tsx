@@ -1,6 +1,6 @@
 import { useController, useForm } from "react-hook-form";
 import { useUserHobby } from "../../hooks/useUserHobby";
-import Modal from "../ui/Modal";
+import Modal from "../layout/Modal";
 import type { CreateEntryDto } from "@hobbies-dashboard/types";
 import RadioPill from "../ui/RadioPill";
 import Button from "../ui/Button";
@@ -12,13 +12,19 @@ import { entryService } from "../../services/entry";
 import { showToast } from "../../utils/toast";
 
 interface LogEntryModalProps {
+  userId: number | null;
   open: boolean;
   onClose: () => void;
   onRefresh: () => Promise<void>;
 }
 
-function LogEntryModal({ open, onClose, onRefresh }: LogEntryModalProps) {
-  const { userHobbies } = useUserHobby();
+function LogEntryModal({
+  userId,
+  open,
+  onClose,
+  onRefresh,
+}: LogEntryModalProps) {
+  const { userHobbies } = useUserHobby(userId);
   const { entryMoods } = useEntryMood();
   const dateToday = new Date().toISOString().split("T")[0];
 

@@ -8,6 +8,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('Like')
 @Controller('entry/:id/like')
@@ -35,8 +36,7 @@ export class LikeController {
 
   @Get('status')
   @ApiOperation({
-    summary:
-      'Get ammount of like of entry and status if current user have liked it or not',
+    summary: 'Get status if current user have liked it or not',
   })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({
@@ -45,7 +45,6 @@ export class LikeController {
       type: 'object',
       properties: {
         like: { type: 'boolean' },
-        count: { type: 'number' },
       },
     },
   })
@@ -54,7 +53,24 @@ export class LikeController {
     @AuthUser() user: PayloadEntity,
   ) {
     const liked = await this.likeService.isLiked(user.sub, id);
+    return { liked };
+  }
+
+  @Public()
+  @Get('count')
+  @ApiOperation({ summary: 'Get ammount of like of entry' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiOkResponse({
+    description: 'Fetch successful',
+    schema: {
+      type: 'object',
+      properties: {
+        count: { type: 'number' },
+      },
+    },
+  })
+  async count(@Param('id', ParseIntPipe) id: number) {
     const count = await this.likeService.count(id);
-    return { liked, count };
+    return { count };
   }
 }
