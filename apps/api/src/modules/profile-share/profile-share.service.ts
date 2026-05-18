@@ -60,6 +60,48 @@ export class ProfileShareService {
     return share.user;
   }
 
+  async findEntriesByReference(
+    referenceId: string,
+    page?: number,
+    limit = 10,
+  ) {
+    const share = await this.databaseService.profileShare.findFirst({
+      where: { referenceId },
+    });
+
+    if (!share) throw new NotFoundException('Share link not found or expired');
+
+    const paginatedDatabase = await this.databaseService.paginateModel();
+    return paginatedDatabase.entry
+      .paginate({
+        where: {
+          visibility: 'PUBLIC',
+          userHobby: { userId: share.userId },
+        },
+        include: {
+          userHobby: {
+            include: {
+              hobby: true,
+              user: {
+                select: {
+                  id: true,
+                  displayName: true,
+                  username: true,
+                  profilePicture: true,
+                  coverImage: true,
+                  bio: true,
+                  visibility: true,
+                },
+              },
+            },
+          },
+          mood: true,
+        },
+        orderBy: { activityDate: 'desc' },
+      })
+      .withPages({ page, limit });
+  }
+
   async revoke(userId: number) {
     return await this.databaseService.profileShare.delete({
       where: { userId },

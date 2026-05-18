@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/AuthPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage";
+import ShareProfilePage from "./pages/ShareProfilePage";
 import DashboardPage from "./pages/DashboardPage";
 import ExplorePage from "./pages/ExplorePage";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
@@ -23,14 +24,6 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      // {
-      //   path: "profile",
-      //   element: (
-      //     <ProtectedRoute>
-      //       <ProfilePage />
-      //     </ProtectedRoute>
-      //   ),
-      // },
       {
         path: "explore",
         element: (
@@ -38,6 +31,10 @@ export const router = createBrowserRouter([
             <ExplorePage />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "share/:referenceId",
+        element: <ShareProfilePage />,
       },
       {
         path: ":slug",

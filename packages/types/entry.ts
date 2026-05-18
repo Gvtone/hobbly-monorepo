@@ -26,6 +26,7 @@ export interface EntryFilterDto {
   hobbyId?: number[];
   moodId?: number[];
   visibility?: Visibility;
+  userVisibility?: Visibility;
   startDate?: Date;
   endDate?: Date;
   page?: number;

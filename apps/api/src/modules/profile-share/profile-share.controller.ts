@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Delete,
+  Query,
+  ParseIntPipe,
+  DefaultValuePipe,
+} from '@nestjs/common';
 import { ProfileShareService } from './profile-share.service';
 import {
   ApiOkResponse,
@@ -50,6 +59,23 @@ export class ProfileShareController {
   })
   async findByReference(@Param('referenceId') referenceId: string) {
     return await this.profileShareService.findByReference(referenceId);
+  }
+
+  @Public()
+  @Get(':referenceId/entries')
+  @ApiOperation({ summary: 'Fetch public entries via share link' })
+  @ApiParam({ name: 'referenceId', type: String })
+  async findEntriesByReference(
+    @Param('referenceId') referenceId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    const [data, meta] = await this.profileShareService.findEntriesByReference(
+      referenceId,
+      page,
+      limit,
+    );
+    return { data, ...meta };
   }
 
   @Delete()

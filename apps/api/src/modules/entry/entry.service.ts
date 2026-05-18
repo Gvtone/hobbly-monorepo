@@ -27,25 +27,22 @@ export class EntryService {
     return await this.databaseService.entry.create({ data: createEntryDto });
   }
 
-  async findAll(
-    {
-      userId,
-      search,
-      hobbyId,
-      moodId,
-      visibility,
-      startDate,
-      endDate,
-      page,
-      limit = 10,
-    }: EntryFilterDto,
-    enforcePublicProfile = false,
-  ) {
-    // Merge all userHobby conditions into one object to avoid spread overwrites
+  async findAll({
+    userId,
+    search,
+    hobbyId,
+    moodId,
+    visibility,
+    userVisibility,
+    startDate,
+    endDate,
+    page,
+    limit = 10,
+  }: EntryFilterDto) {
     const userHobbyCondition: Prisma.UserHobbyWhereInput = {
       ...(userId && { userId }),
       ...(hobbyId && { hobbyId: { in: hobbyId } }),
-      ...(enforcePublicProfile && userId && { user: { visibility: 'PUBLIC' } }),
+      ...(userVisibility && { user: { visibility: userVisibility } }),
     };
 
     const whereClause: Prisma.EntryWhereInput = {

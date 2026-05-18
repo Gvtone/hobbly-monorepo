@@ -1,5 +1,6 @@
 import type {
   CreateEntryDto,
+  EntryFilterDto,
   EntryWithUserHobbyEntity,
   PaginatedOutputEntity,
 } from "@hobbies-dashboard/types";
@@ -9,9 +10,10 @@ import { showToast } from "../utils/toast";
 
 interface UseEntryParams {
   limit?: number;
+  filter?: Omit<EntryFilterDto, "page" | "limit">;
 }
 
-export function useEntry({ limit = 10 }: UseEntryParams = {}) {
+export function useEntry({ limit = 10, filter }: UseEntryParams = {}) {
   const [userEntries, setUserEntries] = useState<EntryWithUserHobbyEntity[]>(
     [],
   );
@@ -33,6 +35,7 @@ export function useEntry({ limit = 10 }: UseEntryParams = {}) {
       const { data, ...pagination } = await entryService.findAll({
         page: targetPage,
         limit,
+        ...filter,
       });
       setUserEntries((prev) => (append ? [...prev, ...data] : data));
       setMeta(pagination);
