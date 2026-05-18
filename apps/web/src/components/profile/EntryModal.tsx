@@ -569,8 +569,8 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                             `@${comment.user.username}`}
                         </span>
                         <span className="text-muted-foreground text-xs">
-                          {comment.createdAt < subDays(new Date(), 6)
-                            ? formatDate(comment.createdAt, "PPp")
+                          {new Date(comment.createdAt) < subDays(new Date(), 6)
+                            ? formatDate(comment.createdAt, "PP")
                             : formatRelative(comment.createdAt, new Date())}
                         </span>
                       </div>

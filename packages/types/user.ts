@@ -16,6 +16,7 @@ export interface UpdateUserDto extends Partial<CreateUserDto> {
 
 export interface PublicUserEntity {
   id: number;
+  createdAt: Date;
   displayName: string | null;
   username: string;
   profilePicture: string | null;

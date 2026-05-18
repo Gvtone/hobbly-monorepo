@@ -113,7 +113,7 @@ function ProfilePage() {
         {isOwnProfile || profileUser.visibility === "PUBLIC" ? (
           <>
             {/* Activity calendar */}
-            <ActivityCalendar />
+            <ActivityCalendar entries={entries} user={profileUser} />
 
             {/* Hobbies */}
             <section>
