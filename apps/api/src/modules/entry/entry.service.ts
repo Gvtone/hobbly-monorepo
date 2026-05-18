@@ -33,15 +33,23 @@ export class EntryService {
     hobbyId,
     moodId,
     visibility,
+    userVisibility,
     startDate,
     endDate,
     page,
     limit = 10,
   }: EntryFilterDto) {
-    const whereClause: Prisma.EntryWhereInput = {
-      ...(userId && { userHobby: { userId } }),
+    const userHobbyCondition: Prisma.UserHobbyWhereInput = {
+      ...(userId && { userId }),
+      ...(hobbyId && { hobbyId: { in: hobbyId } }),
+      ...(userVisibility && { user: { visibility: userVisibility } }),
+    };
 
-      // Search across multiple fields
+    const whereClause: Prisma.EntryWhereInput = {
+      ...(Object.keys(userHobbyCondition).length > 0 && {
+        userHobby: userHobbyCondition,
+      }),
+
       ...(search && {
         OR: [
           { title: { contains: search, mode: 'insensitive' } },
@@ -59,23 +67,10 @@ export class EntryService {
         ],
       }),
 
-      // Filter by hobbies
-      ...(hobbyId && { userHobby: { hobbyId: { in: hobbyId } } }),
-
-      // Filter by moods
       ...(moodId && { moodId: { in: moodId } }),
-
-      // Filter by visibility
       ...(visibility && { visibility }),
-
-      // Filter by date range
       ...(startDate || endDate
-        ? {
-            activityDate: {
-              gte: startDate,
-              lte: endDate,
-            },
-          }
+        ? { activityDate: { gte: startDate, lte: endDate } }
         : {}),
     };
 

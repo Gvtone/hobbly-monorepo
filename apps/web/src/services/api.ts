@@ -6,6 +6,16 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  // Arrays become comma-separated strings: hobbyId=[1,2] → hobbyId=1,2
+  paramsSerializer: (params) => {
+    const parts: string[] = [];
+    for (const [key, value] of Object.entries(params)) {
+      if (value === undefined || value === null) continue;
+      const serialized = Array.isArray(value) ? value.join(",") : String(value);
+      parts.push(`${key}=${encodeURIComponent(serialized)}`);
+    }
+    return parts.join("&");
+  },
 });
 
 api.interceptors.response.use(

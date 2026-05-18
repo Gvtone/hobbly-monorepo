@@ -14,8 +14,10 @@ export const userHobbyService = {
     return res.data;
   },
 
-  async findAll() {
-    const res = await api.get<UserHobbyWithHobbyEntity[]>(`${serviceRoute}`);
+  async findAll(userId: number) {
+    const res = await api.get<UserHobbyWithHobbyEntity[]>(
+      `${serviceRoute}/user/${userId}`,
+    );
     return res.data;
   },
 
