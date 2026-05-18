@@ -54,6 +54,10 @@ export class EntryFilterDto implements IEntryFilterDto {
   @IsOptional()
   visibility?: Visibility;
 
+  @ApiPropertyOptional({ enum: Visibility })
+  @IsOptional()
+  userVisibility?: Visibility;
+
   @ApiPropertyOptional({
     type: Date,
     example: '2026-04-27',

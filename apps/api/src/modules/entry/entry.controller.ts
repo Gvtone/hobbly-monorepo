@@ -47,10 +47,11 @@ export class EntryController {
     type: PaginatedEntity(EntryEntityWithUserHobby),
   })
   async findAllPublic(@Query() filter: PublicEntryFilterDto) {
-    const [data, meta] = await this.entryService.findAll(
-      { ...filter, visibility: 'PUBLIC' },
-      true,
-    );
+    const [data, meta] = await this.entryService.findAll({
+      ...filter,
+      visibility: 'PUBLIC',
+      userVisibility: 'PUBLIC',
+    });
     return { data, ...meta };
   }
 

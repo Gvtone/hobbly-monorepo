@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { likeService } from "../services/like";
 import { showToast } from "../utils/toast";
+import { useAuth } from "../context/auth/useAuth";
 
 export function useLike(entryId: number) {
+  const { user } = useAuth();
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -14,15 +16,17 @@ export function useLike(entryId: number) {
   }, [liked]);
 
   useEffect(() => {
-    Promise.allSettled([
-      likeService.count(entryId),
-      likeService.status(entryId),
-    ]).then(([countResult, statusResult]) => {
-      if (countResult.status === "fulfilled") setCount(countResult.value.count);
-      if (statusResult.status === "fulfilled") setLiked(statusResult.value.liked);
+    likeService.count(entryId).then(({ count }) => setCount(count));
+
+    if (user) {
+      likeService
+        .status(entryId)
+        .then(({ liked }) => setLiked(liked))
+        .finally(() => setIsLoading(false));
+    } else {
       setIsLoading(false);
-    });
-  }, [entryId]);
+    }
+  }, [entryId, user]);
 
   const toggle = async () => {
     const wasLiked = likedRef.current;

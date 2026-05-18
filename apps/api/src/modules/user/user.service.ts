@@ -40,6 +40,7 @@ export class UserService {
       where: { username },
       select: {
         id: true,
+        createdAt: true,
         displayName: true,
         username: true,
         profilePicture: true,

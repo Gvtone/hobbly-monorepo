@@ -1,4 +1,4 @@
-import { Globe, Lock, PenLine, Share2, SmilePlus } from "lucide-react";
+import { Globe, Lock, Share2, SmilePlus } from "lucide-react";
 import Button from "../ui/Button";
 import { Card } from "../ui/Card";
 import { cn } from "../../utils/utils";
@@ -92,25 +92,27 @@ function MainProfileCard({
                   )}
                 </div>
               ) : (
-                <div
-                  className={cn(
-                    "border-card/50 hover:border-card group absolute -bottom-2 left-[calc(100%-1.5rem)]",
-                    "flex items-center justify-center gap-1",
-                    "max-w-36 rounded-full border-2 p-1 hover:pr-2",
-                    "bg-card/50 hover:bg-card hover:text-foreground text-foreground/50 drop-shadow-xl hover:cursor-pointer",
-                    "transition-all duration-300",
-                  )}
-                  onClick={() => setIsCurrentMoodOpen(true)}
-                >
-                  <span>
-                    <SmilePlus />
-                  </span>
-                  <span className="hidden max-w-25 overflow-hidden group-hover:inline">
-                    <span className="marquee-text text-foreground inline-block text-sm whitespace-nowrap">
-                      Set your mood
+                isOwnProfile && (
+                  <div
+                    className={cn(
+                      "border-card/50 hover:border-card group absolute -bottom-2 left-[calc(100%-1.5rem)]",
+                      "flex items-center justify-center gap-1",
+                      "max-w-36 rounded-full border-2 p-1 hover:pr-2",
+                      "bg-card/50 hover:bg-card hover:text-foreground text-foreground/50 drop-shadow-xl hover:cursor-pointer",
+                      "transition-all duration-300",
+                    )}
+                    onClick={() => setIsCurrentMoodOpen(true)}
+                  >
+                    <span>
+                      <SmilePlus />
                     </span>
-                  </span>
-                </div>
+                    <span className="hidden max-w-25 overflow-hidden group-hover:inline">
+                      <span className="marquee-text text-foreground inline-block text-sm whitespace-nowrap">
+                        Set your mood
+                      </span>
+                    </span>
+                  </div>
+                )
               )}
             </div>
 
@@ -158,19 +160,7 @@ function MainProfileCard({
 
             {/* Bio */}
             {user?.bio && (
-              <div className="group relative">
-                <p className="text-center text-sm md:text-start">{user?.bio}</p>
-                {isOwnProfile && (
-                  <Button
-                    variant="transparent"
-                    shape="pill"
-                    size="icon"
-                    className="absolute top-1/2 right-0 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100"
-                  >
-                    <PenLine size={14} />
-                  </Button>
-                )}
-              </div>
+              <p className="text-center text-sm md:text-start">{user?.bio}</p>
             )}
           </div>
 

@@ -1,15 +1,16 @@
 import { useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "../ui/Card";
+import { format } from "date-fns";
+import type {
+  EntryWithUserHobbyEntity,
+  PublicUserEntity,
+  UserEntity,
+} from "@hobbies-dashboard/types";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
-
-interface HobbyEntry {
-  date: string; // "YYYY-MM-DD"
-  hobby: { name: string; color: string };
-}
 
 type Hobby = { name: string; color: string };
 
@@ -23,21 +24,20 @@ type CalendarDay = {
 // Constants
 // ---------------------------------------------------------------------------
 
-const HOBBY_LIST: Hobby[] = [
-  { name: "Anime", color: "#c8a2e3" },
-  { name: "Books", color: "#f5c27a" },
-  { name: "Gaming", color: "#8baf8b" },
-  { name: "Art", color: "#e8857a" },
-  { name: "Cooking", color: "#f5a040" },
-  { name: "Music", color: "#7ec8e3" },
-  { name: "Journal", color: "#d4c5a0" },
-  { name: "Plants", color: "#5a8a5a" },
-];
-
 const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 const MONTH_NAMES = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -58,16 +58,6 @@ function getSundayOf(d: Date): Date {
   return copy;
 }
 
-/** Formats "YYYY-MM-DD" → "Mon, Jan 1" */
-function formatDisplayDate(dateStr: string): string {
-  const [y, m, day] = dateStr.split("-").map(Number);
-  return new Date(y, m - 1, day).toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  });
-}
-
 /**
  * Returns a CSS background value for the dot.
  * - 0 hobbies → muted colour
@@ -82,78 +72,12 @@ function getDotBackground(hobbies: Hobby[]): string {
 }
 
 // ---------------------------------------------------------------------------
-// Mock data
-// ---------------------------------------------------------------------------
-
-function generateMockEntries(): HobbyEntry[] {
-  let seed = 42;
-  const rand = () => {
-    seed = (seed * 1664525 + 1013904223) >>> 0;
-    return seed / 0xffffffff;
-  };
-
-  const entries: HobbyEntry[] = [];
-
-  const addYear = (year: number, primaryCount: number) => {
-    const start = new Date(year, 0, 1);
-    const end =
-      year === CURRENT_YEAR ? new Date(2026, 3, 16) : new Date(year, 11, 31);
-    const totalDays = Math.floor((end.getTime() - start.getTime()) / 86400000) + 1;
-
-    // Build a pool of active dates (unique)
-    const activeDates: string[] = [];
-    const seen = new Set<string>();
-    let tries = 0;
-    while (activeDates.length < Math.min(primaryCount, totalDays) && tries < primaryCount * 4) {
-      tries++;
-      const d = new Date(start);
-      d.setDate(d.getDate() + Math.floor(rand() * totalDays));
-      const s = toDateStr(d);
-      if (!seen.has(s)) {
-        seen.add(s);
-        activeDates.push(s);
-        entries.push({ date: s, hobby: HOBBY_LIST[Math.floor(rand() * HOBBY_LIST.length)] });
-      }
-    }
-
-    // ~25 % of active days get a second different hobby
-    for (const dateStr of activeDates) {
-      if (rand() < 0.25) {
-        const existing = entries.filter((e) => e.date === dateStr).map((e) => e.hobby.name);
-        const others = HOBBY_LIST.filter((h) => !existing.includes(h.name));
-        if (others.length > 0) {
-          entries.push({ date: dateStr, hobby: others[Math.floor(rand() * others.length)] });
-        }
-      }
-    }
-
-    // ~8 % of active days get a third different hobby
-    for (const dateStr of activeDates) {
-      if (rand() < 0.08) {
-        const existing = entries.filter((e) => e.date === dateStr).map((e) => e.hobby.name);
-        const others = HOBBY_LIST.filter((h) => !existing.includes(h.name));
-        if (others.length > 0) {
-          entries.push({ date: dateStr, hobby: others[Math.floor(rand() * others.length)] });
-        }
-      }
-    }
-  };
-
-  addYear(2024, 145);
-  addYear(2025, 155);
-  addYear(2026, 58);
-  return entries;
-}
-
-const MOCK_ENTRIES = generateMockEntries();
-
-// ---------------------------------------------------------------------------
 // Calendar grid builder
 // ---------------------------------------------------------------------------
 
 function buildCalendar(
   year: number,
-  entryMap: Map<string, Hobby[]>
+  entryMap: Map<string, Hobby[]>,
 ): {
   weeks: CalendarDay[][];
   monthPositions: { month: number; weekIndex: number }[];
@@ -209,32 +133,41 @@ interface TooltipState {
 // Component
 // ---------------------------------------------------------------------------
 
-function ActivityCalendar() {
+interface ActivityCalendarProps {
+  entries: EntryWithUserHobbyEntity[];
+  user: PublicUserEntity | UserEntity;
+}
+
+function ActivityCalendar({ entries, user }: ActivityCalendarProps) {
   const [selectedYear, setSelectedYear] = useState(CURRENT_YEAR);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { weeks, monthPositions, activeDays, usedHobbies } = useMemo(() => {
-    // Build date → hobbies[] map (deduplicated by hobby name)
     const entryMap = new Map<string, Hobby[]>();
-    MOCK_ENTRIES.forEach((e) => {
-      if (parseInt(e.date) !== selectedYear) return;
-      if (!entryMap.has(e.date)) entryMap.set(e.date, []);
-      const list = entryMap.get(e.date)!;
-      if (!list.find((h) => h.name === e.hobby.name)) list.push(e.hobby);
+    const hobbyMap = new Map<string, Hobby>();
+
+    entries.forEach((entry) => {
+      const date = new Date(entry.activityDate);
+      if (date.getFullYear() !== selectedYear) return;
+      const dateStr = toDateStr(date);
+      const hobby = {
+        name: entry.userHobby.hobby.name,
+        color: entry.userHobby.hobby.color,
+      };
+
+      if (!entryMap.has(dateStr)) entryMap.set(dateStr, []);
+      const list = entryMap.get(dateStr)!;
+      if (!list.find((h) => h.name === hobby.name)) list.push(hobby);
+
+      hobbyMap.set(hobby.name, hobby);
     });
 
     const calendar = buildCalendar(selectedYear, entryMap);
-
-    // Collect hobbies used this year in HOBBY_LIST order
-    const hobbySet = new Set<string>();
-    MOCK_ENTRIES.forEach((e) => {
-      if (parseInt(e.date) === selectedYear) hobbySet.add(e.hobby.name);
-    });
-    const usedHobbies = HOBBY_LIST.filter((h) => hobbySet.has(h.name));
+    const usedHobbies = Array.from(hobbyMap.values());
 
     return { ...calendar, usedHobbies };
-  }, [selectedYear]);
+  }, [entries, selectedYear]);
 
   function showTooltip(e: React.MouseEvent, day: CalendarDay) {
     if (!day.inYear || day.hobbies.length === 0) return;
@@ -257,10 +190,10 @@ function ActivityCalendar() {
     <>
       <Card className="mb-10">
         {/* Header */}
-        <div className="flex justify-between items-start mb-3">
+        <div className="mb-3 flex items-start justify-between">
           <div>
             <h3 className="text-xl">Activity</h3>
-            <p className="text-muted-foreground text-xs mt-0.5">
+            <p className="text-muted-foreground mt-0.5 text-xs">
               {activeDays} active {activeDays === 1 ? "day" : "days"} in{" "}
               {selectedYear}
             </p>
@@ -269,19 +202,20 @@ function ActivityCalendar() {
           {/* Year navigation */}
           <div className="flex items-center gap-1">
             <button
-              onClick={() => setSelectedYear((y) => y - 1)}
-              className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+              onClick={() => setSelectedYear((year) => year - 1)}
+              disabled={selectedYear <= new Date(user.createdAt).getFullYear()}
+              className="hover:bg-muted text-muted-foreground hover:text-foreground rounded p-1 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
               aria-label="Previous year"
             >
               <ChevronLeft size={14} />
             </button>
-            <span className="text-sm font-medium w-10 text-center tabular-nums">
+            <span className="w-10 text-center text-sm font-medium tabular-nums">
               {selectedYear}
             </span>
             <button
-              onClick={() => setSelectedYear((y) => y + 1)}
+              onClick={() => setSelectedYear((year) => year + 1)}
               disabled={selectedYear >= CURRENT_YEAR}
-              className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+              className="hover:bg-muted text-muted-foreground hover:text-foreground rounded p-1 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
               aria-label="Next year"
             >
               <ChevronRight size={14} />
@@ -293,15 +227,15 @@ function ActivityCalendar() {
         <div className="overflow-x-auto">
           <div className="inline-block">
             {/* Month label row */}
-            <div className="flex mb-1">
-              <div className="w-5 mr-1.5 shrink-0" />
+            <div className="mb-1 flex">
+              <div className="mr-1.5 w-5 shrink-0" />
               <div className="flex gap-0.5">
                 {weeks.map((_, wi) => {
                   const mp = monthPositions.find((m) => m.weekIndex === wi);
                   return (
-                    <div key={wi} className="relative w-3 h-4">
+                    <div key={wi} className="relative h-4 w-3">
                       {mp && (
-                        <span className="absolute bottom-0 text-[10px] text-muted-foreground whitespace-nowrap leading-none">
+                        <span className="text-muted-foreground absolute bottom-0 text-[10px] leading-none whitespace-nowrap">
                           {MONTH_NAMES[mp.month]}
                         </span>
                       )}
@@ -313,11 +247,11 @@ function ActivityCalendar() {
 
             {/* Day labels + dot columns */}
             <div className="flex gap-0.5">
-              <div className="flex flex-col gap-0.5 mr-1.5 shrink-0">
+              <div className="mr-1.5 flex shrink-0 flex-col gap-0.5">
                 {DAY_LABELS.map((label, i) => (
                   <span
                     key={i}
-                    className="text-[10px] text-muted-foreground h-3 w-5 flex items-center justify-end leading-none"
+                    className="text-muted-foreground flex h-3 w-5 items-center justify-end text-[10px] leading-none"
                   >
                     {label}
                   </span>
@@ -329,7 +263,7 @@ function ActivityCalendar() {
                   {week.map((day, di) => (
                     <span
                       key={di}
-                      className="rounded-full size-3 shrink-0 transition-opacity"
+                      className="size-3 shrink-0 rounded-full transition-opacity"
                       style={{
                         background: day.inYear
                           ? getDotBackground(day.hobbies)
@@ -339,7 +273,10 @@ function ActivityCalendar() {
                             ? "pointer"
                             : "default",
                         opacity:
-                          tooltip && tooltip.dateStr !== day.dateStr && day.inYear && day.hobbies.length > 0
+                          tooltip &&
+                          tooltip.dateStr !== day.dateStr &&
+                          day.inYear &&
+                          day.hobbies.length > 0
                             ? 0.5
                             : 1,
                       }}
@@ -355,14 +292,14 @@ function ActivityCalendar() {
 
         {/* Hobby legend */}
         {usedHobbies.length > 0 && (
-          <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 pt-3 border-t border-border">
+          <div className="border-border mt-4 flex flex-wrap gap-x-4 gap-y-2 border-t pt-3">
             {usedHobbies.map((h) => (
               <div key={h.name} className="flex items-center gap-1.5">
                 <span
-                  className="rounded-full size-2.5 shrink-0"
+                  className="size-2.5 shrink-0 rounded-full"
                   style={{ backgroundColor: h.color }}
                 />
-                <span className="text-xs text-muted-foreground">{h.name}</span>
+                <span className="text-muted-foreground text-xs">{h.name}</span>
               </div>
             ))}
           </div>
@@ -372,25 +309,25 @@ function ActivityCalendar() {
       {/* Tooltip — rendered outside the Card so overflow-x never clips it */}
       {tooltip && (
         <div
-          className="fixed z-50 pointer-events-none"
+          className="pointer-events-none fixed z-50"
           style={{
             left: tooltip.x,
             top: tooltip.y,
             transform: "translate(-50%, calc(-100% - 8px))",
           }}
         >
-          <div className="bg-card border border-border rounded-2xl shadow-lg px-3 py-2.5 min-w-30">
-            <p className="text-[11px] text-muted-foreground mb-2 whitespace-nowrap">
-              {formatDisplayDate(tooltip.dateStr)}
+          <div className="bg-card border-border min-w-30 rounded-2xl border px-3 py-2.5 shadow-lg">
+            <p className="text-muted-foreground mb-2 text-[11px] whitespace-nowrap">
+              {format(tooltip.dateStr, "eee', 'MMM' 'd")}
             </p>
             <div className="flex flex-col gap-1.5">
-              {tooltip.hobbies.map((h) => (
-                <div key={h.name} className="flex items-center gap-2">
+              {tooltip.hobbies.map((hobby) => (
+                <div key={hobby.name} className="flex items-center gap-2">
                   <span
-                    className="rounded-full size-2.5 shrink-0"
-                    style={{ backgroundColor: h.color }}
+                    className="size-2.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: hobby.color }}
                   />
-                  <span className="text-xs font-medium">{h.name}</span>
+                  <span className="text-xs font-medium">{hobby.name}</span>
                 </div>
               ))}
             </div>

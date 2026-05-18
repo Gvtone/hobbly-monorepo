@@ -1,14 +1,16 @@
-import Button from "../components/ui/Button";
+import LinkButton from "../components/ui/LinkButton";
 
 function NotFoundPage() {
   return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      <span className="text-6xl mb-4">🌙</span>
-      <h1 className="text-center mb-2">Lost in the stars...</h1>
-      <p className="text-center text-muted-foreground mb-4">
+    <div className="flex h-screen flex-col items-center justify-center">
+      <span className="mb-4 text-6xl">🌙</span>
+      <h1 className="mb-2 text-center">Lost in the stars...</h1>
+      <p className="text-muted-foreground mb-4 text-center">
         This page doesn't exist in our cozy little world.
       </p>
-      <Button size="lg">Return home ✨</Button>
+      <LinkButton size="lg" to="/dashboard">
+        Return home ✨
+      </LinkButton>
     </div>
   );
 }

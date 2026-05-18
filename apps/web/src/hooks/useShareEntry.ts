@@ -3,17 +3,11 @@ import type {
   PaginatedOutputEntity,
 } from "@hobbies-dashboard/types";
 import { useCallback, useEffect, useState } from "react";
-import { entryService } from "../services/entry";
+import { profileShareService } from "../services/profile-share";
 
-interface UsePublicEntryParams {
-  userId: number | null;
-  limit?: number;
-  hobbyId?: number | null;
-}
-
-export function usePublicEntry({ userId, limit = 10, hobbyId }: UsePublicEntryParams) {
+export function useShareEntry(referenceId: string | undefined, limit = 10) {
   const [entries, setEntries] = useState<EntryWithUserHobbyEntity[]>([]);
-  const [isLoading, setIsLoading] = useState(userId !== null);
+  const [isLoading, setIsLoading] = useState(referenceId !== undefined);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<PaginatedOutputEntity>({
     currentPage: 1,
@@ -27,25 +21,24 @@ export function usePublicEntry({ userId, limit = 10, hobbyId }: UsePublicEntryPa
 
   const fetchEntries = useCallback(
     async (targetPage: number, append = false) => {
-      if (userId === null) return;
+      if (!referenceId) return;
       setIsLoading(true);
       try {
-        const { data, ...pagination } = await entryService.findAllPublic({
-          userId,
-          page: targetPage,
-          limit,
-          hobbyId: hobbyId ? [hobbyId] : undefined,
-        });
+        const { data, ...pagination } =
+          await profileShareService.findEntriesByReference(referenceId, {
+            page: targetPage,
+            limit,
+          });
         setEntries((prev) => (append ? [...prev, ...data] : data));
         setMeta(pagination);
         setPage(targetPage);
       } catch {
-        // silently handle — no entries is a valid state
+        // invalid or expired share link — handled at page level
       } finally {
         setIsLoading(false);
       }
     },
-    [userId, limit, hobbyId],
+    [referenceId, limit],
   );
 
   useEffect(() => {
@@ -57,14 +50,5 @@ export function usePublicEntry({ userId, limit = 10, hobbyId }: UsePublicEntryPa
     await fetchEntries(page + 1, true);
   };
 
-  const refresh = async () => fetchEntries(1);
-
-  return {
-    entries,
-    isLoading,
-    loadMore,
-    refresh,
-    hasMore: !meta.isLastPage,
-    meta,
-  };
+  return { entries, isLoading, loadMore, hasMore: !meta.isLastPage, meta };
 }

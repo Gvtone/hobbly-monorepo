@@ -15,6 +15,9 @@ export class PublicUserEntity implements IPublicUserEntity {
   @ApiProperty({ type: Number })
   id: number;
 
+  @ApiProperty({ type: Date })
+  createdAt: Date;
+
   @ApiProperty({ type: String })
   displayName: string | null;
 

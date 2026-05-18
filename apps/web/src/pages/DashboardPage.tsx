@@ -34,7 +34,7 @@ function DashboardPage() {
     hasMore,
     meta,
     refresh: refreshEntries,
-  } = useEntry();
+  } = useEntry({ userId: user?.id ?? null });
   const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
   const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
@@ -90,10 +90,6 @@ function DashboardPage() {
                 <HobbyCard
                   key={data.id}
                   data={data}
-                  // TODO: replace with real data
-                  trackedNumber="8"
-                  trackedLabel="series tracked"
-                  additional="Celestial Chronicles"
                   className="size-56 shrink-0"
                 ></HobbyCard>
               ))}

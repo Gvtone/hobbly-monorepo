@@ -29,6 +29,7 @@ import Textarea from "../ui/TextArea";
 import { useAuth } from "../../context/auth/useAuth";
 import { useComment } from "../../hooks/useComment";
 import { useForm } from "react-hook-form";
+import { useRequireAuth } from "../../hooks/useRequireAuth";
 
 type View = "default" | "delete" | "visibility" | "edit";
 
@@ -52,6 +53,8 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
     addComment,
   } = useComment(data.id);
   const { user } = useAuth();
+
+  const requireAuth = useRequireAuth();
 
   const [view, setView] = useState<View>("default");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -261,7 +264,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                           {entryUser?.profilePicture ? (
                             <img
                               src={entryUser.profilePicture}
-                              className="size-8 shrink-0 rounded-full"
+                              className="size-8 shrink-0 rounded-full object-cover"
                               alt={entryUser.username}
                             />
                           ) : (
@@ -286,7 +289,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                               liked ? "text-destructive" : "",
                             )}
                             disabled={isToggling}
-                            onClick={toggle}
+                            onClick={() => requireAuth(toggle)}
                           >
                             <Heart
                               size={16}
@@ -550,12 +553,12 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                     {comment.user.profilePicture ? (
                       <img
                         src={comment.user.profilePicture}
-                        alt=""
-                        className="size-10 shrink-0 self-start rounded-full"
+                        alt={`${comment.user.username}'s profile picture`}
+                        className="size-10 shrink-0 self-start rounded-full object-cover"
                       />
                     ) : (
                       <div className="from-hobbly-sky to-hobbly-lavender flex size-10 shrink-0 items-center justify-center self-start rounded-full bg-linear-to-br text-sm font-bold text-white">
-                        {user?.username?.[0].toUpperCase()}
+                        {comment.user.username?.[0].toUpperCase()}
                       </div>
                     )}
 
@@ -566,8 +569,8 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                             `@${comment.user.username}`}
                         </span>
                         <span className="text-muted-foreground text-xs">
-                          {comment.createdAt < subDays(new Date(), 6)
-                            ? formatDate(comment.createdAt, "PPp")
+                          {new Date(comment.createdAt) < subDays(new Date(), 6)
+                            ? formatDate(comment.createdAt, "PP")
                             : formatRelative(comment.createdAt, new Date())}
                         </span>
                       </div>
@@ -576,56 +579,59 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                   </div>
                 ))}
 
-                <div className="border-border my-4 border" />
-
                 {/* Comment Input */}
-                <div className="flex items-center gap-2">
-                  {user?.profilePicture ? (
-                    <img
-                      src={user.profilePicture}
-                      alt=""
-                      className="size-10 shrink-0 rounded-full"
-                    />
-                  ) : (
-                    <div className="from-hobbly-sky to-hobbly-lavender flex size-10 shrink-0 items-center justify-center self-start rounded-full bg-linear-to-br text-sm font-bold text-white">
-                      {user?.username?.[0].toUpperCase()}
-                    </div>
-                  )}
+                {user && (
+                  <>
+                    <div className="border-border my-4 border" />
+                    <div className="flex items-center gap-2">
+                      {user?.profilePicture ? (
+                        <img
+                          src={user.profilePicture}
+                          alt=""
+                          className="size-10 shrink-0 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="from-hobbly-sky to-hobbly-lavender flex size-10 shrink-0 items-center justify-center self-start rounded-full bg-linear-to-br text-sm font-bold text-white">
+                          {user?.username?.[0].toUpperCase()}
+                        </div>
+                      )}
 
-                  <form
-                    onSubmit={handleSubmit(onSubmit)}
-                    className="flex w-full items-center justify-center gap-2"
-                  >
-                    <Input
-                      variant="auth"
-                      shape="pill"
-                      fullWidth
-                      placeholder="Write a comment..."
-                      autoComplete="off"
-                      disabled={isSubmittingComment}
-                      {...register("content", {
-                        maxLength: {
-                          value: 8000,
-                          message: "Title cannot exceed 8000 characters",
-                        },
-                      })}
-                    />
-                    <Button
-                      type="submit"
-                      variant="secondary"
-                      shape="pill"
-                      size="icon"
-                      className="size-10 shrink-0"
-                      disabled={isSubmittingComment}
-                    >
-                      <Send size={20} />
-                    </Button>
-                  </form>
-                </div>
-                {errors.content && (
-                  <p className="text-destructive mt-2 text-center text-xs">
-                    {errors.content.message}
-                  </p>
+                      <form
+                        onSubmit={() => requireAuth(handleSubmit(onSubmit))}
+                        className="flex w-full items-center justify-center gap-2"
+                      >
+                        <Input
+                          variant="auth"
+                          shape="pill"
+                          fullWidth
+                          placeholder="Write a comment..."
+                          autoComplete="off"
+                          disabled={isSubmittingComment}
+                          {...register("content", {
+                            maxLength: {
+                              value: 8000,
+                              message: "Title cannot exceed 8000 characters",
+                            },
+                          })}
+                        />
+                        <Button
+                          type="submit"
+                          variant="secondary"
+                          shape="pill"
+                          size="icon"
+                          className="size-10 shrink-0"
+                          disabled={isSubmittingComment}
+                        >
+                          <Send size={20} />
+                        </Button>
+                      </form>
+                    </div>
+                    {errors.content && (
+                      <p className="text-destructive mt-2 text-center text-xs">
+                        {errors.content.message}
+                      </p>
+                    )}
+                  </>
                 )}
               </Card>
             </div>
