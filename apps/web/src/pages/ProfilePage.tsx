@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import type { PublicUserEntity } from "@hobbies-dashboard/types";
 import { userService } from "../services/user";
 import EntryModal from "../components/profile/EntryModal";
+import LinkButton from "../components/ui/LinkButton";
 
 function ProfilePage() {
   const { slug } = useParams();
@@ -54,13 +55,21 @@ function ProfilePage() {
     loadMore: ownLoadMore,
     hasMore: ownHasMore,
     refresh: refreshOwn,
-  } = useEntry({ enabled: isOwnProfile, hobbyId: activeHobbyId, filter: { visibility: "PUBLIC" } });
+  } = useEntry({
+    userId: authUser?.id ?? null,
+    enabled: isOwnProfile,
+    hobbyId: activeHobbyId,
+    filter: { visibility: "PUBLIC" },
+  });
   const {
     entries: publicEntries,
     loadMore: publicLoadMore,
     hasMore: publicHasMore,
     refresh: refreshPublic,
-  } = usePublicEntry({ userId: !isOwnProfile ? profileUserId : null, hobbyId: activeHobbyId });
+  } = usePublicEntry({
+    userId: !isOwnProfile ? profileUserId : null,
+    hobbyId: activeHobbyId,
+  });
 
   const entries = isOwnProfile ? ownEntries : publicEntries;
   const loadMore = isOwnProfile ? ownLoadMore : publicLoadMore;
@@ -106,29 +115,39 @@ function ProfilePage() {
             {/* Activity calendar */}
             <ActivityCalendar />
 
+            {/* Hobbies */}
             <section>
               <div className="mb-4 flex items-baseline justify-between">
                 <h3 className="text-xl">
                   {isOwnProfile ? "My Hobby Board" : "Hobby Board"}
                 </h3>
                 {isOwnProfile && (
-                  <a
-                    href=""
+                  <LinkButton
+                    variant="transparent"
+                    to="/dashboard"
                     className="text-hobbly-sky-dark flex items-center gap-2 text-sm"
                   >
                     Manage
                     <MoveRight size={14} />
-                  </a>
+                  </LinkButton>
                 )}
               </div>
 
-              <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {userHobbies.map((data) => (
-                  <HobbyCard key={data.id} data={data} className="min-h-36" />
-                ))}
-              </div>
+              {userHobbies.length > 0 ? (
+                <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {userHobbies.map((data) => (
+                    <HobbyCard key={data.id} data={data} className="min-h-36" />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <span className="mb-4 text-6xl">🦗</span>
+                  <h3 className="mb-2 text-2xl">No hobbies yet</h3>
+                </div>
+              )}
             </section>
 
+            {/* Entries */}
             <section>
               <div className="mb-4 flex items-baseline justify-between">
                 <h3 className="text-xl">Entries</h3>
@@ -137,29 +156,38 @@ function ProfilePage() {
                 </p>
               </div>
 
-              {/* Entries */}
-              <ProfileEntriesLayout
-                entryTabs={entryTabs}
-                activeHobby={activeHobby}
-                onHobbyChange={setActiveHobby}
-              >
-                {entries.map((data) => (
-                  <EntryCard
-                    key={data.id}
-                    data={data}
-                    dashboard
-                    onClick={() => setSelectedEntryId(data.id)}
-                  />
-                ))}
-                {hasMore && (
-                  <button
-                    onClick={loadMore}
-                    className="text-muted-foreground col-span-full mt-2 text-sm"
-                  >
-                    Load more
-                  </button>
-                )}
-              </ProfileEntriesLayout>
+              {entries.length > 0 ? (
+                <ProfileEntriesLayout
+                  entryTabs={entryTabs}
+                  activeHobby={activeHobby}
+                  onHobbyChange={setActiveHobby}
+                >
+                  {entries.map((data) => (
+                    <EntryCard
+                      key={data.id}
+                      data={data}
+                      dashboard
+                      onClick={() => setSelectedEntryId(data.id)}
+                    />
+                  ))}
+                  {hasMore && (
+                    <button
+                      onClick={loadMore}
+                      className="text-muted-foreground col-span-full mt-2 text-sm"
+                    >
+                      Load more
+                    </button>
+                  )}
+                </ProfileEntriesLayout>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <span className="mb-4 text-6xl">🧶</span>
+                  <h3 className="mb-2 text-2xl">Share your entries</h3>
+                  <p className="text-muted-foreground mb-6 max-w-md">
+                    This is where your public entries will show up
+                  </p>
+                </div>
+              )}
             </section>
           </>
         ) : (

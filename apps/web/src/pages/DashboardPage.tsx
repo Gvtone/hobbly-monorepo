@@ -34,7 +34,7 @@ function DashboardPage() {
     hasMore,
     meta,
     refresh: refreshEntries,
-  } = useEntry();
+  } = useEntry({ userId: user?.id ?? null });
   const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
   const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);

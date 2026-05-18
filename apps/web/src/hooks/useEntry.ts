@@ -9,6 +9,7 @@ import { entryService } from "../services/entry";
 import { showToast } from "../utils/toast";
 
 interface UseEntryParams {
+  userId?: number | null;
   limit?: number;
   enabled?: boolean;
   hobbyId?: number | null;
@@ -16,6 +17,7 @@ interface UseEntryParams {
 }
 
 export function useEntry({
+  userId,
   limit = 10,
   enabled = true,
   hobbyId,
@@ -38,13 +40,14 @@ export function useEntry({
 
   const fetchEntries = useCallback(
     async (targetPage: number, append = false) => {
-      if (!enabled) return;
+      if (!enabled || userId === null) return;
       setIsLoading(true);
       try {
         const { data, ...pagination } = await entryService.findAll({
           page: targetPage,
           limit,
           hobbyId: hobbyId ? [hobbyId] : undefined,
+          userId,
           ...filter,
         });
         setUserEntries((prev) => (append ? [...prev, ...data] : data));
@@ -58,7 +61,7 @@ export function useEntry({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [enabled, limit, hobbyId, filter?.visibility],
+    [enabled, limit, hobbyId, filter?.visibility, userId],
   );
 
   useEffect(() => {

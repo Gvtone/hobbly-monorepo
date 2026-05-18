@@ -264,7 +264,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                           {entryUser?.profilePicture ? (
                             <img
                               src={entryUser.profilePicture}
-                              className="size-8 shrink-0 rounded-full"
+                              className="size-8 shrink-0 rounded-full object-cover"
                               alt={entryUser.username}
                             />
                           ) : (
@@ -553,8 +553,8 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                     {comment.user.profilePicture ? (
                       <img
                         src={comment.user.profilePicture}
-                        alt=""
-                        className="size-10 shrink-0 self-start rounded-full"
+                        alt={`${comment.user.username}'s profile picture`}
+                        className="size-10 shrink-0 self-start rounded-full object-cover"
                       />
                     ) : (
                       <div className="from-hobbly-sky to-hobbly-lavender flex size-10 shrink-0 items-center justify-center self-start rounded-full bg-linear-to-br text-sm font-bold text-white">
@@ -588,7 +588,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                         <img
                           src={user.profilePicture}
                           alt=""
-                          className="size-10 shrink-0 rounded-full"
+                          className="size-10 shrink-0 rounded-full object-cover"
                         />
                       ) : (
                         <div className="from-hobbly-sky to-hobbly-lavender flex size-10 shrink-0 items-center justify-center self-start rounded-full bg-linear-to-br text-sm font-bold text-white">
