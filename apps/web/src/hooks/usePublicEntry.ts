@@ -8,9 +8,10 @@ import { entryService } from "../services/entry";
 interface UsePublicEntryParams {
   userId: number | null;
   limit?: number;
+  hobbyId?: number | null;
 }
 
-export function usePublicEntry({ userId, limit = 10 }: UsePublicEntryParams) {
+export function usePublicEntry({ userId, limit = 10, hobbyId }: UsePublicEntryParams) {
   const [entries, setEntries] = useState<EntryWithUserHobbyEntity[]>([]);
   const [isLoading, setIsLoading] = useState(userId !== null);
   const [page, setPage] = useState(1);
@@ -33,6 +34,7 @@ export function usePublicEntry({ userId, limit = 10 }: UsePublicEntryParams) {
           userId,
           page: targetPage,
           limit,
+          hobbyId: hobbyId ? [hobbyId] : undefined,
         });
         setEntries((prev) => (append ? [...prev, ...data] : data));
         setMeta(pagination);
@@ -43,7 +45,7 @@ export function usePublicEntry({ userId, limit = 10 }: UsePublicEntryParams) {
         setIsLoading(false);
       }
     },
-    [userId, limit],
+    [userId, limit, hobbyId],
   );
 
   useEffect(() => {
@@ -55,10 +57,13 @@ export function usePublicEntry({ userId, limit = 10 }: UsePublicEntryParams) {
     await fetchEntries(page + 1, true);
   };
 
+  const refresh = async () => fetchEntries(1);
+
   return {
     entries,
     isLoading,
     loadMore,
+    refresh,
     hasMore: !meta.isLastPage,
     meta,
   };

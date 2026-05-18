@@ -16,6 +16,7 @@ import NotFoundPage from "./NotFoundPage";
 import { useEffect, useState } from "react";
 import type { PublicUserEntity } from "@hobbies-dashboard/types";
 import { userService } from "../services/user";
+import EntryModal from "../components/profile/EntryModal";
 
 function ProfilePage() {
   const { slug } = useParams();
@@ -24,6 +25,8 @@ function ProfilePage() {
   const [otherUser, setOtherUser] = useState<PublicUserEntity | null>(null);
   const [profileFetched, setProfileFetched] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
+  const [activeHobby, setActiveHobby] = useState<string | null>(null);
 
   const username = slug?.startsWith("@") ? slug.slice(1) : null;
   const isOwnProfile =
@@ -43,20 +46,28 @@ function ProfilePage() {
     ? (authUser?.id ?? null)
     : (otherUser?.id ?? null);
 
+  const activeHobbyId =
+    userHobbies.find((h) => h.hobby.name === activeHobby)?.hobby.id ?? null;
+
   const {
     userEntries: ownEntries,
     loadMore: ownLoadMore,
     hasMore: ownHasMore,
-  } = useEntry({ filter: { visibility: "PUBLIC" } });
+    refresh: refreshOwn,
+  } = useEntry({ enabled: isOwnProfile, hobbyId: activeHobbyId, filter: { visibility: "PUBLIC" } });
   const {
     entries: publicEntries,
     loadMore: publicLoadMore,
     hasMore: publicHasMore,
-  } = usePublicEntry({ userId: !isOwnProfile ? profileUserId : null });
+    refresh: refreshPublic,
+  } = usePublicEntry({ userId: !isOwnProfile ? profileUserId : null, hobbyId: activeHobbyId });
 
   const entries = isOwnProfile ? ownEntries : publicEntries;
   const loadMore = isOwnProfile ? ownLoadMore : publicLoadMore;
   const hasMore = isOwnProfile ? ownHasMore : publicHasMore;
+  const refreshEntries = isOwnProfile ? refreshOwn : refreshPublic;
+
+  const selectedEntry = entries.find((e) => e.id === selectedEntryId) ?? null;
 
   useEffect(() => {
     if (!username || isOwnProfile) return;
@@ -113,14 +124,7 @@ function ProfilePage() {
 
               <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {userHobbies.map((data) => (
-                  <HobbyCard
-                    key={data.id}
-                    data={data}
-                    trackedNumber="8"
-                    trackedLabel="series tracked"
-                    additional="Celestial Chronicles"
-                    className="min-h-36"
-                  />
+                  <HobbyCard key={data.id} data={data} className="min-h-36" />
                 ))}
               </div>
             </section>
@@ -133,9 +137,19 @@ function ProfilePage() {
                 </p>
               </div>
 
-              <ProfileEntriesLayout entryTabs={entryTabs}>
+              {/* Entries */}
+              <ProfileEntriesLayout
+                entryTabs={entryTabs}
+                activeHobby={activeHobby}
+                onHobbyChange={setActiveHobby}
+              >
                 {entries.map((data) => (
-                  <EntryCard key={data.id} data={data} dashboard />
+                  <EntryCard
+                    key={data.id}
+                    data={data}
+                    dashboard
+                    onClick={() => setSelectedEntryId(data.id)}
+                  />
                 ))}
                 {hasMore && (
                   <button
@@ -176,6 +190,15 @@ function ProfilePage() {
               </Button>
             </div>
           </section>
+        )}
+
+        {selectedEntry && (
+          <EntryModal
+            open={!!selectedEntry}
+            onClose={() => setSelectedEntryId(null)}
+            data={selectedEntry}
+            onRefresh={refreshEntries}
+          />
         )}
       </div>
     </AppLayout>

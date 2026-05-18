@@ -90,10 +90,6 @@ function DashboardPage() {
                 <HobbyCard
                   key={data.id}
                   data={data}
-                  // TODO: replace with real data
-                  trackedNumber="8"
-                  trackedLabel="series tracked"
-                  additional="Celestial Chronicles"
                   className="size-56 shrink-0"
                 ></HobbyCard>
               ))}

@@ -4,16 +4,23 @@ import type {
   EntryWithUserHobbyEntity,
   PaginatedOutputEntity,
 } from "@hobbies-dashboard/types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { entryService } from "../services/entry";
 import { showToast } from "../utils/toast";
 
 interface UseEntryParams {
   limit?: number;
-  filter?: Omit<EntryFilterDto, "page" | "limit">;
+  enabled?: boolean;
+  hobbyId?: number | null;
+  filter?: Omit<EntryFilterDto, "page" | "limit" | "hobbyId">;
 }
 
-export function useEntry({ limit = 10, filter }: UseEntryParams = {}) {
+export function useEntry({
+  limit = 10,
+  enabled = true,
+  hobbyId,
+  filter,
+}: UseEntryParams = {}) {
   const [userEntries, setUserEntries] = useState<EntryWithUserHobbyEntity[]>(
     [],
   );
@@ -29,29 +36,34 @@ export function useEntry({ limit = 10, filter }: UseEntryParams = {}) {
     totalCount: 0,
   });
 
-  const fetchEntries = async (targetPage: number, append = false) => {
-    setIsLoading(true);
-    try {
-      const { data, ...pagination } = await entryService.findAll({
-        page: targetPage,
-        limit,
-        ...filter,
-      });
-      setUserEntries((prev) => (append ? [...prev, ...data] : data));
-      setMeta(pagination);
-      setPage(targetPage);
-    } catch (error) {
-      showToast.error("Failed to load entries");
-      console.log("Error fetching user entries:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const fetchEntries = useCallback(
+    async (targetPage: number, append = false) => {
+      if (!enabled) return;
+      setIsLoading(true);
+      try {
+        const { data, ...pagination } = await entryService.findAll({
+          page: targetPage,
+          limit,
+          hobbyId: hobbyId ? [hobbyId] : undefined,
+          ...filter,
+        });
+        setUserEntries((prev) => (append ? [...prev, ...data] : data));
+        setMeta(pagination);
+        setPage(targetPage);
+      } catch (error) {
+        showToast.error("Failed to load entries");
+        console.log("Error fetching user entries:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [enabled, limit, hobbyId, filter?.visibility],
+  );
 
   useEffect(() => {
     fetchEntries(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchEntries]);
 
   const goToPage = (nextPage: number) => {
     fetchEntries(nextPage);

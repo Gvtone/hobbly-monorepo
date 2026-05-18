@@ -1,4 +1,4 @@
-import { Globe, Lock, PenLine, Share2, SmilePlus } from "lucide-react";
+import { Globe, Lock, Share2, SmilePlus } from "lucide-react";
 import Button from "../ui/Button";
 import { Card } from "../ui/Card";
 import { cn } from "../../utils/utils";
@@ -158,19 +158,7 @@ function MainProfileCard({
 
             {/* Bio */}
             {user?.bio && (
-              <div className="group relative">
-                <p className="text-center text-sm md:text-start">{user?.bio}</p>
-                {isOwnProfile && (
-                  <Button
-                    variant="transparent"
-                    shape="pill"
-                    size="icon"
-                    className="absolute top-1/2 right-0 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100"
-                  >
-                    <PenLine size={14} />
-                  </Button>
-                )}
-              </div>
+              <p className="text-center text-sm md:text-start">{user?.bio}</p>
             )}
           </div>
 

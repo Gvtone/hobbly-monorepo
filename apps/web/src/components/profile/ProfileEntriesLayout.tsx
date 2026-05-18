@@ -4,11 +4,15 @@ import Button from "../ui/Button";
 interface ProfileEntriesLayoutProps {
   entryTabs: { emoji: string; hobby: string }[];
   children: React.ReactNode;
+  activeHobby?: string | null;
+  onHobbyChange?: (hobby: string | null) => void;
 }
 
 function ProfileEntriesLayout({
   entryTabs,
   children,
+  activeHobby,
+  onHobbyChange,
 }: ProfileEntriesLayoutProps) {
   return (
     <>
@@ -18,7 +22,8 @@ function ProfileEntriesLayout({
           shape="pill"
           size="sm"
           className="text-muted-foreground border-none text-sm"
-          active
+          active={activeHobby == null}
+          onClick={() => onHobbyChange?.(null)}
         >
           <span>✨</span>
           <span>All</span>
@@ -31,6 +36,8 @@ function ProfileEntriesLayout({
             shape="pill"
             size="sm"
             className="text-muted-foreground border-none text-sm"
+            active={activeHobby === tab.hobby}
+            onClick={() => onHobbyChange?.(tab.hobby)}
           >
             <span>{tab.emoji}</span>
             <span>{tab.hobby}</span>
