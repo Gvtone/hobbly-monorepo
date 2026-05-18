@@ -6,7 +6,7 @@ import {
   Sun,
   Moon,
   Settings,
-  LogOut
+  LogOut,
 } from "lucide-react";
 import * as Popover from "@radix-ui/react-popover";
 import Button from "../ui/Button";
@@ -24,8 +24,8 @@ function Navbar() {
 
   const navItems = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/profile", label: "Profile", icon: User },
-    { to: "/explore", label: "Explore", icon: Compass }
+    { to: `/@${user?.username}`, label: "Profile", icon: User },
+    { to: "/explore", label: "Explore", icon: Compass },
   ];
 
   const handleLogout = async () => {
@@ -34,42 +34,46 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-card sticky top-0 w-full border-b border-border z-50">
-      <div className="relative flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+    <nav className="bg-card border-border sticky top-0 z-50 w-full border-b">
+      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo and name */}
         <LinkButton
           to="/"
           variant="transparent"
           shape="pill"
-          className="flex gap-2 items-center z-20 p-0"
+          className="z-20 flex items-center gap-2 p-0"
         >
-          <div className="flex justify-center items-center bg-linear-to-br from-hobbly-sky to-hobbly-lavender rounded-full w-8 h-8 shadow shadow-hobbly-sky/30">
+          <div className="from-hobbly-sky to-hobbly-lavender shadow-hobbly-sky/30 flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br shadow">
             <Sparkles className="text-white" size={16} />
           </div>
-          <span className="text-xl font-semibold font-hobbly-serif text-foreground">
+          <span className="font-hobbly-serif text-foreground text-xl font-semibold">
             Hobbly
           </span>
         </LinkButton>
 
         {/* Navigation links/buttons */}
-        <div className="md:absolute left-0 right-0 flex justify-center items-center gap-2">
-          {navItems.map(({ to, label, icon: Icon }) => (
-            <LinkButton
-              to={to}
-              variant="ghost"
-              shape="pill"
-              className="hidden xs:flex xs:p-2 md:px-5"
-              key={to}
-              active={isActive(to)}
-            >
-              <Icon size={18} />
-              <span className="hidden sm:block text-sm">{label}</span>
-            </LinkButton>
-          ))}
-        </div>
+        {user && (
+          <>
+            <div className="right-0 left-0 flex items-center justify-center gap-2 md:absolute">
+              {navItems.map(({ to, label, icon: Icon }) => (
+                <LinkButton
+                  to={to}
+                  variant="ghost"
+                  shape="pill"
+                  className="xs:flex xs:p-2 hidden md:px-5"
+                  key={to}
+                  active={isActive(to)}
+                >
+                  <Icon size={18} />
+                  <span className="hidden text-sm sm:block">{label}</span>
+                </LinkButton>
+              ))}
+            </div>
+          </>
+        )}
 
         {/* Right Side */}
-        <div className="flex gap-2  z-20">
+        <div className="z-20 flex gap-2">
           <Button
             onClick={toggleTheme}
             variant="ghost"
@@ -84,68 +88,70 @@ function Navbar() {
             )}
           </Button>
 
-          <Popover.Root>
-            <Popover.Trigger asChild>
-              <button className="rounded-full border-2 border-hobbly-sky-light size-9 overflow-hidden hover:border-hobbly-sky transition-colors cursor-pointer">
-                {user?.profilePicture ? (
-                  <img
-                    src={user.profilePicture}
-                    className="w-full h-full object-cover"
-                    alt={user.username}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-linear-to-br from-hobbly-sky to-hobbly-lavender flex items-center justify-center text-white text-sm font-bold">
-                    {user?.username?.[0].toUpperCase()}
+          {user && (
+            <Popover.Root>
+              <Popover.Trigger asChild>
+                <button className="border-hobbly-sky-light hover:border-hobbly-sky size-9 cursor-pointer overflow-hidden rounded-full border-2 transition-colors">
+                  {user?.profilePicture ? (
+                    <img
+                      src={user.profilePicture}
+                      className="h-full w-full object-cover"
+                      alt={user.username}
+                    />
+                  ) : (
+                    <div className="from-hobbly-sky to-hobbly-lavender flex h-full w-full items-center justify-center bg-linear-to-br text-sm font-bold text-white">
+                      {user?.username?.[0].toUpperCase()}
+                    </div>
+                  )}
+                </button>
+              </Popover.Trigger>
+
+              <Popover.Portal>
+                <Popover.Content
+                  className="bg-card border-border z-50 w-52 rounded-2xl border p-2 shadow-lg"
+                  sideOffset={8}
+                  align="end"
+                >
+                  {/* User info */}
+                  <div className="border-border mb-1 border-b px-3 py-2">
+                    <p className="truncate text-sm font-semibold">
+                      {user?.displayName ?? user?.username}
+                    </p>
+                    <p className="text-muted-foreground truncate text-xs">
+                      @{user?.username}
+                    </p>
                   </div>
-                )}
-              </button>
-            </Popover.Trigger>
 
-            <Popover.Portal>
-              <Popover.Content
-                className="bg-card border border-border rounded-2xl p-2 shadow-lg w-52 z-50"
-                sideOffset={8}
-                align="end"
-              >
-                {/* User info */}
-                <div className="px-3 py-2 mb-1 border-b border-border">
-                  <p className="font-semibold text-sm truncate">
-                    {user?.displayName ?? user?.username}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    @{user?.username}
-                  </p>
-                </div>
-
-                {/* Menu items */}
-                <button
-                  onClick={() => navigate("/profile")}
-                  className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
-                >
-                  <User size={14} />
-                  Profile
-                </button>
-
-                <button
-                  onClick={() => navigate("/settings")}
-                  className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm rounded-xl hover:bg-muted transition-colors"
-                >
-                  <Settings size={14} />
-                  Settings
-                </button>
-
-                <div className="border-t border-border mt-1 pt-1">
+                  {/* Menu items */}
                   <button
-                    onClick={handleLogout}
-                    className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm rounded-xl hover:bg-muted transition-colors text-destructive"
+                    onClick={() => navigate("/profile")}
+                    className="hover:bg-muted flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors"
                   >
-                    <LogOut size={14} />
-                    Log out
+                    <User size={14} />
+                    Profile
                   </button>
-                </div>
-              </Popover.Content>
-            </Popover.Portal>
-          </Popover.Root>
+
+                  <button
+                    onClick={() => navigate("/settings")}
+                    className="hover:bg-muted flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors"
+                  >
+                    <Settings size={14} />
+                    Settings
+                  </button>
+
+                  <div className="border-border mt-1 border-t pt-1">
+                    <button
+                      onClick={handleLogout}
+                      className="hover:bg-muted text-destructive flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors"
+                    >
+                      <LogOut size={14} />
+                      Log out
+                    </button>
+                  </div>
+                </Popover.Content>
+              </Popover.Portal>
+            </Popover.Root>
+          )}
         </div>
       </div>
     </nav>

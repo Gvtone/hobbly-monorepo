@@ -26,7 +26,7 @@ function DashboardPage() {
     userHobbies,
     isLoading: isUserHobbiesLoading,
     addUserHobby,
-  } = useUserHobby();
+  } = useUserHobby(user?.id ?? null);
   const {
     userEntries,
     isLoading: isEntriesLoading,
@@ -34,7 +34,7 @@ function DashboardPage() {
     hasMore,
     meta,
     refresh: refreshEntries,
-  } = useEntry();
+  } = useEntry({ userId: user?.id ?? null });
   const [isLogEntryOpen, setIsLogEntryOpen] = useState(false);
   const [isAddHobbyOpen, setIsAddHobbyOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
@@ -90,10 +90,6 @@ function DashboardPage() {
                 <HobbyCard
                   key={data.id}
                   data={data}
-                  // TODO: replace with real data
-                  trackedNumber="8"
-                  trackedLabel="series tracked"
-                  additional="Celestial Chronicles"
                   className="size-56 shrink-0"
                 ></HobbyCard>
               ))}
@@ -145,6 +141,7 @@ function DashboardPage() {
 
         {/* Modals */}
         <LogEntryModal
+          userId={user?.id ?? null}
           open={isLogEntryOpen}
           onClose={() => setIsLogEntryOpen(false)}
           onRefresh={refreshEntries}

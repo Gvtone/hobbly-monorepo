@@ -5,6 +5,8 @@ import { cn } from "../../utils/utils";
 import type { EntryWithUserHobbyEntity } from "@hobbies-dashboard/types";
 import { useLike } from "../../hooks/useLike";
 import { useComment } from "../../hooks/useComment";
+import { useRequireAuth } from "../../hooks/useRequireAuth";
+import { formatDistance } from "date-fns";
 
 interface EntryCardProps {
   data: EntryWithUserHobbyEntity;
@@ -20,10 +22,12 @@ function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
     // metadata,
     userHobby: { hobby },
     mood,
+    createdAt,
   } = data;
 
   const { liked, count, isToggling, toggle } = useLike(data.id);
   const { comments } = useComment(data.id);
+  const requireAuth = useRequireAuth();
 
   return (
     <div
@@ -97,7 +101,9 @@ function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
                 className={cn("flex text-xs", dashboard && "justify-between")}
               >
                 {dashboard && (
-                  <p className="text-muted-foreground">Yesterday</p>
+                  <p className="text-muted-foreground">
+                    {formatDistance(createdAt, new Date(), { addSuffix: true })}
+                  </p>
                 )}
                 <div className="flex gap-2">
                   <Button
@@ -106,7 +112,7 @@ function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
                     disabled={isToggling}
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggle();
+                      requireAuth(toggle);
                     }}
                   >
                     <Heart size={12} fill={liked ? "currentColor" : "none"} />

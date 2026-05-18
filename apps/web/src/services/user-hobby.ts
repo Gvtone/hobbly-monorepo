@@ -14,9 +14,9 @@ export const userHobbyService = {
     return res.data;
   },
 
-  async findAll() {
+  async findAll(userId: number) {
     const res = await api.get<UserHobbyWithHobbyEntity[]>(
-      `${serviceRoute}/find-all`,
+      `${serviceRoute}/user/${userId}`,
     );
     return res.data;
   },
