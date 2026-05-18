@@ -6,10 +6,17 @@ export interface CreateUserDto {
   password: string;
 }
 
-export interface UpdateUserDto extends Partial<CreateUserDto> {}
+export interface UpdateUserDto extends Partial<CreateUserDto> {
+  status?: UserStatus;
+  profilePicture?: string;
+  coverImage?: string;
+  bio?: string;
+  visibility?: Visibility;
+}
 
 export interface PublicUserEntity {
   id: number;
+  createdAt: Date;
   displayName: string | null;
   username: string;
   profilePicture: string | null;

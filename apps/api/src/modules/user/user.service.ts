@@ -12,7 +12,7 @@ export class UserService {
     private readonly hashService: HashService,
   ) {}
 
-  async findAllUsers() {
+  async findAll() {
     const users = await this.databaseService.user.findMany();
     return users.map((user) => new UserEntity(user));
   }
@@ -35,6 +35,24 @@ export class UserService {
     return new UserEntity(user);
   }
 
+  async findUserByUsernamePublic(username: string) {
+    const user = await this.databaseService.user.findFirst({
+      where: { username },
+      select: {
+        id: true,
+        createdAt: true,
+        displayName: true,
+        username: true,
+        profilePicture: true,
+        coverImage: true,
+        bio: true,
+        visibility: true,
+      },
+    });
+
+    return user;
+  }
+
   async findUserByUsername(username: string) {
     const user = await this.databaseService.user.findFirst({
       where: { username },
@@ -44,7 +62,7 @@ export class UserService {
     return new UserEntity(user);
   }
 
-  async createUser({ username, email, password }: CreateUserDto) {
+  async create({ username, email, password }: CreateUserDto) {
     const existingUsername = await this.databaseService.user.findFirst({
       where: { username },
     });
@@ -70,10 +88,18 @@ export class UserService {
     return new UserEntity(user);
   }
 
-  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.databaseService.user.update({
       where: { id },
       data: { ...updateUserDto },
+    });
+
+    return new UserEntity(user);
+  }
+
+  async delete(id: number) {
+    const user = await this.databaseService.user.delete({
+      where: { id },
     });
 
     return new UserEntity(user);

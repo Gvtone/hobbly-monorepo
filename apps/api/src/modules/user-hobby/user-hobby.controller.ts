@@ -9,7 +9,13 @@ import {
   Post,
 } from '@nestjs/common';
 import { UserHobbyService } from './user-hobby.service';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateUserHobbyDto } from './dto/create-user-hobby.dto';
 import {
   UserHobbyEntity,
@@ -18,6 +24,7 @@ import {
 import { UpdateUserHobbyDto } from './dto/update-user-hobby.dto';
 import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { PayloadEntity } from '../auth/entities/payload.entity';
+import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('User Hobby')
 @Controller('user-hobby')
@@ -35,16 +42,18 @@ export class UserHobbyController {
     return await this.userHobbyService.create(userId.sub, createHobbyDto);
   }
 
-  @Get('find-all')
+  @Public()
+  @Get('user/:userId')
   @ApiOperation({
     summary: 'Finds all of existing user-hobby connection of the current user',
   })
+  @ApiParam({ name: 'userId', type: Number })
   @ApiOkResponse({
     description: 'Fetch successful',
     type: [UserHobbyEntity],
   })
-  async findAll(@AuthUser() userId: PayloadEntity) {
-    return await this.userHobbyService.findAll(userId.sub);
+  async findAll(@Param('userId', ParseIntPipe) userId: number) {
+    return await this.userHobbyService.findAll(userId);
   }
 
   @Get(':id')

@@ -131,6 +131,11 @@ export class AuthService {
       '15m',
     ) as StringValue;
 
+    const jwtRefreshTokenExpiration = this.configService.get(
+      'JWT_REFRESH_TOKEN_EXPIRATION',
+      '7d',
+    ) as StringValue;
+
     const newPayload: PayloadEntity = {
       sub: user.id,
       username: user.username,
@@ -144,6 +149,13 @@ export class AuthService {
       expiresIn: jwtAccessTokenExpiration,
     });
 
+    const newRefreshToken = this.jwtService.sign(
+      { ...newPayload, type: 'REFRESH' },
+      {
+        expiresIn: jwtRefreshTokenExpiration,
+      },
+    );
+
     response.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: true,
@@ -151,11 +163,18 @@ export class AuthService {
       maxAge: ms(jwtAccessTokenExpiration),
     });
 
+    response.cookie('refresh_token', newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: ms(jwtRefreshTokenExpiration),
+    });
+
     return newPayload;
   }
 
   async register(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const createdUser = await this.userService.createUser(createUserDto);
+    const createdUser = await this.userService.create(createUserDto);
 
     const token = await this.tokenService.generateToken({
       userId: createdUser.id,
@@ -212,7 +231,7 @@ export class AuthService {
     // TODO: Check if user account was deleted or suspended
     // TODO: and create ways for them to recover their accounts
 
-    return await this.userService.updateUser(userId, { status: 'ACTIVE' });
+    return await this.userService.update(userId, { status: 'ACTIVE' });
   }
 
   async logout(response: Response): Promise<GenericOutputEntity> {
@@ -259,7 +278,7 @@ export class AuthService {
 
     const newPassword = await this.hashService.hashPassword(password);
 
-    await this.userService.updateUser(userId, { password: newPassword });
+    await this.userService.update(userId, { password: newPassword });
 
     return { message: 'Password reset successfully' };
   }

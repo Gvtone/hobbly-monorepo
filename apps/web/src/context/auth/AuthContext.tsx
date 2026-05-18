@@ -11,6 +11,7 @@ interface AuthContextType {
     password: string,
   ) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (user: UserEntity) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   register: async () => {},
   logout: async () => {},
+  updateUser: () => {},
 });
 
 export default AuthContext;

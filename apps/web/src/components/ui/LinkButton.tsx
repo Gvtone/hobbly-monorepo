@@ -1,4 +1,3 @@
-// src/components/ui/LinkButton.tsx
 import { Link, type LinkProps } from "react-router-dom";
 import type { VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/utils";
@@ -23,7 +22,7 @@ function LinkButton({
       to={to}
       className={cn(
         buttonVariants({ variant, shape, size, active, fullWidth }),
-        className
+        className,
       )}
       {...props}
     >

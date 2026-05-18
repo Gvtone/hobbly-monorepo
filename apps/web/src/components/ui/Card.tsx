@@ -1,6 +1,6 @@
 import type { UserHobbyWithHobbyEntity } from "@hobbies-dashboard/types";
 import { cn } from "../../utils/utils";
-import { Ellipsis, Expand } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 
 const defaultClasses =
   "flex flex-col bg-card text-card-foreground border border-border rounded-3xl p-6";
@@ -40,16 +40,16 @@ function InfoCard({
 
 interface HobbyCardProps extends React.HTMLAttributes<HTMLDivElement> {
   data: UserHobbyWithHobbyEntity;
-  trackedNumber: string;
-  trackedLabel: string;
-  additional?: string;
+  // trackedNumber: string;
+  // trackedLabel: string;
+  // additional?: string;
 }
 
 function HobbyCard({
   data,
-  trackedNumber,
-  trackedLabel,
-  additional,
+  // trackedNumber,
+  // trackedLabel,
+  // additional,
   className,
 }: HobbyCardProps) {
   const defaultClasses =
@@ -86,7 +86,7 @@ function HobbyCard({
           </div>
         </div>
       </div>
-      <div className="z-10 flex items-end justify-between">
+      {/* <div className="z-10 flex items-end justify-between">
         <div className="flex flex-col">
           <span className="font-hobbly-serif text-2xl font-bold text-white">
             {trackedNumber}
@@ -99,7 +99,7 @@ function HobbyCard({
         <div className="flex size-fit items-center justify-center rounded-full bg-white/30 p-2">
           <Expand size={12} className="text-white"></Expand>
         </div>
-      </div>
+      </div> */}
       <div className="absolute right-0 bottom-0 left-0 h-full rounded-xl bg-linear-to-t from-black/50 to-transparent" />
     </Card>
   );

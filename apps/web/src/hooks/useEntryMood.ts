@@ -5,10 +5,12 @@ import type {
 import { useEffect, useState } from "react";
 import { entryMoodService } from "../services/entry-mood";
 import { showToast } from "../utils/toast";
+import { useAuth } from "../context/auth/useAuth";
 
 export function useEntryMood() {
   const [entryMoods, setEntryMoods] = useState<EntryMoodEntity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
 
   const fetchEntryMoods = async () => {
     try {
@@ -23,8 +25,9 @@ export function useEntryMood() {
   };
 
   useEffect(() => {
+    if (!user) return;
     fetchEntryMoods();
-  }, []);
+  }, [user]);
 
   const addEntryMood = async (data: CreateEntryMoodDto) => {
     await entryMoodService.create(data);

@@ -1,8 +1,10 @@
 import type {
   CreateEntryDto,
   EntryEntity,
+  EntryFilterDto,
   EntryWithUserHobbyEntity,
   PaginatedEntity,
+  PublicEntryFilterDto,
   UpdateEntryDto,
 } from "@hobbies-dashboard/types";
 import api from "./api";
@@ -15,13 +17,22 @@ export const entryService = {
     return res.data;
   },
 
-  async findAll({
-    page = 1,
-    limit = 10,
-  }: { page?: number; limit?: number } = {}) {
+  async findAll({ page = 1, limit = 10, ...filter }: EntryFilterDto = {}) {
     const res = await api.get<PaginatedEntity<EntryWithUserHobbyEntity>>(
       `${serviceRoute}`,
-      { params: { page, limit } },
+      { params: { page, limit, ...filter } },
+    );
+    return res.data;
+  },
+
+  async findAllPublic({
+    page = 1,
+    limit = 10,
+    ...filter
+  }: PublicEntryFilterDto = {}) {
+    const res = await api.get<PaginatedEntity<EntryWithUserHobbyEntity>>(
+      `${serviceRoute}/public`,
+      { params: { page, limit, ...filter } },
     );
     return res.data;
   },

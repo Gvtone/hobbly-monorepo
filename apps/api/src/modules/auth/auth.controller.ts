@@ -143,7 +143,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Get the current authenticated user' })
   @ApiOkResponse({ description: 'Current user payload', type: PayloadEntity })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  me(@Req() req: Request) {
-    return this.authService.me(req);
+  async me(@Req() req: Request) {
+    return await this.authService.me(req);
   }
 }

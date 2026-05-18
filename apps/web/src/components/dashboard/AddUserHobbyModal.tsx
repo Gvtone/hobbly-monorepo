@@ -1,6 +1,6 @@
 // src/components/dashboard/AddUserHobbyModal.tsx
 import { useState } from "react";
-import Modal from "../ui/Modal";
+import Modal from "../layout/Modal";
 import Button from "../ui/Button";
 import { useHobby } from "../../hooks/useHobby";
 import { showToast } from "../../utils/toast";
