@@ -1,6 +1,5 @@
 import { Lock, MoveRight } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
-import { HobbyCard } from "../components/ui/Card";
 import MainProfileCard from "../components/profile/MainProfileCard";
 import ActivityCalendar from "../components/profile/ActivityCalendar";
 import ProfileEntriesLayout from "../components/profile/ProfileEntriesLayout";
@@ -18,6 +17,7 @@ import type { PublicUserEntity } from "@hobbies-dashboard/types";
 import { userService } from "../services/user";
 import EntryModal from "../components/profile/EntryModal";
 import LinkButton from "../components/ui/LinkButton";
+import HobbyCard from "../components/dashboard/HobbyCard";
 
 function ProfilePage() {
   const { slug } = useParams();
