@@ -68,7 +68,7 @@ function getDotBackground(hobbies: Hobby[]): string {
   if (hobbies.length === 0) return "var(--color-muted)";
   if (hobbies.length === 1) return hobbies[0].color;
 
-  return `linear-gradient(135deg, ${hobbies.map((h) => h.color).join(", ")})`;
+  return `linear-gradient(135deg, ${hobbies.map((hobby) => hobby.color).join(", ")})`;
 }
 
 // ---------------------------------------------------------------------------
@@ -224,7 +224,7 @@ function ActivityCalendar({ entries, user }: ActivityCalendarProps) {
         </div>
 
         {/* Calendar grid */}
-        <div className="overflow-x-auto">
+        <div className="scrollbar-custom overflow-x-auto p-2">
           <div className="inline-block">
             {/* Month label row */}
             <div className="mb-1 flex">

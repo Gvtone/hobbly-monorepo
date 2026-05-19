@@ -16,7 +16,7 @@ function ProfileEntriesLayout({
 }: ProfileEntriesLayoutProps) {
   return (
     <>
-      <div className="mb-4 flex gap-2">
+      <div className="scrollbar-custom mb-4 flex gap-2 overflow-x-auto">
         <Button
           variant="secondary"
           shape="pill"
