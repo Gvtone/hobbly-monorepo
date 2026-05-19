@@ -61,6 +61,11 @@ function ProfilePage() {
     hobbyId: activeHobbyId,
     filter: { visibility: "PUBLIC" },
   });
+  const { userEntries: calendarOwnEntries } = useEntry({
+    userId: authUser?.id ?? null,
+    enabled: isOwnProfile,
+    limit: 365,
+  });
   const {
     entries: publicEntries,
     loadMore: publicLoadMore,
@@ -70,11 +75,16 @@ function ProfilePage() {
     userId: !isOwnProfile ? profileUserId : null,
     hobbyId: activeHobbyId,
   });
+  const { entries: calendarPublicEntries } = usePublicEntry({
+    userId: !isOwnProfile ? profileUserId : null,
+    limit: 365,
+  });
 
   const entries = isOwnProfile ? ownEntries : publicEntries;
   const loadMore = isOwnProfile ? ownLoadMore : publicLoadMore;
   const hasMore = isOwnProfile ? ownHasMore : publicHasMore;
   const refreshEntries = isOwnProfile ? refreshOwn : refreshPublic;
+  const calendarEntries = isOwnProfile ? calendarOwnEntries : calendarPublicEntries;
 
   const selectedEntry = entries.find((e) => e.id === selectedEntryId) ?? null;
 
@@ -113,7 +123,7 @@ function ProfilePage() {
         {isOwnProfile || profileUser.visibility === "PUBLIC" ? (
           <>
             {/* Activity calendar */}
-            <ActivityCalendar entries={entries} user={profileUser} />
+            <ActivityCalendar entries={calendarEntries} user={profileUser} />
 
             {/* Hobbies */}
             <section>
@@ -148,7 +158,7 @@ function ProfilePage() {
             </section>
 
             {/* Entries */}
-            <section>
+            {(entries.length > 0 || activeHobby !== null) && <section>
               <div className="mb-4 flex items-baseline justify-between">
                 <h3 className="text-xl">Entries</h3>
                 <p className="text-muted-foreground text-sm">
@@ -156,39 +166,29 @@ function ProfilePage() {
                 </p>
               </div>
 
-              {entries.length > 0 ? (
-                <ProfileEntriesLayout
-                  entryTabs={entryTabs}
-                  activeHobby={activeHobby}
-                  onHobbyChange={setActiveHobby}
-                >
-                  {entries.map((data) => (
-                    <EntryCard
-                      key={data.id}
-                      data={data}
-                      dashboard
-                      onClick={() => setSelectedEntryId(data.id)}
-                    />
-                  ))}
-                  {hasMore && (
-                    <button
-                      onClick={loadMore}
-                      className="text-muted-foreground col-span-full mt-2 text-sm"
-                    >
-                      Load more
-                    </button>
-                  )}
-                </ProfileEntriesLayout>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <span className="mb-4 text-6xl">🧶</span>
-                  <h3 className="mb-2 text-2xl">Share your entries</h3>
-                  <p className="text-muted-foreground mb-6 max-w-md">
-                    This is where your public entries will show up
-                  </p>
-                </div>
-              )}
-            </section>
+              <ProfileEntriesLayout
+                entryTabs={entryTabs}
+                activeHobby={activeHobby}
+                onHobbyChange={setActiveHobby}
+              >
+                {entries.map((data) => (
+                  <EntryCard
+                    key={data.id}
+                    data={data}
+                    dashboard
+                    onClick={() => setSelectedEntryId(data.id)}
+                  />
+                ))}
+                {hasMore && (
+                  <button
+                    onClick={loadMore}
+                    className="text-muted-foreground col-span-full mt-2 text-sm"
+                  >
+                    Load more
+                  </button>
+                )}
+              </ProfileEntriesLayout>
+            </section>}
           </>
         ) : (
           <section className="flex flex-col items-center gap-4 py-16 text-center">
