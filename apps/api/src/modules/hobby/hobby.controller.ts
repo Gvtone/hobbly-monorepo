@@ -24,11 +24,11 @@ import { HobbyEntity } from './entities/hobby.entity';
 
 @ApiTags('Hobby')
 @Controller('hobby')
-@Roles(UserRole.ADMIN)
 export class HobbyController {
   constructor(private readonly hobbyService: HobbyService) {}
 
   @Post()
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Creates new hobby' })
   @ApiBody({ type: CreateHobbyDto })
   @ApiOkResponse({ description: 'Create successful', type: HobbyEntity })
@@ -55,6 +55,7 @@ export class HobbyController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Updates a hobby' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateHobbyDto })
@@ -67,6 +68,7 @@ export class HobbyController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Deletes a hobby' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Delete successful', type: HobbyEntity })

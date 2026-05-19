@@ -1,17 +1,13 @@
 import Button from "../components/ui/Button";
-import {
-  Card,
-  InfoCard,
-  HobbyCard,
-  type InfoCardProps,
-  type HobbyCardProps,
-} from "../components/ui/Card";
+import { Card, InfoCard, type InfoCardProps } from "../components/ui/Card";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { cloudsBg, animeBg, booksBg, journalBg } from "../assets";
 import LandingNavbar from "../components/layout/LandingNavbar";
 import Footer from "../components/layout/Footer";
 import LinkButton from "../components/ui/LinkButton";
 import type { UserHobbyWithHobbyEntity } from "@hobbies-dashboard/types";
+import type { HobbyCardProps } from "../components/dashboard/HobbyCard";
+import HobbyCard from "../components/dashboard/HobbyCard";
 
 const infoCardData: InfoCardProps[] = [
   {
@@ -43,27 +39,27 @@ const previewCardData: HobbyCardProps[] = [
       hobby: { name: "Anime", icon: "🎌", color: "c8a2e3" },
       backgroundImage: animeBg,
     } as UserHobbyWithHobbyEntity,
-    trackedNumber: "8",
-    trackedLabel: "series tracked",
-    additional: "Celestial Chronicles",
+    // trackedNumber: "8",
+    // trackedLabel: "series tracked",
+    // additional: "Celestial Chronicles",
   },
   {
     data: {
       hobby: { name: "Books", icon: "📚", color: "f5c27a" },
       backgroundImage: booksBg,
     } as UserHobbyWithHobbyEntity,
-    trackedNumber: "23",
-    trackedLabel: "books read",
-    additional: "Currently reading 2",
+    // trackedNumber: "23",
+    // trackedLabel: "books read",
+    // additional: "Currently reading 2",
   },
   {
     data: {
       hobby: { name: "Daily Journal", icon: "📖", color: "f5ecd7" },
       backgroundImage: journalBg,
     } as UserHobbyWithHobbyEntity,
-    trackedNumber: "142",
-    trackedLabel: "entries written",
-    additional: "12 day streak 🔥",
+    // trackedNumber: "142",
+    // trackedLabel: "entries written",
+    // additional: "12 day streak 🔥",
   },
 ];
 
@@ -125,9 +121,9 @@ function LandingPage() {
                 <HobbyCard
                   key={card.data.hobby.name}
                   data={card.data}
-                  trackedNumber={card.trackedNumber}
-                  trackedLabel={card.trackedLabel}
-                  additional={card.additional}
+                  // trackedNumber={card.trackedNumber}
+                  // trackedLabel={card.trackedLabel}
+                  // additional={card.additional}
                   className="h-40"
                 />
               ))}

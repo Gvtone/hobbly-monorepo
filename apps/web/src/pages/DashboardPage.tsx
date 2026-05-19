@@ -2,7 +2,6 @@ import { Plus } from "lucide-react";
 import AppLayout from "../components/layout/AppLayout";
 import Button from "../components/ui/Button";
 import EntryCard from "../components/profile/EntryCard";
-import { HobbyCard } from "../components/ui/Card";
 import Carousel from "../components/ui/Carousel";
 import { useAuth } from "../context/auth/useAuth";
 import { useUserHobby } from "../hooks/useUserHobby";
@@ -11,6 +10,7 @@ import { useState } from "react";
 import LogEntryModal from "../components/dashboard/LogEntryModal";
 import AddUserHobbyModal from "../components/dashboard/AddUserHobbyModal";
 import EntryModal from "../components/profile/EntryModal";
+import HobbyCard from "../components/dashboard/HobbyCard";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -26,6 +26,8 @@ function DashboardPage() {
     userHobbies,
     isLoading: isUserHobbiesLoading,
     addUserHobby,
+    updateUserHobby,
+    removeUserHobby,
   } = useUserHobby(user?.id ?? null);
   const {
     userEntries,
@@ -64,6 +66,7 @@ function DashboardPage() {
               variant="gradient"
               shape="pill"
               onClick={() => setIsLogEntryOpen(true)}
+              disabled={userHobbies.length === 0}
             >
               <Plus size={16} />
               New Entry
@@ -79,7 +82,11 @@ function DashboardPage() {
               <p className="text-muted-foreground mb-6 max-w-md">
                 Pick your first hobby to begin tracking your journey
               </p>
-              <Button variant="gradient" shape="pill">
+              <Button
+                variant="gradient"
+                shape="pill"
+                onClick={() => setIsAddHobbyOpen(true)}
+              >
                 <Plus size={16} />
                 Add your first hobby
               </Button>
@@ -90,8 +97,15 @@ function DashboardPage() {
                 <HobbyCard
                   key={data.id}
                   data={data}
+                  enableOptions
                   className="size-56 shrink-0"
-                ></HobbyCard>
+                  onUpdate={(id, backgroundImage) =>
+                    updateUserHobby(id, {
+                      backgroundImage: backgroundImage ?? undefined,
+                    })
+                  }
+                  onDelete={removeUserHobby}
+                />
               ))}
               <button
                 onClick={() => setIsAddHobbyOpen(true)}
@@ -106,38 +120,40 @@ function DashboardPage() {
           )}
         </section>
 
-        <section>
-          <div className="mb-4 flex items-baseline justify-between">
-            <h3 className="text-xl">My Entries</h3>
-            <p className="text-muted-foreground text-sm">
-              {meta.totalCount} total
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {userEntries.map((data) => (
-              <EntryCard
-                key={data.id}
-                data={data}
-                dashboard
-                onClick={() => setSelectedEntryId(data.id)}
-              />
-            ))}
-          </div>
-
-          {hasMore && (
-            <div className="mt-6 flex justify-center">
-              <Button
-                variant="outline"
-                shape="pill"
-                onClick={loadMore}
-                disabled={isEntriesLoading}
-              >
-                {isEntriesLoading ? "Loading..." : "Load more"}
-              </Button>
+        {userHobbies.length > 0 && (
+          <section>
+            <div className="mb-4 flex items-baseline justify-between">
+              <h3 className="text-xl">My Entries</h3>
+              <p className="text-muted-foreground text-sm">
+                {meta.totalCount} total
+              </p>
             </div>
-          )}
-        </section>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {userEntries.map((data) => (
+                <EntryCard
+                  key={data.id}
+                  data={data}
+                  dashboard
+                  onClick={() => setSelectedEntryId(data.id)}
+                />
+              ))}
+            </div>
+
+            {hasMore && (
+              <div className="mt-6 flex justify-center">
+                <Button
+                  variant="outline"
+                  shape="pill"
+                  onClick={loadMore}
+                  disabled={isEntriesLoading}
+                >
+                  {isEntriesLoading ? "Loading..." : "Load more"}
+                </Button>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Modals */}
         <LogEntryModal

@@ -27,7 +27,7 @@ export const userHobbyService = {
   },
 
   async update(id: number, data: UpdateUserHobbyDto) {
-    const res = await api.put<UserHobbyEntity>(`${serviceRoute}/${id}`, data);
+    const res = await api.patch<UserHobbyEntity>(`${serviceRoute}/${id}`, data);
     return res.data;
   },
 
