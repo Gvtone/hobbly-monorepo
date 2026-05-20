@@ -126,7 +126,7 @@ function SettingsPage() {
     { label: "Appearance", icon: Palette, devOnly: true },
     { label: "Privacy", icon: Lock, devOnly: true },
     { label: "Notifications", icon: Bell, devOnly: true },
-    { label: "Account", icon: Shield },
+    { label: "Account", icon: Shield, devOnly: true },
   ].filter((tab) => !isProd || !tab.devOnly);
   const dashboardLayoutSettings = [
     {
