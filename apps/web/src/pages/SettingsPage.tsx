@@ -128,6 +128,7 @@ function SettingsPage() {
     { label: "Notifications", icon: Bell, devOnly: true },
     { label: "Account", icon: Shield, devOnly: true },
   ].filter((tab) => !isProd || !tab.devOnly);
+
   const dashboardLayoutSettings = [
     {
       title: "Show entry images",
@@ -151,6 +152,7 @@ function SettingsPage() {
       },
     },
   ];
+
   const profileVisibilitySettings = [
     {
       title: "Show follower count",
@@ -174,6 +176,7 @@ function SettingsPage() {
       },
     },
   ];
+
   const activitySettings = [
     {
       title: "Likes on entries",
@@ -197,6 +200,7 @@ function SettingsPage() {
       },
     },
   ];
+
   const digestEmailSettings = [
     {
       title: "Weekly hobby recap",

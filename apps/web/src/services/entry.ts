@@ -12,8 +12,29 @@ import api from "./api";
 const serviceRoute = "/entry";
 
 export const entryService = {
-  async create(data: CreateEntryDto) {
-    const res = await api.post<EntryEntity>(`${serviceRoute}`, data);
+  async create(data: CreateEntryDto, file?: File) {
+    const form = new FormData();
+
+    // Append every DTO field as a string — FormData only carries strings or files.
+    // Dates become ISO strings; objects (metadata) become JSON strings; nulls are skipped.
+    (
+      Object.entries(data) as [keyof CreateEntryDto, CreateEntryDto[keyof CreateEntryDto]][]
+    ).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
+      if (value instanceof Date) {
+        form.append(key, value.toISOString());
+      } else if (typeof value === "object") {
+        form.append(key, JSON.stringify(value));
+      } else {
+        form.append(key, String(value));
+      }
+    });
+
+    if (file) form.append("image", file);
+
+    const res = await api.post<EntryEntity>(`${serviceRoute}`, form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return res.data;
   },
 
