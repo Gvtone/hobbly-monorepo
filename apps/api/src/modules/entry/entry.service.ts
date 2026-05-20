@@ -5,15 +5,17 @@ import { DatabaseService } from '../../common/database/database.service';
 import { EntryFilterDto } from './dto/entry-filter.dto';
 import { Prisma } from '../../generated/prisma/client';
 import { EntryMoodService } from '../entry-mood/entry-mood.service';
+import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 
 @Injectable()
 export class EntryService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly entryMoodService: EntryMoodService,
+    private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async create(createEntryDto: CreateEntryDto) {
+  async create(createEntryDto: CreateEntryDto, image?: Express.Multer.File) {
     if (createEntryDto.moodId) {
       const entryMood = await this.entryMoodService.findOne(
         createEntryDto.moodId,
@@ -22,6 +24,14 @@ export class EntryService {
       if (!entryMood) {
         throw new NotFoundException('Mood does not exist');
       }
+    }
+
+    if (image) {
+      const { secure_url } = await this.cloudinary.upload(image, 'coverImage');
+
+      return await this.databaseService.entry.create({
+        data: { ...createEntryDto, image: secure_url },
+      });
     }
 
     return await this.databaseService.entry.create({ data: createEntryDto });
@@ -115,6 +125,10 @@ export class EntryService {
   }
 
   async delete(id: number, userId: number) {
+    const { image } = await this.findById(id);
+
+    if (image) await this.cloudinary.delete(image);
+
     return await this.databaseService.entry.delete({
       where: { id, userHobby: { userId } },
     });
