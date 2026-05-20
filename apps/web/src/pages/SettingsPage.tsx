@@ -1,6 +1,7 @@
 import {
   Bell,
   Camera,
+  CameraOff,
   ChevronRight,
   Lock,
   Palette,
@@ -9,7 +10,7 @@ import {
   User,
 } from "lucide-react";
 import Button from "../components/ui/Button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/auth/useAuth";
 import Input from "../components/ui/Input";
@@ -26,6 +27,97 @@ function SettingsPage() {
   const { user, updateUser } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const [selectedTab, setSelectedTab] = useState("Profile");
+
+  const profilePictureInputRef = useRef<HTMLInputElement>(null);
+  const coverImageInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingProfilePicture, setIsUploadingProfilePicture] =
+    useState(false);
+  const [isUploadingCoverImage, setIsUploadingCoverImage] = useState(false);
+
+  const handleProfilePictureChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingProfilePicture(true);
+    try {
+      const updated = await userService.uploadProfilePicture(file);
+      updateUser(updated);
+      showToast.success("Profile picture updated");
+    } catch {
+      showToast.error("Failed to upload profile picture");
+    } finally {
+      setIsUploadingProfilePicture(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleRemoveProfilePicture = async () => {
+    setIsUploadingProfilePicture(true);
+    try {
+      const updated = await userService.removeProfilePicture();
+      updateUser(updated);
+      showToast.success("Profile picture removed");
+    } catch {
+      showToast.error("Failed to remove profile picture");
+    } finally {
+      setIsUploadingProfilePicture(false);
+    }
+  };
+
+  const handleCoverImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingCoverImage(true);
+    try {
+      const updated = await userService.uploadCoverImage(file);
+      updateUser(updated);
+      showToast.success("Cover image updated");
+    } catch {
+      showToast.error("Failed to upload cover image");
+    } finally {
+      setIsUploadingCoverImage(false);
+      e.target.value = "";
+    }
+  };
+
+  const COVER_PRESETS = [
+    "https://res.cloudinary.com/dheojbnvv/image/upload/v1779293948/hobbly/commonAsset/backgroundImages/photo-1527842891421-42eec6e703ea_rdbywl.webp",
+    "https://res.cloudinary.com/dheojbnvv/image/upload/v1779293921/hobbly/commonAsset/backgroundImages/photo-1586380951230-e6703d9f6833_ngkkrd.webp",
+    "https://res.cloudinary.com/dheojbnvv/image/upload/v1779293900/hobbly/commonAsset/backgroundImages/photo-1522383225653-ed111181a951_b4o4or.webp",
+    "https://res.cloudinary.com/dheojbnvv/image/upload/v1779293891/hobbly/commonAsset/backgroundImages/photo-1577016029703-cc22a7c0c28c_g4iszx.webp",
+    "https://res.cloudinary.com/dheojbnvv/image/upload/v1779293850/hobbly/commonAsset/backgroundImages/photo-1431440869543-efaf3388c585_hp92gn.webp",
+  ];
+
+  const handleRemoveCoverImage = async () => {
+    setIsUploadingCoverImage(true);
+    try {
+      const isPreset = COVER_PRESETS.includes(user?.coverImage ?? "");
+      const updated = isPreset
+        ? await userService.updateCurrentUser({ coverImage: null })
+        : await userService.removeCoverImage();
+      updateUser(updated);
+      showToast.success("Cover image removed");
+    } catch {
+      showToast.error("Failed to remove cover image");
+    } finally {
+      setIsUploadingCoverImage(false);
+    }
+  };
+
+  const handleSelectCoverPreset = async (url: string) => {
+    setIsUploadingCoverImage(true);
+    try {
+      const updated = await userService.updateCurrentUser({ coverImage: url });
+      updateUser(updated);
+    } catch {
+      showToast.error("Failed to set cover image");
+    } finally {
+      setIsUploadingCoverImage(false);
+    }
+  };
 
   const isProd = import.meta.env.VITE_NODE_ENV === "production";
 
@@ -211,10 +303,18 @@ function SettingsPage() {
                   <div className="flex flex-col gap-4">
                     <h3 className="text-muted-foreground">Profile picture</h3>
                     <div className="flex flex-col items-center gap-8 md:flex-row">
+                      <input
+                        ref={profilePictureInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleProfilePictureChange}
+                      />
                       <button
                         type="button"
-                        onClick={() => console.log("hello")}
-                        className="border-hobbly-sky-light hover:border-hobbly-sky group relative size-30 cursor-pointer overflow-hidden rounded-full border-2 transition-colors"
+                        onClick={() => profilePictureInputRef.current?.click()}
+                        disabled={isUploadingProfilePicture}
+                        className="border-hobbly-sky-light hover:border-hobbly-sky group relative size-30 cursor-pointer overflow-hidden rounded-full border-2 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         {user?.profilePicture ? (
                           <img
@@ -223,7 +323,7 @@ function SettingsPage() {
                             alt={user.username}
                           />
                         ) : (
-                          <div className="from-hobbly-sky to-hobbly-lavender flex h-full w-full items-center justify-center bg-linear-to-br text-sm font-bold text-white">
+                          <div className="from-hobbly-sky to-hobbly-lavender flex h-full w-full items-center justify-center bg-linear-to-br text-5xl font-bold text-white">
                             {user?.username?.[0].toUpperCase()}
                           </div>
                         )}
@@ -232,14 +332,34 @@ function SettingsPage() {
                         </div>
                       </button>
                       <div className="flex flex-col items-center gap-2 md:items-start">
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          shape="pill"
-                          className="size-fit"
-                        >
-                          Upload photo
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            shape="pill"
+                            className="size-fit"
+                            disabled={isUploadingProfilePicture}
+                            onClick={() =>
+                              profilePictureInputRef.current?.click()
+                            }
+                          >
+                            {isUploadingProfilePicture
+                              ? "Uploading..."
+                              : "Upload photo"}
+                          </Button>
+                          {user?.profilePicture && (
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              shape="pill"
+                              className="size-fit"
+                              disabled={isUploadingProfilePicture}
+                              onClick={handleRemoveProfilePicture}
+                            >
+                              Remove
+                            </Button>
+                          )}
+                        </div>
                         <p className="text-muted-foreground text-sm">
                           JPG, PNG, or GIF · Max 4MB
                         </p>
@@ -252,33 +372,109 @@ function SettingsPage() {
                 <Card>
                   <div className="flex flex-col gap-4">
                     <h3 className="text-muted-foreground">Cover image</h3>
+
+                    <input
+                      ref={coverImageInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleCoverImageChange}
+                    />
                     <Button
                       type="button"
                       fullWidth
-                      className="group relative h-40 overflow-clip rounded-b-none border-none p-0"
+                      disabled={isUploadingCoverImage}
+                      className="group relative h-40 overflow-clip rounded-b-none border-none p-0 disabled:cursor-not-allowed disabled:opacity-60"
+                      onClick={() => coverImageInputRef.current?.click()}
                     >
-                      {user?.coverImage && (
+                      {user?.coverImage ? (
                         <img
                           src={user?.coverImage}
                           alt=""
                           className="h-full w-full object-cover object-center"
                         />
+                      ) : (
+                        <CameraOff size={40} />
                       )}
                       <div className="from-card absolute top-0 right-0 left-0 z-10 h-42 overflow-hidden rounded-t-3xl bg-linear-to-t to-transparent" />
                       <div className="absolute top-0 right-0 bottom-0 left-0 z-20 hidden items-center justify-center bg-black/30 group-hover:flex">
                         <div className="flex size-fit items-center justify-center gap-2 rounded-full bg-black/50 px-4 py-2 text-white">
                           <Camera size={16} />
-                          <span>Upload custom photo</span>
+                          <span>
+                            {isUploadingCoverImage
+                              ? "Uploading..."
+                              : "Upload custom photo"}
+                          </span>
                         </div>
                       </div>
                     </Button>
+
                     <p className="text-muted-foreground text-xs">
                       Or pick a preset
                     </p>
-                    <div className="grid grid-cols-3 grid-rows-2 gap-4">
-                      {/* <RadioPill>
 
-                      </RadioPill> */}
+                    <div className="grid grid-cols-3 grid-rows-2 gap-4">
+                      {/* No cover / remove */}
+                      <button
+                        type="button"
+                        disabled={isUploadingCoverImage}
+                        onClick={handleRemoveCoverImage}
+                        className="relative h-16 overflow-hidden rounded-xl border-2 transition-all hover:cursor-pointer hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        style={
+                          !user?.coverImage
+                            ? {
+                                borderColor: "var(--ring)",
+                                boxShadow: "0 0 0 3px var(--hobbly-sky-light)",
+                              }
+                            : { borderColor: "transparent" }
+                        }
+                      >
+                        <div className="from-hobbly-sky to-hobbly-lavender flex h-full w-full items-center justify-center bg-linear-to-br">
+                          <CameraOff size={24} className="text-black" />
+                        </div>
+                        {!user?.coverImage && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                            <span className="text-xs font-medium text-white">
+                              None
+                            </span>
+                          </div>
+                        )}
+                      </button>
+
+                      {/* Preset images */}
+                      {COVER_PRESETS.map((url) => {
+                        const isSelected = user?.coverImage === url;
+                        return (
+                          <button
+                            key={url}
+                            type="button"
+                            disabled={isUploadingCoverImage}
+                            onClick={() => handleSelectCoverPreset(url)}
+                            className="relative h-16 overflow-hidden rounded-xl border-2 transition-all hover:cursor-pointer hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-50"
+                            style={
+                              isSelected
+                                ? {
+                                    borderColor: "var(--ring)",
+                                    boxShadow:
+                                      "0 0 0 3px var(--hobbly-sky-light)",
+                                  }
+                                : { borderColor: "transparent" }
+                            }
+                          >
+                            <img
+                              src={url}
+                              className="h-full w-full object-cover object-center"
+                            />
+                            {isSelected && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                <span className="flex size-5 items-center justify-center rounded-full bg-white text-xs font-bold text-black">
+                                  ✓
+                                </span>
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </Card>

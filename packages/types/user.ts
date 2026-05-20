@@ -8,8 +8,8 @@ export interface CreateUserDto {
 
 export interface UpdateUserDto extends Partial<CreateUserDto> {
   status?: UserStatus;
-  profilePicture?: string;
-  coverImage?: string;
+  profilePicture?: string | null;
+  coverImage?: string | null;
   displayName?: string;
   bio?: string;
   visibility?: Visibility;
