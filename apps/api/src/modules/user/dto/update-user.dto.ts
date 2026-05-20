@@ -22,6 +22,11 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiPropertyOptional({ type: String })
   @IsString()
   @IsOptional()
+  displayName?: string;
+
+  @ApiPropertyOptional({ type: String })
+  @IsString()
+  @IsOptional()
   bio?: string;
 
   @ApiPropertyOptional({ enum: Visibility })

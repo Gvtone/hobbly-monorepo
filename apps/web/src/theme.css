@@ -18,7 +18,7 @@
   --accent-foreground: #2d3a4a;
   --destructive: #e8857a;
   --destructive-foreground: #ffffff;
-  --border: rgba(45, 58, 74, 0.1);
+  --border: #2d3a4a1a;
   --ring: #7ec8e3;
 
   /* Hobbly palette */
@@ -58,7 +58,7 @@
   --accent-foreground: #e8edf5;
   --destructive: #e8857a;
   --destructive-foreground: #ffffff;
-  --border: rgba(232, 237, 245, 0.1);
+  --border: #e8edf51a;
   --ring: #7ec8e3;
 }
 

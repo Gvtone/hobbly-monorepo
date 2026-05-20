@@ -6,7 +6,7 @@ import RadioPill from "../ui/RadioPill";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import { useEntryMood } from "../../hooks/useEntryMood";
-import Textarea from "../ui/TextArea";
+import TextArea from "../ui/TextArea";
 import { Globe, Lock } from "lucide-react";
 import { entryService } from "../../services/entry";
 import { showToast } from "../../utils/toast";
@@ -250,7 +250,7 @@ function LogEntryModal({
               </span>
             )}
           </p>
-          <Textarea
+          <TextArea
             variant="auth"
             shape="rounded"
             rows={4}
