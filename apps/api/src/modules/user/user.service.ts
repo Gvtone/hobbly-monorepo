@@ -1,15 +1,22 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { DatabaseService } from '../../common/database/database.service';
 import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { HashService } from '../../common/utils/hash.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PayloadEntity } from '../auth/entities/payload.entity';
+import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly hashService: HashService,
+    private readonly cloudinary: CloudinaryService,
   ) {}
 
   async findAll() {
@@ -86,6 +93,71 @@ export class UserService {
     });
 
     return new UserEntity(user);
+  }
+
+  async uploadProfilePicture(user: PayloadEntity, image: Express.Multer.File) {
+    const { profilePicture } = await this.findUserById(user.sub);
+
+    if (profilePicture) await this.cloudinary.delete(profilePicture);
+
+    const { secure_url } = await this.cloudinary.upload(
+      image,
+      'profilePicture',
+    );
+
+    const updatedUser = await this.databaseService.user.update({
+      where: { id: user.sub },
+      data: { profilePicture: secure_url },
+    });
+
+    return new UserEntity(updatedUser);
+  }
+
+  async removeProfilePicture(user: PayloadEntity) {
+    const { profilePicture } = await this.findUserById(user.sub);
+
+    if (!profilePicture)
+      throw new NotFoundException('User have no profile picture');
+
+    await this.cloudinary.delete(profilePicture);
+
+    const updatedUser = await this.databaseService.user.update({
+      where: { id: user.sub },
+      data: { profilePicture: null },
+    });
+
+    return new UserEntity(updatedUser);
+  }
+
+  async uploadCoverImage(user: PayloadEntity, image: Express.Multer.File) {
+    const { coverImage } = await this.findUserById(user.sub);
+
+    if (coverImage) await this.cloudinary.delete(coverImage);
+
+    const { secure_url } = await this.cloudinary.upload(image, 'coverImage');
+
+    const updatedUser = await this.databaseService.user.update({
+      where: { id: user.sub },
+      data: { coverImage: secure_url },
+    });
+
+    return new UserEntity(updatedUser);
+  }
+
+  async removeCoverImage(user: PayloadEntity) {
+    const { coverImage } = await this.findUserById(user.sub);
+
+    if (!coverImage)
+      throw new NotFoundException('User have no profile picture');
+
+    await this.cloudinary.delete(coverImage);
+
+    const updatedUser = await this.databaseService.user.update({
+      where: { id: user.sub },
+      data: { coverImage: null },
+    });
+
+    return new UserEntity(updatedUser);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
