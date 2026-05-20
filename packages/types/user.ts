@@ -10,6 +10,7 @@ export interface UpdateUserDto extends Partial<CreateUserDto> {
   status?: UserStatus;
   profilePicture?: string;
   coverImage?: string;
+  displayName?: string;
   bio?: string;
   visibility?: Visibility;
 }
