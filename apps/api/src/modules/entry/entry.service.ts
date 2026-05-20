@@ -26,15 +26,25 @@ export class EntryService {
       }
     }
 
-    if (image) {
-      const { secure_url } = await this.cloudinary.upload(image, 'coverImage');
-
-      return await this.databaseService.entry.create({
-        data: { ...createEntryDto, image: secure_url },
+    return await this.databaseService.$transaction(async (tx) => {
+      const createdEntry = await tx.entry.create({
+        data: { ...createEntryDto },
       });
-    }
 
-    return await this.databaseService.entry.create({ data: createEntryDto });
+      if (image) {
+        const { secure_url } = await this.cloudinary.upload(
+          image,
+          `entryImage/${createdEntry.id}`,
+        );
+
+        return await tx.entry.update({
+          where: { id: createdEntry.id },
+          data: { image: secure_url },
+        });
+      }
+
+      return createdEntry;
+    });
   }
 
   async findAll({
