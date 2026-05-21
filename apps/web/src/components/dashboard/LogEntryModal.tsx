@@ -6,10 +6,11 @@ import RadioPill from "../ui/RadioPill";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import { useEntryMood } from "../../hooks/useEntryMood";
-import Textarea from "../ui/TextArea";
-import { Globe, Lock } from "lucide-react";
+import TextArea from "../ui/TextArea";
+import { Camera, Globe, Lock, X } from "lucide-react";
 import { entryService } from "../../services/entry";
 import { showToast } from "../../utils/toast";
+import { useRef, useState } from "react";
 
 interface LogEntryModalProps {
   userId: number | null;
@@ -41,6 +42,27 @@ function LogEntryModal({
     },
   });
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageInputKey, setImageInputKey] = useState(0);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const clearImage = () => {
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImageFile(null);
+    setImagePreview(null);
+    setImageInputKey((k) => k + 1);
+  };
+
   const { field: hobbyField } = useController({
     name: "userHobbyId",
     control,
@@ -49,11 +71,6 @@ function LogEntryModal({
 
   const { field: moodField } = useController({
     name: "moodId",
-    control,
-  });
-
-  const { field: imageField } = useController({
-    name: "image",
     control,
   });
 
@@ -83,16 +100,16 @@ function LogEntryModal({
         ? new Date(data.activityDate as unknown as string)
         : new Date(),
       visibility: data.visibility,
-      image: data.image,
-      metadata: null, // for future use with tracked hobbies
+      metadata: null,
     };
 
     try {
-      await entryService.create(entryData);
+      await entryService.create(entryData, imageFile ?? undefined);
       showToast.success("Entry created successfully!");
       await onRefresh();
       onClose();
       reset();
+      clearImage();
     } catch (error) {
       console.log("Failed to create entry:", error);
       showToast.error("Failed to create entry.");
@@ -109,6 +126,7 @@ function LogEntryModal({
       open={open}
       onClose={() => {
         reset();
+        clearImage();
         onClose();
       }}
       title="Log Entry"
@@ -182,29 +200,46 @@ function LogEntryModal({
             Image <span className="text-xs opacity-50">(optional)</span>
           </p>
 
-          {/* Preview if URL is entered */}
-          {imageField.value && (
+          {/* Preview */}
+          {imagePreview && (
             <div className="bg-accent relative aspect-video overflow-hidden rounded-2xl">
               <img
-                src={imageField.value}
+                src={imagePreview}
                 alt=""
                 className="h-full w-full object-cover"
-                onError={(e) => {
-                  // hide broken image
-                  e.currentTarget.style.display = "none";
-                }}
               />
+              <Button
+                variant="translucent"
+                shape="pill"
+                size="icon"
+                type="button"
+                onClick={clearImage}
+                className="absolute top-2 right-2 flex"
+              >
+                <X size={14} />
+              </Button>
             </div>
           )}
 
-          <Input
-            type="text"
-            variant="auth"
-            shape="pill"
-            placeholder="Paste image URL..."
-            disabled={noHobby}
-            {...imageField}
+          <input
+            key={imageInputKey}
+            ref={imageInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageChange}
           />
+
+          <Button
+            type="button"
+            variant="secondary"
+            shape="pill"
+            disabled={noHobby}
+            onClick={() => imageInputRef.current?.click()}
+          >
+            <Camera size={14} />
+            {imageFile ? "Change image" : "Upload image"}
+          </Button>
         </div>
 
         {/* Json */}
@@ -250,7 +285,7 @@ function LogEntryModal({
               </span>
             )}
           </p>
-          <Textarea
+          <TextArea
             variant="auth"
             shape="rounded"
             rows={4}

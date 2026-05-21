@@ -40,7 +40,7 @@ function MainProfileCard({
                   src={user.coverImage}
                   className="h-full w-full object-cover object-center"
                 />
-                <div className="from-card absolute top-0 right-0 left-0 z-10 h-42 overflow-hidden rounded-t-3xl bg-linear-to-t to-transparent"></div>
+                <div className="from-card absolute top-0 right-0 left-0 z-10 h-42 overflow-hidden rounded-t-3xl bg-linear-to-t to-transparent" />
               </>
             )}
           </div>

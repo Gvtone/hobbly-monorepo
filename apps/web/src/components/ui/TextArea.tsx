@@ -2,13 +2,13 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/utils";
 import { forwardRef } from "react";
 
-const textareaVariants = cva(
+const textAreaVariants = cva(
   "transition focus:outline-none focus:ring-1 focus:ring-ring resize-none w-full",
   {
     variants: {
       variant: {
         default: "bg-card text-card-foreground border-2 border-border",
-        auth: "bg-accent text-accent-foreground",
+        auth: "bg-accent text-accent-foreground border border-border",
       },
       shape: {
         rounded: "rounded-2xl",
@@ -26,22 +26,22 @@ const textareaVariants = cva(
   },
 );
 
-interface TextareaProps
+interface TextAreaProps
   extends
     React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-    VariantProps<typeof textareaVariants> {}
+    VariantProps<typeof textAreaVariants> {}
 
-const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ className, variant, shape, scale, ...props }, ref) => {
     return (
       <textarea
         ref={ref}
-        className={cn(textareaVariants({ variant, shape, scale }), className)}
+        className={cn(textAreaVariants({ variant, shape, scale }), className)}
         {...props}
       />
     );
   },
 );
 
-Textarea.displayName = "Textarea";
-export default Textarea;
+TextArea.displayName = "TextArea";
+export default TextArea;

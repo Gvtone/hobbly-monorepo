@@ -1,4 +1,4 @@
-import type { UserRole, Visibility } from "./enums";
+import type { UserRole, UserStatus, Visibility } from "./enums";
 
 export interface AuthPayloadDto {
   identifier: string;
@@ -12,5 +12,6 @@ export interface JwtPayload {
   email: string;
   role: UserRole;
   visibility: Visibility;
+  status: UserStatus;
   type: "ACCESS" | "REFRESH";
 }
