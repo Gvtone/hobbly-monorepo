@@ -50,6 +50,7 @@ export class AuthService {
         email: user.email,
         role: user.role,
         visibility: user.visibility,
+        status: user.status,
         type: 'ACCESS',
       };
     }
@@ -142,6 +143,7 @@ export class AuthService {
       email: user.email,
       role: user.role,
       visibility: user.visibility,
+      status: user.status,
       type: 'ACCESS',
     };
 
