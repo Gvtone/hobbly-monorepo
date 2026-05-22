@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/auth/useAuth";
 import { showToast } from "../utils/toast";
-import { useController, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { moonSky } from "../assets";
 
 interface LoginFormValues {
@@ -36,26 +36,7 @@ function AuthPage() {
     handleSubmit,
     formState: { errors },
     reset,
-    control,
   } = useForm<SignupFormValues>({ shouldUnregister: true });
-
-  const { field: usernameField } = useController({
-    name: "username",
-    control,
-    defaultValue: "",
-    rules:
-      mode === "signup"
-        ? {
-            required: "Username is required",
-            minLength: { value: 3, message: "At least 3 characters" },
-            maxLength: { value: 20, message: "At most 20 characters" },
-            pattern: {
-              value: /^[a-z0-9_]+$/,
-              message: "Only lowercase letters, numbers, and underscores",
-            },
-          }
-        : {},
-  });
 
   const onSubmit = async (data: SignupFormValues) => {
     setIsSubmitting(true);
@@ -142,19 +123,36 @@ function AuthPage() {
                   Username
                 </label>
                 <Input
+                  key={mode}
                   id="username"
                   variant="auth"
                   shape="pill"
                   fullWidth
                   placeholder="starweaver"
-                  {...usernameField}
-                  onChange={(e) => {
-                    const cleaned = e.target.value
-                      .toLowerCase()
-                      .replace(/[^a-z0-9_]/g, "");
-                    usernameField.onChange(cleaned);
-                  }}
+                  {...register("username", {
+                    required: "Username is required",
+                    minLength: {
+                      value: 3,
+                      message: "At least 3 characters",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "At most 20 characters",
+                    },
+                    pattern: {
+                      value: /^[a-z0-9_]+$/,
+                      message:
+                        "Only lowercase letters, numbers, and underscores",
+                    },
+
+                    onChange: (e) => {
+                      e.target.value = e.target.value
+                        .toLowerCase()
+                        .replace(/[^a-z0-9_]/g, "");
+                    },
+                  })}
                 />
+
                 {errors.username && (
                   <p className="text-destructive mt-1 ml-2 text-xs">
                     {errors.username.message}
