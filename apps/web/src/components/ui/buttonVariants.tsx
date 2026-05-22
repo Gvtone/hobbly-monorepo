@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed whitespace-nowrap",
+  "w-fit inline-flex items-center gap-2 font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed whitespace-nowrap",
   {
     variants: {
       variant: {
@@ -57,7 +57,7 @@ const buttonVariants = cva(
       size: {
         default: "px-5 py-2.5 text-sm",
         sm: "px-4 py-1 text-sm",
-        lg: "px-8 py-3 text-base",
+        lg: "px-6 py-3 text-base",
         icon: "size-9",
       },
       fullWidth: {
@@ -65,6 +65,12 @@ const buttonVariants = cva(
       },
       active: {
         true: "bg-primary text-primary-foreground border-hobbly-sky hover:bg-primary",
+      },
+      contentPosition: {
+        start: "justify-start",
+        center: "justify-center",
+        end: "justify-end",
+        between: "justify-between",
       },
     },
     compoundVariants: [
@@ -78,6 +84,7 @@ const buttonVariants = cva(
       variant: "default",
       shape: "rounded",
       size: "default",
+      contentPosition: "center",
     },
   },
 );

@@ -18,7 +18,12 @@ function RadioPill({
   ...props
 }: RadioPillProps) {
   return (
-    <label className={cn("cursor-pointer", props.disabled && "cursor-not-allowed opacity-50")}>
+    <label
+      className={cn(
+        "cursor-pointer",
+        props.disabled && "cursor-not-allowed opacity-50",
+      )}
+    >
       <input type="radio" ref={ref} className="peer sr-only" {...props} />
       <span
         className={cn(

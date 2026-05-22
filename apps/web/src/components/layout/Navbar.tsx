@@ -22,11 +22,13 @@ function Navbar() {
   const navigate = useNavigate();
   const isActive = (path: string) => location.pathname === path;
 
+  const isProd = import.meta.env.VITE_NODE_ENV === "production";
+
   const navItems = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: `/@${user?.username}`, label: "Profile", icon: User },
-    { to: "/explore", label: "Explore", icon: Compass },
-  ];
+    { to: "/explore", label: "Explore", icon: Compass, devOnly: true },
+  ].filter((nav) => !isProd || !nav.devOnly);
 
   const handleLogout = async () => {
     await logout();

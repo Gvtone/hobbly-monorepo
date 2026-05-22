@@ -12,7 +12,7 @@ const inputVariants = cva(
           "border-2 border-border",
           "shadow-lg shadow-card/30",
         ],
-        auth: "bg-accent text-accent-foreground",
+        auth: "bg-accent text-accent-foreground border border-border",
       },
       shape: {
         rounded: "rounded-2xl",

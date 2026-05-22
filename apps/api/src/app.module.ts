@@ -19,6 +19,7 @@ import { LikeModule } from './modules/like/like.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { ProfileShareModule } from './modules/profile-share/profile-share.module';
 import { CurrentMoodModule } from './modules/current-mood/current-mood.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { CurrentMoodModule } from './modules/current-mood/current-mood.module';
     CommentModule,
     ProfileShareModule,
     CurrentMoodModule,
+    CloudinaryModule,
   ],
   providers: [
     {

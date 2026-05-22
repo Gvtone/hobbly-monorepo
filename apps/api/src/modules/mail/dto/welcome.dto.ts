@@ -9,8 +9,4 @@ export class WelcomeDto {
   @IsString()
   @IsNotEmpty()
   username: string;
-
-  @IsString()
-  @IsNotEmpty()
-  dashboardUrl: string;
 }

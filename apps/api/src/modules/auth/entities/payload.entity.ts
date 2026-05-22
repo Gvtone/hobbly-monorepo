@@ -1,5 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRole, Visibility } from '../../../generated/prisma/enums';
+import {
+  UserRole,
+  UserStatus,
+  Visibility,
+} from '../../../generated/prisma/enums';
 import type { JwtPayload } from '@hobbies-dashboard/types';
 
 export class PayloadEntity implements JwtPayload {
@@ -20,6 +24,9 @@ export class PayloadEntity implements JwtPayload {
 
   @ApiProperty({ enum: Visibility })
   visibility: Visibility;
+
+  @ApiProperty({ enum: UserStatus })
+  status: UserStatus;
 
   @ApiProperty({ enum: { ACCESS: 'ACCESS', REFRESH: 'REFRESH' } })
   type: 'ACCESS' | 'REFRESH' = 'ACCESS';

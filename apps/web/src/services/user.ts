@@ -18,8 +18,46 @@ export const userService = {
     return res.data;
   },
 
-  async findUserByUsername(username: string) {
-    const res = await api.get<PublicUserEntity>(`${serviceRoute}/${username}`);
+  async findUserByUsernamePublic(username: string) {
+    const res = await api.get<PublicUserEntity>(
+      `${serviceRoute}/public/${username}`,
+    );
+    return res.data;
+  },
+
+  async uploadProfilePicture(file: File) {
+    const form = new FormData();
+    form.append("image", file);
+    const res = await api.post<UserEntity>(
+      `${serviceRoute}/upload/profile-picture`,
+      form,
+      { headers: { "Content-Type": "multipart/form-data" } },
+    );
+    return res.data;
+  },
+
+  async removeProfilePicture() {
+    const res = await api.post<UserEntity>(
+      `${serviceRoute}/remove/profile-picture`,
+    );
+    return res.data;
+  },
+
+  async uploadCoverImage(file: File) {
+    const form = new FormData();
+    form.append("image", file);
+    const res = await api.post<UserEntity>(
+      `${serviceRoute}/upload/cover-image`,
+      form,
+      { headers: { "Content-Type": "multipart/form-data" } },
+    );
+    return res.data;
+  },
+
+  async removeCoverImage() {
+    const res = await api.post<UserEntity>(
+      `${serviceRoute}/remove/cover-image`,
+    );
     return res.data;
   },
 
