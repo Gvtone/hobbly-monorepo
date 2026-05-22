@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { authService } from "../services/auth";
 import { showToast } from "../utils/toast";
 
@@ -50,14 +50,17 @@ export function useAuthActions() {
     }
   }
 
-  async function verify(token: string) {
+  const verify = useCallback(async (token: string): Promise<boolean> => {
     try {
       await authService.verify(token);
+      return true;
     } catch (error) {
-      showToast.error(error as string);
-      console.log("Error verifying token");
+      showToast.error(
+        error instanceof Error ? error.message : "Something went wrong",
+      );
+      return false;
     }
-  }
+  }, []);
 
   return { isLoading, forgot, reset, resendVerification, verify };
 }

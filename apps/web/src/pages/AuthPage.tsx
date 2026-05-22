@@ -42,6 +42,7 @@ function AuthPage() {
   const { field: usernameField } = useController({
     name: "username",
     control,
+    defaultValue: "",
     rules:
       mode === "signup"
         ? {
@@ -62,15 +63,24 @@ function AuthPage() {
       if (mode === "login") {
         await login(data.email, data.password);
         showToast.success("Welcome back! ✨");
+        navigate("/dashboard");
       } else {
         await registerUser(data.username, data.email, data.password);
-        showToast.success("Your space is ready 🌸");
+        navigate(`/verify-email?email=${encodeURIComponent(data.email)}`);
       }
-      navigate("/dashboard");
     } catch (err) {
-      showToast.error(
-        err instanceof Error ? err.message : "Something went wrong",
-      );
+      const message =
+        err instanceof Error ? err.message : "Something went wrong";
+      if (message === "Please verify your email first") {
+        const isEmail = data.email.includes("@");
+        navigate(
+          isEmail
+            ? `/verify-email?email=${encodeURIComponent(data.email)}`
+            : "/verify-email",
+        );
+      } else {
+        showToast.error(message);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -196,6 +206,7 @@ function AuthPage() {
               </label>
               <div className="relative">
                 <Input
+                  key={mode}
                   id="password"
                   variant="auth"
                   shape="pill"

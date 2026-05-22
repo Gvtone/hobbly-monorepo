@@ -15,7 +15,10 @@ export const authService = {
   },
 
   async register(data: CreateUserDto) {
-    const res = await api.post<UserEntity>(`${serviceRoute}/register`, data);
+    const res = await api.post<GenericOutputEntity>(
+      `${serviceRoute}/register`,
+      data,
+    );
     return res.data;
   },
 

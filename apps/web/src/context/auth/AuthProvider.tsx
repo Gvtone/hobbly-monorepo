@@ -26,8 +26,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function register(username: string, email: string, password: string) {
-    const user = await authService.register({ username, email, password });
-    setUser(user);
+    await authService.register({ username, email, password });
   }
 
   async function logout() {

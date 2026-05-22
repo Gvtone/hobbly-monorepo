@@ -1,7 +1,7 @@
 import { ArrowLeft, Eye, EyeClosed, KeyRound } from "lucide-react";
 import AuthLayout from "../components/layout/AuthLayout";
 import { Card } from "../components/ui/Card";
-import { moonSky } from "../assets";
+import { journalBg } from "../assets";
 import Input from "../components/ui/Input";
 import { useForm } from "react-hook-form";
 import Button from "../components/ui/Button";
@@ -50,7 +50,7 @@ function ResetPasswordPage() {
 
   return (
     <AuthLayout
-      background={moonSky}
+      background={journalBg}
       subtitle="Don't worry — it happens to the coziest of us. We'll have you back in your space in no time. ✨"
     >
       <div className="w-full max-w-md">
@@ -67,19 +67,19 @@ function ResetPasswordPage() {
             {isPasswordReset ? (
               <div className="text-5xl">🎉</div>
             ) : (
-              <div className="bg-hobbly-sky-light text-hobbly-sky-dark rounded-2xl p-4">
-                <KeyRound />
+              <div className="from-hobbly-sky-light to-background text-hobbly-sky-dark flex size-20 items-center justify-center rounded-2xl bg-linear-to-br">
+                <KeyRound size={36} />
               </div>
             )}
             <h2 className="xs:text-2xl text-center text-lg">
               {isPasswordReset
                 ? "Password has been reset"
-                : "Forgot your password?"}
+                : "Set a new password"}
             </h2>
             <span className="text-muted-foreground text-center text-sm">
               {isPasswordReset
                 ? "Use your new password to enter your cozy space!"
-                : "Enter your email or username and we'll send a reset link to your inbox."}
+                : "Choose something cozy but strong — you'll use it every time you come home."}
             </span>
           </div>
 
@@ -184,6 +184,7 @@ function ResetPasswordPage() {
                 fullWidth
                 type="submit"
                 disabled={isSubmitting}
+                className="mt-8"
               >
                 Set New Password
               </Button>

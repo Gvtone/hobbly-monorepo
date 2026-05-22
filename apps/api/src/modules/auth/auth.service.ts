@@ -20,7 +20,6 @@ import {
   GenericOutputEntity,
   GenericOutputStatus,
 } from '../../common/entities/generic-output.entity';
-import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -178,28 +177,37 @@ export class AuthService {
     return newPayload;
   }
 
-  async register(createUserDto: CreateUserDto): Promise<UserEntity> {
+  async register(createUserDto: CreateUserDto): Promise<GenericOutputEntity> {
     const createdUser = await this.userService.create(createUserDto);
 
     const token = await this.tokenService.generateToken({
       userId: createdUser.id,
-      type: 'EMAIL_VERIFICATION',
+      type: TokenType.EMAIL_VERIFICATION,
+      expiresAt: new Date(Date.now() + ms('30m')),
     });
 
-    await this.mailService.sendVerificationEmail({
+    return await this.mailService.sendVerificationEmail({
       to: createUserDto.email,
       username: createUserDto.username,
       token,
     });
-
-    return createdUser;
   }
 
   async resendVerificationEmail(email: string): Promise<GenericOutputEntity> {
     const user = await this.userService.findUserByEmail(email);
 
+    if (!user) {
+      return {
+        status: GenericOutputStatus.FAILED,
+        message: 'No user found',
+      };
+    }
+
     if (user.status === UserStatus.ACTIVE) {
-      return { message: 'Email is already active. Please log in.' };
+      return {
+        status: GenericOutputStatus.FAILED,
+        message: 'Email is already active. Please log in.',
+      };
     }
 
     const token = await this.tokenService.findTokenByUserId(
@@ -212,6 +220,7 @@ export class AuthService {
     const verificationToken = await this.tokenService.generateToken({
       userId: user.id,
       type: TokenType.EMAIL_VERIFICATION,
+      expiresAt: new Date(Date.now() + ms('30m')),
     });
 
     await this.mailService.sendVerificationEmail({
@@ -220,7 +229,10 @@ export class AuthService {
       token: verificationToken,
     });
 
-    return { message: 'New verification email has been sent.' };
+    return {
+      status: GenericOutputStatus.SUCCESS,
+      message: 'New verification email has been sent.',
+    };
   }
 
   async verifyEmail(token: string) {

@@ -56,13 +56,13 @@ export class MailService {
       await this.mailerService.sendMail({
         to,
         subject: 'Reset your Hobbly Password',
-        template: 'forgot-password',
+        template: 'verify-email',
         context: { username, verificationUrl },
       });
 
       return {
         status: GenericOutputStatus.SUCCESS,
-        message: 'Sent Forgot Password email successfully',
+        message: 'Sent verification email successfully',
       };
     } catch (error) {
       return {

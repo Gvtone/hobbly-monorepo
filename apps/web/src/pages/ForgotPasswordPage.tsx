@@ -18,6 +18,7 @@ function ForgotPasswordPage() {
   const { isLoading, forgot } = useAuthActions();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState("");
 
   const {
     register,
@@ -30,6 +31,7 @@ function ForgotPasswordPage() {
     setIsSubmitting(true);
     try {
       await forgot(data.email);
+      setSubmittedEmail(data.email);
       setIsEmailSent(true);
     } catch (error) {
       showToast.error(
@@ -58,8 +60,8 @@ function ForgotPasswordPage() {
           {!isEmailSent ? (
             <>
               <div className="mb-8 flex flex-col items-center gap-2">
-                <div className="bg-hobbly-sky-light text-hobbly-sky-dark rounded-2xl p-4">
-                  <Mail />
+                <div className="from-hobbly-sky-light to-background text-hobbly-sky-dark flex size-20 items-center justify-center rounded-2xl bg-linear-to-br">
+                  <Mail size={36} />
                 </div>
                 <h2 className="xs:text-2xl text-center text-lg">
                   Forgot your password?
@@ -134,26 +136,25 @@ function ForgotPasswordPage() {
                 <span className="text-5xl">📬</span>
                 <h2>Check your inbox ✨</h2>
                 <p className="text-muted-foreground text-sm">
-                  We sent a password reset link to{" "}
-                  <span className="text-foreground font-bold">
-                    {watch("email")}
-                  </span>
-                  .
+                  We sent a password reset link to
                 </p>
+                <div className="border-bs-hobbly-sky-dark bg-hobbly-sky-light text-hobbly-sky-dark mt-2 rounded-full border px-3 py-1 text-sm">
+                  {submittedEmail}
+                </div>
               </div>
 
               <div className="bg-muted border-border my-8 w-full rounded-2xl border p-4">
                 <ul className="text-muted-foreground flex flex-col gap-2 text-xs">
                   <li>
-                    💡 The link expires in{" "}
+                    ⏳ The link expires in{" "}
                     <span className="text-foreground font-bold">
                       15 minutes
                     </span>
                     .
                   </li>
-                  <li>💡 Check your spam or junk folder</li>
-                  <li>💡 Make sure the address above is correct</li>
-                  <li>💡 The link works only once</li>
+                  <li>📥 Check your spam or junk folder</li>
+                  <li>📧 Make sure the address above is correct</li>
+                  <li>⏰ The link works only once</li>
                 </ul>
               </div>
 
