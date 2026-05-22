@@ -24,10 +24,17 @@ export const authService = {
   },
 
   async forgot(email: string) {
-    const res = await api.post<GenericOutputEntity>(
-      `${serviceRoute}/forgot`,
-      { email },
-    );
+    const res = await api.post<GenericOutputEntity>(`${serviceRoute}/forgot`, {
+      email,
+    });
+    return res.data;
+  },
+
+  async reset(token: string, password: string) {
+    const res = await api.post<GenericOutputEntity>(`${serviceRoute}/reset`, {
+      token,
+      password,
+    });
     return res.data;
   },
 

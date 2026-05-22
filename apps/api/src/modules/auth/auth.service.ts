@@ -16,7 +16,10 @@ import { MailService } from '../mail/mail.service';
 import { TokenService } from '../token/token.service';
 import { TokenType, UserStatus } from '../../generated/prisma/enums';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { GenericOutputEntity } from '../../common/entities/generic-output.entity';
+import {
+  GenericOutputEntity,
+  GenericOutputStatus,
+} from '../../common/entities/generic-output.entity';
 import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable()
@@ -265,6 +268,7 @@ export class AuthService {
     const token = await this.tokenService.generateToken({
       userId: user.id,
       type: TokenType.PASSWORD_RESET,
+      expiresAt: new Date(Date.now() + ms('15m')),
     });
 
     return await this.mailService.sendForgotPasswordEmail({
@@ -287,7 +291,10 @@ export class AuthService {
 
     await this.userService.update(userId, { password: newPassword });
 
-    return { message: 'Password reset successfully' };
+    return {
+      status: GenericOutputStatus.SUCCESS,
+      message: 'Password reset successfully',
+    };
   }
 
   async me(request: Request) {

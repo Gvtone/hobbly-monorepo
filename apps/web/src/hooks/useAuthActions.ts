@@ -20,6 +20,21 @@ export function useAuthActions() {
     }
   }
 
+  async function reset(token: string, password: string) {
+    setIsLoading(true);
+    try {
+      const data = await authService.reset(token, password);
+
+      if (data.status === "SUCCESS") {
+        showToast.success(data.message);
+      } else {
+        showToast.error(data.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function resendVerification(email: string) {
     setIsLoading(true);
     try {
@@ -44,5 +59,5 @@ export function useAuthActions() {
     }
   }
 
-  return { isLoading, forgot, resendVerification, verify };
+  return { isLoading, forgot, reset, resendVerification, verify };
 }

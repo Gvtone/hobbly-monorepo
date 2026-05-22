@@ -77,7 +77,7 @@ export class MailService {
     username,
     token,
   }: ForgotPasswordEmailDto): Promise<GenericOutputEntity> {
-    const resetUrl = `${this.clientUrl}/reset?token=${token}`;
+    const resetUrl = `${this.clientUrl}/reset-password?token=${token}`;
 
     try {
       await this.mailerService.sendMail({
