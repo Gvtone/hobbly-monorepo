@@ -8,6 +8,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/auth/useAuth";
 import { showToast } from "../utils/toast";
 import { useController, useForm } from "react-hook-form";
+import { moonSky } from "../assets";
 
 interface LoginFormValues {
   email: string;
@@ -25,9 +26,9 @@ function AuthPage() {
   const { login, register: registerUser } = useAuth();
   const navigate = useNavigate();
   const mode = searchParams.get("mode") === "signup" ? "signup" : "login";
-  const handleModeChange = (m: "login" | "signup") => {
+  const handleModeChange = (mode: "login" | "signup") => {
     reset();
-    navigate(`/auth?mode=${m}`, { replace: true });
+    navigate(`/auth?mode=${mode}`, { replace: true });
   };
 
   const {
@@ -41,6 +42,7 @@ function AuthPage() {
   const { field: usernameField } = useController({
     name: "username",
     control,
+    defaultValue: "",
     rules:
       mode === "signup"
         ? {
@@ -61,22 +63,35 @@ function AuthPage() {
       if (mode === "login") {
         await login(data.email, data.password);
         showToast.success("Welcome back! ✨");
+        navigate("/dashboard");
       } else {
         await registerUser(data.username, data.email, data.password);
-        showToast.success("Your space is ready 🌸");
+        navigate(`/verify-email?email=${encodeURIComponent(data.email)}`);
       }
-      navigate("/dashboard");
     } catch (err) {
-      showToast.error(
-        err instanceof Error ? err.message : "Something went wrong",
-      );
+      const message =
+        err instanceof Error ? err.message : "Something went wrong";
+      if (message === "Please verify your email first") {
+        const isEmail = data.email.includes("@");
+        navigate(
+          isEmail
+            ? `/verify-email?email=${encodeURIComponent(data.email)}`
+            : "/verify-email",
+        );
+      } else {
+        showToast.error(message);
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout
+      background={moonSky}
+      subtitle='"A cozy place for everything you love."'
+      icons
+    >
       <div className="w-full max-w-md">
         <div className="text-muted-foreground hover:text-foreground mb-8 flex items-center gap-2 self-start">
           <ArrowLeft size={14} />
@@ -191,6 +206,7 @@ function AuthPage() {
               </label>
               <div className="relative">
                 <Input
+                  key={mode}
                   id="password"
                   variant="auth"
                   shape="pill"
@@ -236,7 +252,10 @@ function AuthPage() {
               )}
             </div>
 
-            <a href="#" className="text-hobbly-sky-dark mb-6 self-end text-sm">
+            <a
+              href="/forgot-password"
+              className="text-hobbly-sky-dark mb-6 self-end text-sm"
+            >
               Forgot password?
             </a>
 

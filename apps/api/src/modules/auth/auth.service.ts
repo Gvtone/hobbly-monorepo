@@ -16,8 +16,10 @@ import { MailService } from '../mail/mail.service';
 import { TokenService } from '../token/token.service';
 import { TokenType, UserStatus } from '../../generated/prisma/enums';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { GenericOutputEntity } from '../../common/entities/generic-output.entity';
-import { UserEntity } from '../user/entities/user.entity';
+import {
+  GenericOutputEntity,
+  GenericOutputStatus,
+} from '../../common/entities/generic-output.entity';
 
 @Injectable()
 export class AuthService {
@@ -175,28 +177,37 @@ export class AuthService {
     return newPayload;
   }
 
-  async register(createUserDto: CreateUserDto): Promise<UserEntity> {
+  async register(createUserDto: CreateUserDto): Promise<GenericOutputEntity> {
     const createdUser = await this.userService.create(createUserDto);
 
     const token = await this.tokenService.generateToken({
       userId: createdUser.id,
-      type: 'EMAIL_VERIFICATION',
+      type: TokenType.EMAIL_VERIFICATION,
+      expiresAt: new Date(Date.now() + ms('30m')),
     });
 
-    await this.mailService.sendVerificationEmail({
+    return await this.mailService.sendVerificationEmail({
       to: createUserDto.email,
       username: createUserDto.username,
       token,
     });
-
-    return createdUser;
   }
 
   async resendVerificationEmail(email: string): Promise<GenericOutputEntity> {
     const user = await this.userService.findUserByEmail(email);
 
+    if (!user) {
+      return {
+        status: GenericOutputStatus.FAILED,
+        message: 'No user found',
+      };
+    }
+
     if (user.status === UserStatus.ACTIVE) {
-      return { message: 'Email is already active. Please log in.' };
+      return {
+        status: GenericOutputStatus.FAILED,
+        message: 'Email is already active. Please log in.',
+      };
     }
 
     const token = await this.tokenService.findTokenByUserId(
@@ -209,6 +220,7 @@ export class AuthService {
     const verificationToken = await this.tokenService.generateToken({
       userId: user.id,
       type: TokenType.EMAIL_VERIFICATION,
+      expiresAt: new Date(Date.now() + ms('30m')),
     });
 
     await this.mailService.sendVerificationEmail({
@@ -217,23 +229,31 @@ export class AuthService {
       token: verificationToken,
     });
 
-    return { message: 'New verification email has been sent.' };
+    return {
+      status: GenericOutputStatus.SUCCESS,
+      message: 'New verification email has been sent.',
+    };
   }
 
   async verifyEmail(token: string) {
-    const { userId } = await this.tokenService.verifyToken({
+    const existingToken = await this.tokenService.verifyToken({
       token,
       type: TokenType.EMAIL_VERIFICATION,
     });
 
-    const user = await this.userService.findUserById(userId);
+    if (!existingToken)
+      throw new NotFoundException('Token invalid or already expired');
+
+    const user = await this.userService.findUserById(existingToken.userId);
 
     if (!user) throw new NotFoundException('User not found');
 
     // TODO: Check if user account was deleted or suspended
     // TODO: and create ways for them to recover their accounts
 
-    return await this.userService.update(userId, { status: 'ACTIVE' });
+    return await this.userService.update(existingToken.userId, {
+      status: 'ACTIVE',
+    });
   }
 
   async logout(response: Response): Promise<GenericOutputEntity> {
@@ -260,6 +280,7 @@ export class AuthService {
     const token = await this.tokenService.generateToken({
       userId: user.id,
       type: TokenType.PASSWORD_RESET,
+      expiresAt: new Date(Date.now() + ms('15m')),
     });
 
     return await this.mailService.sendForgotPasswordEmail({
@@ -282,7 +303,10 @@ export class AuthService {
 
     await this.userService.update(userId, { password: newPassword });
 
-    return { message: 'Password reset successfully' };
+    return {
+      status: GenericOutputStatus.SUCCESS,
+      message: 'Password reset successfully',
+    };
   }
 
   async me(request: Request) {

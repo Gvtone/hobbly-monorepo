@@ -45,7 +45,7 @@ export class UserController {
   }
 
   @Public()
-  @Get(':username')
+  @Get('public/:username')
   @ApiOperation({
     summary: 'Fetch the user based on username return public info',
   })

@@ -18,8 +18,10 @@ export const userService = {
     return res.data;
   },
 
-  async findUserByUsername(username: string) {
-    const res = await api.get<PublicUserEntity>(`${serviceRoute}/${username}`);
+  async findUserByUsernamePublic(username: string) {
+    const res = await api.get<PublicUserEntity>(
+      `${serviceRoute}/public/${username}`,
+    );
     return res.data;
   },
 
