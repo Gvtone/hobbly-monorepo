@@ -8,6 +8,11 @@ import ShareProfilePage from "./pages/ShareProfilePage";
 import DashboardPage from "./pages/DashboardPage";
 import ExplorePage from "./pages/ExplorePage";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
+import SettingsPage from "./pages/SettingsPage";
+import AppLayout from "./components/layout/AppLayout";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
 
 export const router = createBrowserRouter([
   {
@@ -16,11 +21,16 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: LandingPage },
       { path: "auth", Component: AuthPage },
+      { path: "forgot-password", Component: ForgotPasswordPage },
+      { path: "reset-password", Component: ResetPasswordPage },
+      { path: "verify-email", Component: VerifyEmailPage },
       {
         path: "dashboard",
         element: (
           <ProtectedRoute>
-            <DashboardPage />
+            <AppLayout>
+              <DashboardPage />
+            </AppLayout>
           </ProtectedRoute>
         ),
       },
@@ -28,17 +38,37 @@ export const router = createBrowserRouter([
         path: "explore",
         element: (
           <ProtectedRoute>
-            <ExplorePage />
+            <AppLayout>
+              <ExplorePage />
+            </AppLayout>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "settings",
+        element: (
+          <ProtectedRoute>
+            <AppLayout>
+              <SettingsPage />
+            </AppLayout>
           </ProtectedRoute>
         ),
       },
       {
         path: "share/:referenceId",
-        element: <ShareProfilePage />,
+        element: (
+          <AppLayout>
+            <ShareProfilePage />
+          </AppLayout>
+        ),
       },
       {
         path: ":slug",
-        element: <ProfilePage />,
+        element: (
+          <AppLayout>
+            <ProfilePage />
+          </AppLayout>
+        ),
       },
       { path: "*", Component: NotFoundPage },
     ],

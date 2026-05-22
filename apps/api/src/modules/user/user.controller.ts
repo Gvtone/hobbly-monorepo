@@ -7,11 +7,14 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import {
   ApiBody,
+  ApiConsumes,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -23,6 +26,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PublicUserEntity, UserEntity } from './entities/user.entity';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Public } from '../../common/decorators/public.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { imageFilePipe } from '../../common/pipes/image-file.pipe';
 
 @ApiTags('User')
 @Controller('user')
@@ -40,7 +45,7 @@ export class UserController {
   }
 
   @Public()
-  @Get(':username')
+  @Get('public/:username')
   @ApiOperation({
     summary: 'Fetch the user based on username return public info',
   })
@@ -69,6 +74,42 @@ export class UserController {
   @ApiOkResponse({ description: 'Create successful', type: UserEntity })
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.userService.create(createUserDto);
+  }
+
+  @Post('upload/profile-picture')
+  @ApiOperation({ summary: 'Uploads profile picture' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadProfilePicture(
+    @AuthUser() user: PayloadEntity,
+    @UploadedFile(imageFilePipe())
+    image: Express.Multer.File,
+  ) {
+    return await this.userService.uploadProfilePicture(user, image);
+  }
+
+  @Post('remove/profile-picture')
+  @ApiOperation({ summary: 'Removes profile picture' })
+  async removeProfilePicture(@AuthUser() user: PayloadEntity) {
+    return await this.userService.removeProfilePicture(user);
+  }
+
+  @Post('upload/cover-image')
+  @ApiOperation({ summary: 'Uploads cover image' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadCoverImage(
+    @AuthUser() user: PayloadEntity,
+    @UploadedFile(imageFilePipe())
+    image: Express.Multer.File,
+  ) {
+    return await this.userService.uploadCoverImage(user, image);
+  }
+
+  @Post('remove/cover-image')
+  @ApiOperation({ summary: 'Removes cover image' })
+  async removeCoverImage(@AuthUser() user: PayloadEntity) {
+    return await this.userService.removeCoverImage(user);
   }
 
   @Patch('current-user')

@@ -7,7 +7,8 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/auth/useAuth";
 import { showToast } from "../utils/toast";
-import { useController, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { moonSky } from "../assets";
 
 interface LoginFormValues {
   email: string;
@@ -25,9 +26,9 @@ function AuthPage() {
   const { login, register: registerUser } = useAuth();
   const navigate = useNavigate();
   const mode = searchParams.get("mode") === "signup" ? "signup" : "login";
-  const handleModeChange = (m: "login" | "signup") => {
+  const handleModeChange = (mode: "login" | "signup") => {
     reset();
-    navigate(`/auth?mode=${m}`, { replace: true });
+    navigate(`/auth?mode=${mode}`, { replace: true });
   };
 
   const {
@@ -35,25 +36,7 @@ function AuthPage() {
     handleSubmit,
     formState: { errors },
     reset,
-    control
   } = useForm<SignupFormValues>({ shouldUnregister: true });
-
-  const { field: usernameField } = useController({
-    name: "username",
-    control,
-    rules:
-      mode === "signup"
-        ? {
-            required: "Username is required",
-            minLength: { value: 3, message: "At least 3 characters" },
-            maxLength: { value: 20, message: "At most 20 characters" },
-            pattern: {
-              value: /^[a-z0-9_]+$/,
-              message: "Only lowercase letters, numbers, and underscores"
-            }
-          }
-        : {}
-  });
 
   const onSubmit = async (data: SignupFormValues) => {
     setIsSubmitting(true);
@@ -61,24 +44,37 @@ function AuthPage() {
       if (mode === "login") {
         await login(data.email, data.password);
         showToast.success("Welcome back! ✨");
+        navigate("/dashboard");
       } else {
         await registerUser(data.username, data.email, data.password);
-        showToast.success("Your space is ready 🌸");
+        navigate(`/verify-email?email=${encodeURIComponent(data.email)}`);
       }
-      navigate("/dashboard");
     } catch (err) {
-      showToast.error(
-        err instanceof Error ? err.message : "Something went wrong"
-      );
+      const message =
+        err instanceof Error ? err.message : "Something went wrong";
+      if (message === "Please verify your email first") {
+        const isEmail = data.email.includes("@");
+        navigate(
+          isEmail
+            ? `/verify-email?email=${encodeURIComponent(data.email)}`
+            : "/verify-email",
+        );
+      } else {
+        showToast.error(message);
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout
+      background={moonSky}
+      subtitle='"A cozy place for everything you love."'
+      icons
+    >
       <div className="w-full max-w-md">
-        <div className="self-start flex gap-2 items-center text-muted-foreground hover:text-foreground mb-8">
+        <div className="text-muted-foreground hover:text-foreground mb-8 flex items-center gap-2 self-start">
           <ArrowLeft size={14} />
           <a href="/" className="text-sm">
             Back to Hobbly
@@ -86,12 +82,12 @@ function AuthPage() {
         </div>
 
         {/* Main card */}
-        <Card className="items-center p-10 shadow-xl mb-6">
-          <div className="flex flex-col items-center gap-2 mb-8">
-            <h2 className="text-center text-lg xs:text-2xl">
+        <Card className="mb-6 items-center p-10 shadow-xl">
+          <div className="mb-8 flex flex-col items-center gap-2">
+            <h2 className="xs:text-2xl text-center text-lg">
               {mode === "login" ? "Welcome back ✨" : "Create your space 🌸"}
             </h2>
-            <span className="text-center text-sm text-muted-foreground">
+            <span className="text-muted-foreground text-center text-sm">
               {mode === "login"
                 ? "Welcome back to your space"
                 : "Start your cozy hobby journey"}
@@ -99,8 +95,8 @@ function AuthPage() {
           </div>
 
           {/* Switch */}
-          <div className="flex flex-col xs:flex-row bg-accent rounded-2xl xs:rounded-full w-full py-1.5 px-2 mb-6">
-            {(["login", "signup"] as const).map(m => {
+          <div className="xs:flex-row bg-accent xs:rounded-full mb-6 flex w-full flex-col rounded-2xl px-2 py-1.5">
+            {(["login", "signup"] as const).map((m) => {
               return (
                 <Button
                   key={m}
@@ -119,36 +115,53 @@ function AuthPage() {
           {/* Form */}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col w-full mb-8"
+            className="mb-8 flex w-full flex-col"
           >
             {mode === "signup" && (
-              <div className="flex flex-col mb-6">
+              <div className="mb-6 flex flex-col">
                 <label htmlFor="username" className="mb-2 ml-2">
                   Username
                 </label>
                 <Input
+                  key={mode}
                   id="username"
                   variant="auth"
                   shape="pill"
                   fullWidth
                   placeholder="starweaver"
-                  {...usernameField}
-                  onChange={e => {
-                    const cleaned = e.target.value
-                      .toLowerCase()
-                      .replace(/[^a-z0-9_]/g, "");
-                    usernameField.onChange(cleaned);
-                  }}
+                  {...register("username", {
+                    required: "Username is required",
+                    minLength: {
+                      value: 3,
+                      message: "At least 3 characters",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "At most 20 characters",
+                    },
+                    pattern: {
+                      value: /^[a-z0-9_]+$/,
+                      message:
+                        "Only lowercase letters, numbers, and underscores",
+                    },
+
+                    onChange: (e) => {
+                      e.target.value = e.target.value
+                        .toLowerCase()
+                        .replace(/[^a-z0-9_]/g, "");
+                    },
+                  })}
                 />
+
                 {errors.username && (
-                  <p className="text-destructive text-xs mt-1 ml-2">
+                  <p className="text-destructive mt-1 ml-2 text-xs">
                     {errors.username.message}
                   </p>
                 )}
               </div>
             )}
 
-            <div className="flex flex-col mb-6">
+            <div className="mb-6 flex flex-col">
               <label htmlFor="email" className="mb-2 ml-2">
                 {mode === "login" ? "Email or Username" : "Email"}
               </label>
@@ -165,7 +178,7 @@ function AuthPage() {
                 }
                 {...register("email", {
                   required: "Email or username is required",
-                  validate: value => {
+                  validate: (value) => {
                     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
                     const isUsername = /^[^\s]{3,}$/.test(value);
                     if (mode === "login")
@@ -175,22 +188,23 @@ function AuthPage() {
                         "Enter a valid email or username"
                       );
                     return isEmail || "Enter a valid email";
-                  }
+                  },
                 })}
               />
               {errors.email && (
-                <p className="text-destructive text-xs mt-1 ml-2">
+                <p className="text-destructive mt-1 ml-2 text-xs">
                   {errors.email.message}
                 </p>
               )}
             </div>
 
-            <div className="flex flex-col mb-6">
+            <div className="mb-2 flex flex-col">
               <label htmlFor="password" className="mb-2 ml-2">
                 Password
               </label>
               <div className="relative">
                 <Input
+                  key={mode}
                   id="password"
                   variant="auth"
                   shape="pill"
@@ -205,17 +219,17 @@ function AuthPage() {
                           required: "Password is required",
                           minLength: {
                             value: 8,
-                            message: "At least 8 characters"
+                            message: "At least 8 characters",
                           },
                           pattern: {
                             value: /(?=.*[A-Z])/,
                             message:
-                              "Must contain at least one uppercase letter"
-                          }
+                              "Must contain at least one uppercase letter",
+                          },
                         }
                       : {
-                          required: "Password is required"
-                        }
+                          required: "Password is required",
+                        },
                   )}
                 />
                 <Button
@@ -223,20 +237,23 @@ function AuthPage() {
                   variant="transparent"
                   shape="pill"
                   size="icon"
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  className="absolute top-1/2 right-3 -translate-y-1/2"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <Eye /> : <EyeClosed />}
                 </Button>
               </div>
               {errors.password && (
-                <p className="text-destructive text-xs mt-1 ml-2">
+                <p className="text-destructive mt-1 ml-2 text-xs">
                   {errors.password.message}
                 </p>
               )}
             </div>
 
-            <a href="#" className="self-end text-hobbly-sky-dark mb-6">
+            <a
+              href="/forgot-password"
+              className="text-hobbly-sky-dark mb-6 self-end text-sm"
+            >
               Forgot password?
             </a>
 
@@ -257,54 +274,58 @@ function AuthPage() {
             </Button>
           </form>
 
-          <div className="w-full flex justify-center items-center mb-8">
-            <div className="flex-1 h-px border border-border"></div>
-            <span className="text-muted-foreground text-sm rounded-full bg-card px-2">
-              or
-            </span>
-            <div className="flex-1 h-px border border-border"></div>
-          </div>
+          {import.meta.env.VITE_NODE_ENV !== "production" && (
+            <>
+              <div className="mb-8 flex w-full items-center justify-center">
+                <div className="border-border h-px flex-1 border"></div>
+                <span className="text-muted-foreground bg-card rounded-full px-2 text-sm">
+                  or
+                </span>
+                <div className="border-border h-px flex-1 border"></div>
+              </div>
 
-          {/* Sign in with Google */}
-          <Button
-            variant="secondary"
-            shape="pill"
-            size="lg"
-            fullWidth
-            className="max-xs:text-xs"
-          >
-            <span className="size-5 max-xs:hidden">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  fill="#34A853"
-                />
-                <path
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  fill="#FBBC05"
-                />
-                <path
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  fill="#EA4335"
-                />
-              </svg>
-            </span>
-            <span>Continue with Google</span>
-          </Button>
+              {/* Sign in with Google */}
+              <Button
+                variant="secondary"
+                shape="pill"
+                size="lg"
+                fullWidth
+                className="max-xs:text-xs"
+              >
+                <span className="max-xs:hidden size-5">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      fill="#4285F4"
+                    />
+                    <path
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      fill="#34A853"
+                    />
+                    <path
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                      fill="#FBBC05"
+                    />
+                    <path
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      fill="#EA4335"
+                    />
+                  </svg>
+                </span>
+                <span>Continue with Google</span>
+              </Button>
+            </>
+          )}
         </Card>
 
         {/* Terms and Policy */}
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-center text-xs">
           By continuing, you agree to Hobbly's{" "}
-          <a href="#" className="cursor-pointer text-hobbly-sky-dark">
+          <a href="#" className="text-hobbly-sky-dark cursor-pointer">
             Terms
           </a>{" "}
           and{" "}
-          <a href="#" className="cursor-pointer text-hobbly-sky-dark">
+          <a href="#" className="text-hobbly-sky-dark cursor-pointer">
             Privacy Policy
           </a>
           .

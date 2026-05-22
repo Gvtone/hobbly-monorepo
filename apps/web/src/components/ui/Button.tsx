@@ -14,13 +14,14 @@ function Button({
   size,
   fullWidth,
   active,
+  contentPosition,
   type = "button",
   ...props
 }: ButtonProps) {
   return (
     <button
       className={cn(
-        buttonVariants({ variant, shape, size, fullWidth, active }),
+        buttonVariants({ variant, shape, size, fullWidth, active, contentPosition }),
         className
       )}
       type={type}

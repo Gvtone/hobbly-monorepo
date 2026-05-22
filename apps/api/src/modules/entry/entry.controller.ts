@@ -8,6 +8,8 @@ import {
   Delete,
   ParseIntPipe,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { EntryService } from './entry.service';
 import { CreateEntryDto } from './dto/create-entry.dto';
@@ -16,6 +18,7 @@ import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { PayloadEntity } from '../auth/entities/payload.entity';
 import {
   ApiBody,
+  ApiConsumes,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -25,6 +28,7 @@ import { EntryEntity, EntryEntityWithUserHobby } from './entities/entry.entity';
 import { EntryFilterDto, PublicEntryFilterDto } from './dto/entry-filter.dto';
 import { PaginatedEntity } from '../../common/entities/paginated.entity';
 import { Public } from '../../common/decorators/public.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Entry')
 @Controller('entry')
@@ -33,10 +37,15 @@ export class EntryController {
 
   @Post()
   @ApiOperation({ summary: 'Creates new entry under a user hobby' })
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateEntryDto })
+  @UseInterceptors(FileInterceptor('image'))
   @ApiOkResponse({ description: 'Create successful', type: EntryEntity })
-  async create(@Body() createEntryDto: CreateEntryDto) {
-    return await this.entryService.create(createEntryDto);
+  async create(
+    @Body() createEntryDto: CreateEntryDto,
+    @UploadedFile() image?: Express.Multer.File,
+  ) {
+    return await this.entryService.create(createEntryDto, image);
   }
 
   @Public()

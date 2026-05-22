@@ -25,7 +25,7 @@ import { showToast } from "../../utils/toast";
 import { useEntryMood } from "../../hooks/useEntryMood";
 import { useLike } from "../../hooks/useLike";
 import RadioPill from "../ui/RadioPill";
-import Textarea from "../ui/TextArea";
+import TextArea from "../ui/TextArea";
 import { useAuth } from "../../context/auth/useAuth";
 import { useComment } from "../../hooks/useComment";
 import { useForm } from "react-hook-form";
@@ -465,7 +465,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                             <label className="text-muted-foreground text-xs">
                               Note
                             </label>
-                            <Textarea
+                            <TextArea
                               variant="auth"
                               shape="rounded"
                               rows={4}
