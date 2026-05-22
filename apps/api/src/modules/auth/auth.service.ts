@@ -221,19 +221,24 @@ export class AuthService {
   }
 
   async verifyEmail(token: string) {
-    const { userId } = await this.tokenService.verifyToken({
+    const existingToken = await this.tokenService.verifyToken({
       token,
       type: TokenType.EMAIL_VERIFICATION,
     });
 
-    const user = await this.userService.findUserById(userId);
+    if (!existingToken)
+      throw new NotFoundException('Token invalid or already expired');
+
+    const user = await this.userService.findUserById(existingToken.userId);
 
     if (!user) throw new NotFoundException('User not found');
 
     // TODO: Check if user account was deleted or suspended
     // TODO: and create ways for them to recover their accounts
 
-    return await this.userService.update(userId, { status: 'ACTIVE' });
+    return await this.userService.update(existingToken.userId, {
+      status: 'ACTIVE',
+    });
   }
 
   async logout(response: Response): Promise<GenericOutputEntity> {
