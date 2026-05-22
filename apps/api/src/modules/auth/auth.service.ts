@@ -251,6 +251,11 @@ export class AuthService {
     // TODO: Check if user account was deleted or suspended
     // TODO: and create ways for them to recover their accounts
 
+    await this.mailService.sendWelcomeEmail({
+      email: user.email,
+      username: user.username,
+    });
+
     return await this.userService.update(existingToken.userId, {
       status: 'ACTIVE',
     });

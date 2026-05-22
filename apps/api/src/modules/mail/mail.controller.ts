@@ -8,7 +8,6 @@ export class MailController {
   @Post('test')
   async test() {
     await this.mailService.sendWelcomeEmail({
-      dashboardUrl: '#',
       email: 'email@email.com',
       username: 'user',
     });
