@@ -18,7 +18,10 @@ export const entryService = {
     // Append every DTO field as a string — FormData only carries strings or files.
     // Dates become ISO strings; objects (metadata) become JSON strings; nulls are skipped.
     (
-      Object.entries(data) as [keyof CreateEntryDto, CreateEntryDto[keyof CreateEntryDto]][]
+      Object.entries(data) as [
+        keyof CreateEntryDto,
+        CreateEntryDto[keyof CreateEntryDto],
+      ][]
     ).forEach(([key, value]) => {
       if (value === undefined || value === null) return;
       if (value instanceof Date) {
@@ -64,7 +67,7 @@ export const entryService = {
   },
 
   async delete(id: number) {
-    const res = await api.delete(`${serviceRoute}/${id}`);
+    const res = await api.delete<EntryEntity>(`${serviceRoute}/${id}`);
     return res.data;
   },
 };

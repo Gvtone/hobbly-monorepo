@@ -1,18 +1,21 @@
+/* eslint-disable react-refresh/only-export-components */
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "./components/layout/RootLayout";
-import LandingPage from "./pages/LandingPage";
-import AuthPage from "./pages/AuthPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import ProfilePage from "./pages/ProfilePage";
-import ShareProfilePage from "./pages/ShareProfilePage";
-import DashboardPage from "./pages/DashboardPage";
-import ExplorePage from "./pages/ExplorePage";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
-import SettingsPage from "./pages/SettingsPage";
 import AppLayout from "./components/layout/AppLayout";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
-import VerifyEmailPage from "./pages/VerifyEmailPage";
+
+const LandingPage = lazy(() => import("./pages/LandingPage"));
+const AuthPage = lazy(() => import("./pages/AuthPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const ShareProfilePage = lazy(() => import("./pages/ShareProfilePage"));
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const ExplorePage = lazy(() => import("./pages/ExplorePage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
+const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 
 export const router = createBrowserRouter([
   {

@@ -23,7 +23,7 @@ function EditHobbyCardModal({
   const handleSave = async () => {
     setIsSubmitting(true);
     try {
-      await onSave(data.id, url || null);
+      await onSave(data.id, url ?? null);
       showToast.success("Card updated!");
       onClose();
     } catch {
