@@ -114,7 +114,7 @@ function AuthPage() {
 
           {/* Form */}
           <form
-            onSubmit={() => handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit)}
             className="mb-8 flex w-full flex-col"
           >
             {mode === "signup" && (
