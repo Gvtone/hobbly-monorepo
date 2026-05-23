@@ -8,7 +8,7 @@ export class MailController {
   @Post('test')
   async test() {
     await this.mailService.sendWelcomeEmail({
-      email: 'email@email.com',
+      email: 'delivered@resend.dev',
       username: 'user',
     });
   }
