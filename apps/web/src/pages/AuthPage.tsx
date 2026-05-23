@@ -101,7 +101,7 @@ function AuthPage() {
                 <Button
                   key={buttonMode}
                   onClick={() => handleModeChange(buttonMode)}
-                  variant={mode === buttonMode ? "default" : "transparent"}
+                  variant={buttonMode === mode ? "default" : "transparent"}
                   shape="pill"
                   className="border-none"
                   fullWidth
@@ -114,7 +114,7 @@ function AuthPage() {
 
           {/* Form */}
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={() => handleSubmit(onSubmit)}
             className="mb-8 flex w-full flex-col"
           >
             {mode === "signup" && (
