@@ -20,6 +20,7 @@ import { CommentModule } from './modules/comment/comment.module';
 import { ProfileShareModule } from './modules/profile-share/profile-share.module';
 import { CurrentMoodModule } from './modules/current-mood/current-mood.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     ProfileShareModule,
     CurrentMoodModule,
     CloudinaryModule,
+    HealthModule,
   ],
   providers: [
     {
