@@ -24,7 +24,7 @@ export const hobbyService = {
   },
 
   async delete(id: number) {
-    const res = await api.delete(`${serviceRoute}/${id}`);
+    const res = await api.delete<HobbyEntity>(`${serviceRoute}/${id}`);
     return res.data;
   },
 };

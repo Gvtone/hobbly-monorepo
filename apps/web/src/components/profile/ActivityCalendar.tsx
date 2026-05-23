@@ -12,13 +12,16 @@ import type {
 // Types
 // ---------------------------------------------------------------------------
 
-type Hobby = { name: string; color: string };
+interface Hobby {
+  name: string;
+  color: string;
+}
 
-type CalendarDay = {
+interface CalendarDay {
   dateStr: string;
   hobbies: Hobby[]; // empty when no entries that day
   inYear: boolean;
-};
+}
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -105,7 +108,7 @@ function buildCalendar(
         monthPositions.push({ month, weekIndex: weeks.length });
       }
 
-      const hobbies = (inYear && entryMap.get(dateStr)) || [];
+      const hobbies = inYear ? (entryMap.get(dateStr) ?? []) : [];
       if (hobbies.length > 0) activeDays++;
 
       week.push({ dateStr, hobbies, inYear });

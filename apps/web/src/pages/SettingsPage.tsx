@@ -127,7 +127,7 @@ function SettingsPage() {
     { label: "Privacy", icon: Lock, devOnly: true },
     { label: "Notifications", icon: Bell, devOnly: true },
     { label: "Account", icon: Shield, devOnly: true },
-  ].filter((tab) => !isProd || !tab.devOnly);
+  ];
 
   const dashboardLayoutSettings = [
     {
@@ -272,7 +272,8 @@ function SettingsPage() {
         <div className="flex flex-col gap-8 md:flex-row">
           {/* Left Panel */}
           <div className="flex flex-2 gap-2 overflow-x-auto md:flex-col lg:flex-1">
-            {tabItems.map(({ label, icon: Icon }) => {
+            {tabItems.map(({ label, icon: Icon, devOnly }) => {
+              if (isProd && devOnly) return;
               return (
                 <Button
                   key={label}
@@ -300,7 +301,7 @@ function SettingsPage() {
             {selectedTab === tabItems[0].label && (
               <form
                 className="flex flex-col gap-8"
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={() => handleSubmit(onSubmit)}
               >
                 {/* Profile Picture */}
                 <Card>
@@ -517,7 +518,7 @@ function SettingsPage() {
                           validate: async (value) => {
                             if (!value || value === user?.username) return true;
                             const existing =
-                              await userService.findUserByUsername(value);
+                              await userService.findUserByUsernamePublic(value);
                             return existing
                               ? "Username is already taken"
                               : true;

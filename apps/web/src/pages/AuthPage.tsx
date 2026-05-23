@@ -96,17 +96,17 @@ function AuthPage() {
 
           {/* Switch */}
           <div className="xs:flex-row bg-accent xs:rounded-full mb-6 flex w-full flex-col rounded-2xl px-2 py-1.5">
-            {(["login", "signup"] as const).map((m) => {
+            {(["login", "signup"] as const).map((buttonMode) => {
               return (
                 <Button
-                  key={m}
-                  onClick={() => handleModeChange(m)}
-                  variant={mode === m ? "default" : "transparent"}
+                  key={buttonMode}
+                  onClick={() => handleModeChange(buttonMode)}
+                  variant={mode === buttonMode ? "default" : "transparent"}
                   shape="pill"
                   className="border-none"
                   fullWidth
                 >
-                  {m === "login" ? "Log in" : "Sign up"}
+                  {buttonMode === "login" ? "Log in" : "Sign up"}
                 </Button>
               );
             })}
