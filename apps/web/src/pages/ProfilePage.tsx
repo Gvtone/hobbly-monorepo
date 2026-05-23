@@ -93,7 +93,7 @@ function ProfilePage() {
     if (!username || isOwnProfile) return;
 
     userService
-      .findUserByUsername(username)
+      .findUserByUsernamePublic(username)
       .then(setOtherUser)
       .catch(() => setNotFound(true))
       .finally(() => setProfileFetched(true));
