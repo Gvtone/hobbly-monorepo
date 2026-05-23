@@ -21,7 +21,7 @@ export function usePublicUserHobby(userId: number | null) {
   }, [userId]);
 
   useEffect(() => {
-    fetchUserHobbies();
+    void fetchUserHobbies();
   }, [fetchUserHobbies]);
 
   return { userHobbies, isLoading };

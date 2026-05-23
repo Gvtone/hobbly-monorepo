@@ -127,7 +127,7 @@ function SettingsPage() {
     { label: "Privacy", icon: Lock, devOnly: true },
     { label: "Notifications", icon: Bell, devOnly: true },
     { label: "Account", icon: Shield, devOnly: true },
-  ].filter((tab) => !isProd || !tab.devOnly);
+  ];
 
   const dashboardLayoutSettings = [
     {
@@ -272,7 +272,9 @@ function SettingsPage() {
         <div className="flex flex-col gap-8 md:flex-row">
           {/* Left Panel */}
           <div className="flex flex-2 gap-2 overflow-x-auto md:flex-col lg:flex-1">
-            {tabItems.map(({ label, icon: Icon }) => {
+            {tabItems.map(({ label, icon: Icon, devOnly }) => {
+              if (isProd && devOnly) return;
+
               return (
                 <Button
                   key={label}
@@ -300,7 +302,7 @@ function SettingsPage() {
             {selectedTab === tabItems[0].label && (
               <form
                 className="flex flex-col gap-8"
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={() => void handleSubmit(onSubmit)}
               >
                 {/* Profile Picture */}
                 <Card>
@@ -312,7 +314,7 @@ function SettingsPage() {
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={handleProfilePictureChange}
+                        onChange={void handleProfilePictureChange}
                       />
                       <button
                         type="button"
@@ -358,7 +360,7 @@ function SettingsPage() {
                               shape="pill"
                               className="size-fit"
                               disabled={isUploadingProfilePicture}
-                              onClick={handleRemoveProfilePicture}
+                              onClick={void handleRemoveProfilePicture}
                             >
                               Remove
                             </Button>
@@ -382,7 +384,7 @@ function SettingsPage() {
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={handleCoverImageChange}
+                      onChange={void handleCoverImageChange}
                     />
                     <Button
                       type="button"
@@ -422,7 +424,7 @@ function SettingsPage() {
                       <button
                         type="button"
                         disabled={isUploadingCoverImage}
-                        onClick={handleRemoveCoverImage}
+                        onClick={void handleRemoveCoverImage}
                         className="relative h-16 overflow-hidden rounded-xl border-2 transition-all hover:cursor-pointer hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-50"
                         style={
                           !user?.coverImage
@@ -453,7 +455,7 @@ function SettingsPage() {
                             key={url}
                             type="button"
                             disabled={isUploadingCoverImage}
-                            onClick={() => handleSelectCoverPreset(url)}
+                            onClick={() => void handleSelectCoverPreset(url)}
                             className="relative h-16 overflow-hidden rounded-xl border-2 transition-all hover:cursor-pointer hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-50"
                             style={
                               isSelected
@@ -517,7 +519,7 @@ function SettingsPage() {
                           validate: async (value) => {
                             if (!value || value === user?.username) return true;
                             const existing =
-                              await userService.findUserByUsername(value);
+                              await userService.findUserByUsernamePublic(value);
                             return existing
                               ? "Username is already taken"
                               : true;

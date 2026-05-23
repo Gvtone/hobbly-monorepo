@@ -65,11 +65,11 @@ export function useEntry({
   );
 
   useEffect(() => {
-    fetchEntries(1);
+    void fetchEntries(1);
   }, [fetchEntries]);
 
-  const goToPage = (nextPage: number) => {
-    fetchEntries(nextPage);
+  const goToPage = async (nextPage: number) => {
+    await fetchEntries(nextPage);
   };
 
   const loadMore = async () => {

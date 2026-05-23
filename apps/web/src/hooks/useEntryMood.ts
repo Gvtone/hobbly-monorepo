@@ -26,7 +26,7 @@ export function useEntryMood() {
 
   useEffect(() => {
     if (!user) return;
-    fetchEntryMoods();
+    void fetchEntryMoods();
   }, [user]);
 
   const addEntryMood = async (data: CreateEntryMoodDto) => {

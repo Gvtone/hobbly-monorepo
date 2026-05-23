@@ -77,7 +77,7 @@ function ShareProfilePage() {
           ))}
           {hasMore && (
             <button
-              onClick={loadMore}
+              onClick={void loadMore}
               className="text-muted-foreground col-span-full mt-2 text-sm"
             >
               Load more

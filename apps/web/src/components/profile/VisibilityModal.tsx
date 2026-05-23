@@ -13,8 +13,7 @@ function VisibilityModal({ open, onClose }: VisibilityModalProps) {
   const { user, updateUser } = useAuth();
 
   const toggleVisibility = async () => {
-    const newVisibility =
-      user?.visibility === "PRIVATE" ? "PUBLIC" : "PRIVATE";
+    const newVisibility = user?.visibility === "PRIVATE" ? "PUBLIC" : "PRIVATE";
     const updated = await userService.updateCurrentUser({
       visibility: newVisibility,
     });
@@ -43,7 +42,12 @@ function VisibilityModal({ open, onClose }: VisibilityModalProps) {
           You can change it back any time.
         </p>
       </div>
-      <Button onClick={toggleVisibility} fullWidth variant="gradient" shape="pill">
+      <Button
+        onClick={void toggleVisibility}
+        fullWidth
+        variant="gradient"
+        shape="pill"
+      >
         {user?.visibility === "PUBLIC"
           ? "Make profile private"
           : "Set profile to public"}

@@ -95,7 +95,7 @@ function ResetPasswordPage() {
             </LinkButton>
           ) : (
             <form
-              onSubmit={handleSubmit(onSubmit)}
+              onSubmit={() => void handleSubmit(onSubmit)}
               className="flex w-full flex-col gap-4"
             >
               <div className="flex flex-col gap-2">

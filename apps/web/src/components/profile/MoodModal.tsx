@@ -55,7 +55,10 @@ function MoodModal({ userId, open, onClose }: MoodModalProps) {
         reset({ color: undefined });
       }}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form
+        onSubmit={() => void handleSubmit(onSubmit)}
+        className="flex flex-col gap-4"
+      >
         <div className="flex gap-1">
           <input
             type="color"
@@ -97,8 +100,8 @@ function MoodModal({ userId, open, onClose }: MoodModalProps) {
             variant="secondary"
             shape="pill"
             fullWidth
-            onClick={async () => {
-              await removeCurrentMood();
+            onClick={() => {
+              void removeCurrentMood();
               onClose();
             }}
           >

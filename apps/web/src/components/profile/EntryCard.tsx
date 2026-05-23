@@ -112,7 +112,7 @@ function EntryCard({ data, dashboard = false, onClick }: EntryCardProps) {
                     disabled={isToggling}
                     onClick={(e) => {
                       e.stopPropagation();
-                      requireAuth(toggle);
+                      requireAuth(() => void toggle());
                     }}
                   >
                     <Heart size={12} fill={liked ? "currentColor" : "none"} />

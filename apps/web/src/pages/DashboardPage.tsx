@@ -143,7 +143,7 @@ function DashboardPage() {
               <Button
                 variant="outline"
                 shape="pill"
-                onClick={loadMore}
+                onClick={void loadMore}
                 disabled={isEntriesLoading}
               >
                 {isEntriesLoading ? "Loading..." : "Load more"}

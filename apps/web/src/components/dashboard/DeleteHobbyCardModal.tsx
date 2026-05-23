@@ -60,7 +60,7 @@ function DeleteHobbyCardModal({
             size="lg"
             fullWidth
             disabled={isDeleting}
-            onClick={handleDelete}
+            onClick={void handleDelete}
           >
             {isDeleting ? "Removing..." : "Remove"}
           </Button>
