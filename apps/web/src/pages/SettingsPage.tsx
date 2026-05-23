@@ -301,7 +301,7 @@ function SettingsPage() {
             {selectedTab === tabItems[0].label && (
               <form
                 className="flex flex-col gap-8"
-                onSubmit={() => handleSubmit(onSubmit)}
+                onSubmit={handleSubmit(onSubmit)}
               >
                 {/* Profile Picture */}
                 <Card>
