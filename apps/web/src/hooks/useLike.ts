@@ -16,10 +16,10 @@ export function useLike(entryId: number) {
   }, [liked]);
 
   useEffect(() => {
-    void likeService.count(entryId).then(({ count }) => setCount(count));
+    likeService.count(entryId).then(({ count }) => setCount(count));
 
     if (user) {
-      void likeService
+      likeService
         .status(entryId)
         .then(({ liked }) => setLiked(liked))
         .finally(() => setIsLoading(false));

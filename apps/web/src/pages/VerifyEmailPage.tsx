@@ -34,7 +34,7 @@ function VerifyEmailPage() {
   useEffect(() => {
     if (!token || hasVerified.current) return;
     hasVerified.current = true;
-    void verify(token).then((success) => {
+    verify(token).then((success) => {
       if (success) setIsVerified(true);
     });
   }, [token, verify]);
@@ -118,7 +118,7 @@ function VerifyEmailPage() {
                 onClick={() => {
                   if (!resolvedEmail) return;
                   setIsResending(true);
-                  void resendVerification(resolvedEmail).finally(() => {
+                  resendVerification(resolvedEmail).finally(() => {
                     setIsResending(false);
                     const expiry = Date.now() + 120 * 1000;
                     localStorage.setItem(
@@ -161,7 +161,7 @@ function VerifyEmailPage() {
               variant="gradient"
               shape="pill"
               fullWidth
-              onClick={() => void navigate("/auth?mode=login")}
+              onClick={() => navigate("/auth?mode=login")}
               className="mt-8"
             >
               Log in

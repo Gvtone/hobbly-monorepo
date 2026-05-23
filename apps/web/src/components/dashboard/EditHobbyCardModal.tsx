@@ -23,7 +23,7 @@ function EditHobbyCardModal({
   const handleSave = async () => {
     setIsSubmitting(true);
     try {
-      await onSave(data.id, url ?? null);
+      await onSave(data.id, url || null);
       showToast.success("Card updated!");
       onClose();
     } catch {
@@ -97,7 +97,7 @@ function EditHobbyCardModal({
           size="lg"
           fullWidth
           disabled={isSubmitting}
-          onClick={void handleSave}
+          onClick={handleSave}
         >
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>

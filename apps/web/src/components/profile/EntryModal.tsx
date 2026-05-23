@@ -87,7 +87,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
     try {
       await entryService.delete(data.id);
       showToast.success("Entry deleted.");
-      await onRefresh();
+      onRefresh();
       onClose();
     } catch {
       showToast.error("Failed to delete entry.");
@@ -289,7 +289,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                               liked ? "text-destructive" : "",
                             )}
                             disabled={isToggling}
-                            onClick={() => requireAuth(() => void toggle())}
+                            onClick={() => requireAuth(toggle)}
                           >
                             <Heart
                               size={16}
@@ -376,7 +376,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                           fullWidth
                           className="bg-destructive hover:bg-destructive/90 text-white"
                           disabled={isSubmitting}
-                          onClick={void handleDelete}
+                          onClick={handleDelete}
                         >
                           Yes, delete
                         </Button>
@@ -423,7 +423,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                               : "bg-foreground text-background hover:bg-foreground/90",
                           )}
                           disabled={isSubmitting}
-                          onClick={void handleVisibilityToggle}
+                          onClick={handleVisibilityToggle}
                         >
                           <Check size={14} />
                           {switchingToPublic
@@ -518,7 +518,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                           fullWidth
                           variant="gradient"
                           disabled={isSubmitting}
-                          onClick={void handleEditSave}
+                          onClick={handleEditSave}
                         >
                           <Check size={14} />
                           Save changes
@@ -597,9 +597,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                       )}
 
                       <form
-                        onSubmit={() =>
-                          requireAuth(() => void handleSubmit(onSubmit))
-                        }
+                        onSubmit={() => requireAuth(handleSubmit(onSubmit))}
                         className="flex w-full items-center justify-center gap-2"
                       >
                         <Input

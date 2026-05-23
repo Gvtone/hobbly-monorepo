@@ -135,7 +135,7 @@ function LogEntryModal({
       className="max-w-xl"
     >
       <form
-        onSubmit={() => void handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-6"
         style={
           { "--ring": hobbyColor ?? "var(--hobbly-sky)" } as React.CSSProperties

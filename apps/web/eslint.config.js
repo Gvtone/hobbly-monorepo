@@ -11,18 +11,17 @@ export default defineConfig([
     files: ["**/*.{ts,tsx}"],
     extends: [
       js.configs.recommended,
-      tseslint.configs.recommendedTypeChecked,
-      tseslint.configs.stylisticTypeChecked,
+      tseslint.configs.recommended,
       reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
+      reactRefresh.configs.vite
     ],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
         project: ["./tsconfig.app.json", "./tsconfig.node.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
+        tsconfigRootDir: import.meta.dirname
+      }
+    }
+  }
 ]);

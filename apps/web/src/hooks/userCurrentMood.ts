@@ -24,7 +24,7 @@ export function useCurrentMood(userId: number) {
       }
     };
 
-    void fetchCurrentMood();
+    fetchCurrentMood();
   }, [userId]);
 
   const setOrUpdateCurrentMood = async (data: SetCurrentMoodDto) => {

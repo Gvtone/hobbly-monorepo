@@ -20,7 +20,7 @@ export function useProfileShare() {
   };
 
   useEffect(() => {
-    void fetchOwnRef();
+    fetchOwnRef();
   }, []);
 
   const createOrRemake = async () => {

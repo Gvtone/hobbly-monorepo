@@ -7,7 +7,7 @@ export function useRequireAuth() {
 
   return (fn: () => void) => {
     if (!user) {
-      void navigate("/auth");
+      navigate("/auth");
       return;
     }
     fn();

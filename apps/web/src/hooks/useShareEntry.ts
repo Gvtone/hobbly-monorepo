@@ -42,7 +42,7 @@ export function useShareEntry(referenceId: string | undefined, limit = 10) {
   );
 
   useEffect(() => {
-    void fetchEntries(1);
+    fetchEntries(1);
   }, [fetchEntries]);
 
   const loadMore = async () => {

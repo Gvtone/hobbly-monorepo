@@ -75,7 +75,7 @@ function ForgotPasswordPage() {
               {/* Form */}
               {/* TODO: Add support for username */}
               <form
-                onSubmit={() => handleSubmit(onSubmit)}
+                onSubmit={handleSubmit(onSubmit)}
                 className="mb-8 flex w-full flex-col"
               >
                 <div className="mb-6 flex flex-col">

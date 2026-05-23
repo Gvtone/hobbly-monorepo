@@ -24,7 +24,7 @@ export function useHobby() {
   };
 
   useEffect(() => {
-    void fetchHobbies();
+    fetchHobbies();
   }, []);
 
   const addHobby = async (data: CreateHobbyDto) => {

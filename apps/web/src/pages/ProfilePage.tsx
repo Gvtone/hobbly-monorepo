@@ -93,7 +93,7 @@ function ProfilePage() {
     if (!username || isOwnProfile) return;
 
     userService
-      .findUserByUsernamePublic(username)
+      .findUserByUsername(username)
       .then(setOtherUser)
       .catch(() => setNotFound(true))
       .finally(() => setProfileFetched(true));
@@ -182,7 +182,7 @@ function ProfilePage() {
                 ))}
                 {hasMore && (
                   <button
-                    onClick={void loadMore}
+                    onClick={loadMore}
                     className="text-muted-foreground col-span-full mt-2 text-sm"
                   >
                     Load more
@@ -207,14 +207,14 @@ function ProfilePage() {
             <Button
               variant="secondary"
               shape="pill"
-              onClick={() => void navigate(-1)}
+              onClick={() => navigate(-1)}
             >
               Go back
             </Button>
             <Button
               variant="gradient"
               shape="pill"
-              onClick={() => void navigate("/dashboard")}
+              onClick={() => navigate("/dashboard")}
             >
               Go to Dashboard
             </Button>

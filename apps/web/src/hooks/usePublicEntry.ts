@@ -11,11 +11,7 @@ interface UsePublicEntryParams {
   hobbyId?: number | null;
 }
 
-export function usePublicEntry({
-  userId,
-  limit = 10,
-  hobbyId,
-}: UsePublicEntryParams) {
+export function usePublicEntry({ userId, limit = 10, hobbyId }: UsePublicEntryParams) {
   const [entries, setEntries] = useState<EntryWithUserHobbyEntity[]>([]);
   const [isLoading, setIsLoading] = useState(userId !== null);
   const [page, setPage] = useState(1);
@@ -53,7 +49,7 @@ export function usePublicEntry({
   );
 
   useEffect(() => {
-    void fetchEntries(1);
+    fetchEntries(1);
   }, [fetchEntries]);
 
   const loadMore = async () => {

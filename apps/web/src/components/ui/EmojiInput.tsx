@@ -25,7 +25,7 @@ function EmojiInput({ value, onChange, className }: EmojiInputProps) {
             className,
           )}
         >
-          {value ?? "😊"}
+          {value || "😊"}
         </button>
       </Popover.Trigger>
 

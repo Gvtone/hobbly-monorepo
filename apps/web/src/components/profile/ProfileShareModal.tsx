@@ -33,7 +33,7 @@ function ProfileShareModal({ open, onClose }: ProfileShareModalProps) {
         {sharedProfile ? (
           <div
             className="bg-accent group flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3 transition-opacity hover:opacity-70"
-            onClick={void handleCopy}
+            onClick={handleCopy}
           >
             <p className="text-muted-foreground min-w-0 flex-1 truncate text-sm">
               {`${window.location.origin}/share/${sharedProfile.referenceId}`}
@@ -50,7 +50,7 @@ function ProfileShareModal({ open, onClose }: ProfileShareModalProps) {
           variant="gradient"
           shape="pill"
           fullWidth
-          onClick={() => void createOrRemake()}
+          onClick={() => createOrRemake()}
           disabled={isLoading}
         >
           {sharedProfile ? "Create new link" : "Generate link"}
@@ -61,7 +61,7 @@ function ProfileShareModal({ open, onClose }: ProfileShareModalProps) {
             variant="destructive"
             shape="pill"
             fullWidth
-            onClick={() => void revoke()}
+            onClick={() => revoke()}
             disabled={isLoading}
           >
             Revoke share link

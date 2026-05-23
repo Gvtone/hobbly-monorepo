@@ -26,9 +26,9 @@ function AuthPage() {
   const { login, register: registerUser } = useAuth();
   const navigate = useNavigate();
   const mode = searchParams.get("mode") === "signup" ? "signup" : "login";
-  const handleModeChange = async (mode: "login" | "signup") => {
+  const handleModeChange = (mode: "login" | "signup") => {
     reset();
-    await navigate(`/auth?mode=${mode}`, { replace: true });
+    navigate(`/auth?mode=${mode}`, { replace: true });
   };
 
   const {
@@ -44,17 +44,17 @@ function AuthPage() {
       if (mode === "login") {
         await login(data.email, data.password);
         showToast.success("Welcome back! ✨");
-        await navigate("/dashboard");
+        navigate("/dashboard");
       } else {
         await registerUser(data.username, data.email, data.password);
-        await navigate(`/verify-email?email=${encodeURIComponent(data.email)}`);
+        navigate(`/verify-email?email=${encodeURIComponent(data.email)}`);
       }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Something went wrong";
       if (message === "Please verify your email first") {
         const isEmail = data.email.includes("@");
-        await navigate(
+        navigate(
           isEmail
             ? `/verify-email?email=${encodeURIComponent(data.email)}`
             : "/verify-email",
@@ -96,19 +96,17 @@ function AuthPage() {
 
           {/* Switch */}
           <div className="xs:flex-row bg-accent xs:rounded-full mb-6 flex w-full flex-col rounded-2xl px-2 py-1.5">
-            {(["login", "signup"] as const).map((mode) => {
+            {(["login", "signup"] as const).map((m) => {
               return (
                 <Button
-                  key={mode}
-                  onClick={() => {
-                    void handleModeChange(mode);
-                  }}
-                  variant={mode === mode ? "default" : "transparent"}
+                  key={m}
+                  onClick={() => handleModeChange(m)}
+                  variant={mode === m ? "default" : "transparent"}
                   shape="pill"
                   className="border-none"
                   fullWidth
                 >
-                  {mode === "login" ? "Log in" : "Sign up"}
+                  {m === "login" ? "Log in" : "Sign up"}
                 </Button>
               );
             })}
@@ -116,7 +114,7 @@ function AuthPage() {
 
           {/* Form */}
           <form
-            onSubmit={() => void handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit)}
             className="mb-8 flex w-full flex-col"
           >
             {mode === "signup" && (
@@ -147,7 +145,7 @@ function AuthPage() {
                         "Only lowercase letters, numbers, and underscores",
                     },
 
-                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                    onChange: (e) => {
                       e.target.value = e.target.value
                         .toLowerCase()
                         .replace(/[^a-z0-9_]/g, "");

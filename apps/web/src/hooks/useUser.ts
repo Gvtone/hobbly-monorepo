@@ -33,7 +33,7 @@ export function useUser() {
   // };
 
   useEffect(() => {
-    void fetchUsers();
+    fetchUsers();
   }, []);
 
   const updateCurrentUser = async (data: UpdateUserDto) => {

@@ -99,7 +99,7 @@ function AddUserHobbyModal({
             size="lg"
             fullWidth
             disabled={!selectedId || isSubmitting}
-            onClick={void handleAdd}
+            onClick={handleAdd}
           >
             {isSubmitting ? "Adding..." : "Add to my board ✨"}
           </Button>

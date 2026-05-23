@@ -9,7 +9,7 @@ export function useComment(entryId: number) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    void commentService
+    commentService
       .findAll(entryId)
       .then(({ data }) => setComments(data))
       .finally(() => setIsLoading(false));

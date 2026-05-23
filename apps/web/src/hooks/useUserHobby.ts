@@ -26,7 +26,7 @@ export function useUserHobby(userId: number | null) {
   }, [userId]);
 
   useEffect(() => {
-    void fetchUserHobbies();
+    fetchUserHobbies();
   }, [fetchUserHobbies]);
 
   const addUserHobby = async (data: CreateUserHobbyDto) => {

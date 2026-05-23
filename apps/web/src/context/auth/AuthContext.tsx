@@ -17,10 +17,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
-  login: () => Promise.resolve(),
-  register: () => Promise.resolve(),
-  logout: () => Promise.resolve(),
-  updateUser: () => undefined,
+  login: async () => {},
+  register: async () => {},
+  logout: async () => {},
+  updateUser: () => {},
 });
 
 export default AuthContext;

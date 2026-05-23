@@ -32,7 +32,7 @@ function Navbar() {
 
   const handleLogout = async () => {
     await logout();
-    await navigate("/");
+    navigate("/");
   };
 
   return (
@@ -126,7 +126,7 @@ function Navbar() {
 
                   {/* Menu items */}
                   <button
-                    onClick={() => void navigate("/profile")}
+                    onClick={() => navigate("/profile")}
                     className="hover:bg-muted flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors"
                   >
                     <User size={14} />
@@ -134,7 +134,7 @@ function Navbar() {
                   </button>
 
                   <button
-                    onClick={() => void navigate("/settings")}
+                    onClick={() => navigate("/settings")}
                     className="hover:bg-muted flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors"
                   >
                     <Settings size={14} />
@@ -143,7 +143,7 @@ function Navbar() {
 
                   <div className="border-border mt-1 border-t pt-1">
                     <button
-                      onClick={void handleLogout}
+                      onClick={handleLogout}
                       className="hover:bg-muted text-destructive flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors"
                     >
                       <LogOut size={14} />

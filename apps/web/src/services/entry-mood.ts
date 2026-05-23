@@ -23,7 +23,7 @@ export const entryMoodService = {
   },
 
   async delete(id: number) {
-    const res = await api.delete<EntryMoodEntity>(`${serviceRoute}/${id}`);
+    const res = await api.delete(`${serviceRoute}/${id}`);
     return res.data;
   },
 };
