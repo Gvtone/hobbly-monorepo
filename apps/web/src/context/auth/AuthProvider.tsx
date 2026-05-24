@@ -21,7 +21,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   async function login(identifier: string, password: string) {
-    const user = await authService.login({ identifier, password });
+    await authService.login({ identifier, password });
+    const user = await authService.me();
     setUser(user);
   }
 
