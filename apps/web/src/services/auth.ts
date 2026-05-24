@@ -59,4 +59,8 @@ export const authService = {
     const res = await api.get<UserEntity>(`${serviceRoute}/me`);
     return res.data;
   },
+
+  async refreshToken() {
+    await api.post(`${serviceRoute}/refresh-token`);
+  },
 };

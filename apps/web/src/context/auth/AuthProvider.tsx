@@ -20,6 +20,17 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener("auth:session-expired", handleSessionExpired);
   }, []);
 
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        authService.refreshToken().catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
   async function login(identifier: string, password: string) {
     await authService.login({ identifier, password });
     const user = await authService.me();
