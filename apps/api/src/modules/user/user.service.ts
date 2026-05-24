@@ -10,6 +10,8 @@ import { HashService } from '../../common/utils/hash.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PayloadEntity } from '../auth/entities/payload.entity';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
+import { UserFilterDto } from './dto/user-filter.dto';
+import { Prisma } from '../../generated/prisma/client';
 
 @Injectable()
 export class UserService {
@@ -19,9 +21,40 @@ export class UserService {
     private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async findAll() {
-    const users = await this.databaseService.user.findMany();
-    return users.map((user) => new UserEntity(user));
+  async findAll({
+    id,
+    search,
+    role,
+    status,
+    visibility,
+    page,
+    limit = 10,
+  }: UserFilterDto) {
+    const whereClause: Prisma.UserWhereInput = {
+      ...(id && { id: { in: id } }),
+      ...(role && { role }),
+      ...(status && { status }),
+      ...(visibility && { visibility }),
+
+      ...(search && {
+        OR: [
+          { displayName: { contains: search, mode: 'insensitive' } },
+          { username: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { bio: { contains: search, mode: 'insensitive' } },
+        ],
+      }),
+    };
+
+    const paginatedDatabse = await this.databaseService.paginateModel();
+
+    return await paginatedDatabse.user
+      .paginate({
+        where: whereClause,
+        omit: { password: true },
+        orderBy: { createdAt: 'desc' },
+      })
+      .withPages({ page, limit });
   }
 
   async findUserByEmail(email: string) {

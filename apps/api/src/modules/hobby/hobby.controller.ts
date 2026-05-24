@@ -23,6 +23,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../../generated/prisma/enums';
 import { HobbyEntity } from './entities/hobby.entity';
 import { HobbyFilterDto } from './dto/hobby-filter.dto';
+import { PaginatedEntity } from '../../common/entities/paginated.entity';
 
 @ApiTags('Hobby')
 @Controller('hobby')
@@ -42,10 +43,11 @@ export class HobbyController {
   @ApiOperation({ summary: 'Finds all of existing hobbies' })
   @ApiOkResponse({
     description: 'Fetch successful',
-    type: [HobbyEntity],
+    type: PaginatedEntity(HobbyEntity),
   })
   async findAll(@Query() filter: HobbyFilterDto) {
-    return await this.hobbyService.findAll(filter);
+    const [data, meta] = await this.hobbyService.findAll(filter);
+    return { data, ...meta };
   }
 
   @Get(':id')

@@ -41,6 +41,7 @@ export class HobbyService {
     return await paginatedDatabase.hobby
       .paginate({
         where: whereClause,
+        orderBy: { name: 'desc' },
       })
       .withPages({ page, limit });
   }

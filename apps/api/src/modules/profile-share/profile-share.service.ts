@@ -60,11 +60,7 @@ export class ProfileShareService {
     return share.user;
   }
 
-  async findEntriesByReference(
-    referenceId: string,
-    page?: number,
-    limit = 10,
-  ) {
+  async findEntriesByReference(referenceId: string, page?: number, limit = 10) {
     const share = await this.databaseService.profileShare.findFirst({
       where: { referenceId },
     });
