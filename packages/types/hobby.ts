@@ -21,3 +21,12 @@ export interface HobbyEntity {
   status: HobbyStatus;
   id: number;
 }
+
+export interface HobbyFilterDto {
+  id?: number[];
+  search?: string;
+  category?: HobbyCategory;
+  status?: HobbyStatus;
+  page?: number;
+  limit?: number;
+}

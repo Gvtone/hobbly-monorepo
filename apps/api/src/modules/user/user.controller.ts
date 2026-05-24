@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -28,6 +29,8 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { Public } from '../../common/decorators/public.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { imageFilePipe } from '../../common/pipes/image-file.pipe';
+import { UserFilterDto } from './dto/user-filter.dto';
+import { PaginatedEntity } from '../../common/entities/paginated.entity';
 
 @ApiTags('User')
 @Controller('user')
@@ -62,10 +65,11 @@ export class UserController {
   @ApiOperation({ summary: 'Finds all of existing users' })
   @ApiOkResponse({
     description: 'Fetch successful',
-    type: [UserEntity],
+    type: PaginatedEntity(UserEntity),
   })
-  async findAll() {
-    return await this.userService.findAll();
+  async findAll(@Query() filter: UserFilterDto) {
+    const [data, meta] = await this.userService.findAll(filter);
+    return { data, ...meta };
   }
 
   @Post()
