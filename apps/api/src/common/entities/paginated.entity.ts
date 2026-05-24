@@ -17,6 +17,8 @@ export function PaginatedEntity<T>(ItemClass: Type<T>) {
     @ApiProperty({ type: () => [ItemClass] })
     data: T[];
   }
-  Object.defineProperty(Paginated, 'name', { value: `Paginated${ItemClass.name}` });
+  Object.defineProperty(Paginated, 'name', {
+    value: `Paginated${ItemClass.name}`,
+  });
   return Paginated;
 }
