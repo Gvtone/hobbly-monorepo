@@ -22,7 +22,7 @@ function MainProfileCard({
   className,
   children,
 }: MainProfileCardProps) {
-  const { currentMood } = useCurrentMood(user.id);
+  const { currentMood, setOrUpdateCurrentMood, removeCurrentMood } = useCurrentMood(user.id);
 
   const [isCurrentMoodOpen, setIsCurrentMoodOpen] = useState(false);
   const [isVisibilityOpen, setIsVisibilityOpen] = useState(false);
@@ -171,7 +171,9 @@ function MainProfileCard({
       {isOwnProfile && (
         <>
           <MoodModal
-            userId={user.id}
+            currentMood={currentMood}
+            setOrUpdateCurrentMood={setOrUpdateCurrentMood}
+            removeCurrentMood={removeCurrentMood}
             open={isCurrentMoodOpen}
             onClose={() => setIsCurrentMoodOpen(false)}
           />
