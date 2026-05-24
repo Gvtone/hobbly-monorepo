@@ -10,6 +10,7 @@ import { useShareEntry } from "../hooks/useShareEntry";
 import { profileShareService } from "../services/profile-share";
 import type { PublicUserEntity } from "@hobbies-dashboard/types";
 import HobbyCard from "../components/dashboard/HobbyCard";
+import LoadingPage from "./LoadingPage";
 
 function ShareProfilePage() {
   const { referenceId } = useParams();
@@ -30,7 +31,7 @@ function ShareProfilePage() {
   }, [referenceId]);
 
   if (notFound) return <NotFoundPage />;
-  if (!fetched) return <div>Loading...</div>;
+  if (!fetched) return <LoadingPage />;
   if (!user) return null;
 
   const entryTabs = userHobbies.map((userHobby) => ({

@@ -17,6 +17,7 @@ import { userService } from "../services/user";
 import EntryModal from "../components/profile/EntryModal";
 import LinkButton from "../components/ui/LinkButton";
 import HobbyCard from "../components/dashboard/HobbyCard";
+import LoadingPage from "./LoadingPage";
 
 function ProfilePage() {
   const { slug } = useParams();
@@ -101,7 +102,7 @@ function ProfilePage() {
 
   if (notFound) return <NotFoundPage />;
   // TODO: Add loading screen
-  if (authLoading || isLoading) return <div>Loading...</div>;
+  if (authLoading || isLoading) return <LoadingPage />;
 
   const profileUser = isOwnProfile ? authUser : otherUser;
   if (!profileUser) return null;
