@@ -4,7 +4,7 @@ import { cn } from "../../utils/utils";
 
 function Carousel({
   children,
-  className
+  className,
 }: {
   children: React.ReactNode;
   className: string;
@@ -32,7 +32,7 @@ function Carousel({
     if (!scrollRef.current) return;
     scrollRef.current.scrollBy({
       left: direction === "left" ? -456 : 456,
-      behavior: "smooth"
+      behavior: "smooth",
     });
   }
 
@@ -40,24 +40,28 @@ function Carousel({
     <div className={cn("relative overflow-hidden", className)}>
       {canScrollLeft && (
         <div>
-          <div className="absolute z-10 top-0 bottom-0 left-0 w-24 bg-linear-to-r from-background to-transparent"></div>
+          <div className="from-background absolute top-0 bottom-0 left-0 z-10 w-24 bg-linear-to-r to-transparent"></div>
           <button
             onClick={() => scroll("left")}
-            className="absolute flex justify-center items-center z-20 text-foreground bg-background rounded-full p-1 left-4 top-1/2 -translate-y-1/2 cursor-pointer"
+            className="text-foreground bg-background absolute top-1/2 left-4 z-20 flex -translate-y-1/2 cursor-pointer items-center justify-center rounded-full p-1"
           >
             <ChevronLeft></ChevronLeft>
           </button>
         </div>
       )}
-      <div ref={scrollRef} className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+      <div
+        ref={scrollRef}
+        className="flex gap-2 overflow-x-auto"
+        style={{ scrollbarWidth: "none" }}
+      >
         {children}
       </div>
       {canScrollRight && (
         <div>
-          <div className="absolute z-10 top-0 bottom-0 right-0 w-24 bg-linear-to-l from-background to-transparent"></div>
+          <div className="from-background absolute top-0 right-0 bottom-0 z-10 w-24 bg-linear-to-l to-transparent"></div>
           <button
             onClick={() => scroll("right")}
-            className="absolute flex justify-center items-center z-20 text-foreground bg-background rounded-full p-1 right-4 top-1/2 -translate-y-1/2 cursor-pointer"
+            className="text-foreground bg-background absolute top-1/2 right-4 z-20 flex -translate-y-1/2 cursor-pointer items-center justify-center rounded-full p-1"
           >
             <ChevronRight></ChevronRight>
           </button>
