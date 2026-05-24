@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { HobbyService } from './hobby.service';
 import { CreateHobbyDto } from './dto/create-hobby.dto';
@@ -21,6 +22,7 @@ import {
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../../generated/prisma/enums';
 import { HobbyEntity } from './entities/hobby.entity';
+import { HobbyFilterDto } from './dto/hobby-filter.dto';
 
 @ApiTags('Hobby')
 @Controller('hobby')
@@ -42,8 +44,8 @@ export class HobbyController {
     description: 'Fetch successful',
     type: [HobbyEntity],
   })
-  async findAll() {
-    return await this.hobbyService.findAll();
+  async findAll(@Query() filter: HobbyFilterDto) {
+    return await this.hobbyService.findAll(filter);
   }
 
   @Get(':id')
