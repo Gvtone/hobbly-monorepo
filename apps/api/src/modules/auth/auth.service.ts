@@ -306,7 +306,14 @@ export class AuthService {
 
     const newPassword = await this.hashService.hashPassword(password);
 
-    await this.userService.update(userId, { password: newPassword });
+    const user = await this.userService.update(userId, {
+      password: newPassword,
+    });
+
+    await this.mailService.sendPasswordChangedEmail({
+      to: user.email,
+      username: user.username,
+    });
 
     return {
       status: GenericOutputStatus.SUCCESS,
