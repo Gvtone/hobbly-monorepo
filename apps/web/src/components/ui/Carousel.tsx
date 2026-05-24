@@ -49,7 +49,7 @@ function Carousel({
           </button>
         </div>
       )}
-      <div ref={scrollRef} className="flex gap-2 overflow-hidden">
+      <div ref={scrollRef} className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
         {children}
       </div>
       {canScrollRight && (
