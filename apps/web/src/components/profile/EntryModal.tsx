@@ -549,7 +549,10 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
 
                 {/* Comment collection */}
                 {comments.map((comment) => (
-                  <div className="mb-4 flex items-center gap-2">
+                  <div
+                    key={comment.id}
+                    className="mb-4 flex items-center gap-2"
+                  >
                     {comment.user.profilePicture ? (
                       <img
                         src={comment.user.profilePicture}
