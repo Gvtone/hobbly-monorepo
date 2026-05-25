@@ -23,7 +23,7 @@ export const hobbyService = {
   },
 
   async update(id: number, data: UpdateHobbyDto) {
-    const res = await api.put<HobbyEntity>(`${serviceRoute}/${id}`, data);
+    const res = await api.patch<HobbyEntity>(`${serviceRoute}/${id}`, data);
     return res.data;
   },
 
