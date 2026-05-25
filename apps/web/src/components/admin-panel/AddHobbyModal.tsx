@@ -1,10 +1,15 @@
 import { useState } from "react";
-import type { CreateHobbyDto } from "@hobbies-dashboard/types";
+import type {
+  CreateHobbyDto,
+  HobbyCategory,
+  HobbyStatus,
+} from "@hobbies-dashboard/types";
 import Modal from "../layout/Modal";
 import Input from "../ui/Input";
 import TextArea from "../ui/TextArea";
 import Button from "../ui/Button";
 import { showToast } from "../../utils/toast";
+import { cn } from "../../utils/utils";
 
 interface AddHobbyModalProps {
   open: boolean;
@@ -12,11 +17,26 @@ interface AddHobbyModalProps {
   onAdd: (data: CreateHobbyDto) => Promise<void>;
 }
 
+const CATEGORY_OPTIONS: { label: string; value: HobbyCategory }[] = [
+  { label: "General", value: "GENERAL" },
+  { label: "Tracked", value: "TRACKED" },
+  { label: "Creative", value: "CREATIVE" },
+  { label: "Journal", value: "JOURNAL" },
+];
+
+const STATUS_OPTIONS: { label: string; value: HobbyStatus }[] = [
+  { label: "Draft", value: "DRAFT" },
+  { label: "Published", value: "PUBLISHED" },
+  { label: "Archived", value: "ARCHIVED" },
+];
+
 function AddHobbyModal({ open, onClose, onAdd }: AddHobbyModalProps) {
   const [icon, setIcon] = useState("");
   const [name, setName] = useState("");
   const [color, setColor] = useState("#8b5cf6");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState<HobbyCategory>("GENERAL");
+  const [status, setStatus] = useState<HobbyStatus>("DRAFT");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClose = () => {
@@ -24,6 +44,8 @@ function AddHobbyModal({ open, onClose, onAdd }: AddHobbyModalProps) {
     setName("");
     setColor("#8b5cf6");
     setDescription("");
+    setCategory("GENERAL");
+    setStatus("DRAFT");
     onClose();
   };
 
@@ -36,6 +58,8 @@ function AddHobbyModal({ open, onClose, onAdd }: AddHobbyModalProps) {
         name: name.trim(),
         color,
         description: description.trim() || null,
+        category,
+        status,
       });
       showToast.success("Hobby added");
       handleClose();
@@ -90,7 +114,9 @@ function AddHobbyModal({ open, onClose, onAdd }: AddHobbyModalProps) {
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium">
             Description{" "}
-            <span className="text-muted-foreground font-normal">(optional)</span>
+            <span className="text-muted-foreground font-normal">
+              (optional)
+            </span>
           </label>
           <TextArea
             placeholder="Brief description of this hobby..."
@@ -98,6 +124,48 @@ function AddHobbyModal({ open, onClose, onAdd }: AddHobbyModalProps) {
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
           />
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-1 flex-col gap-1.5">
+            <label className="text-sm font-medium">Category</label>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORY_OPTIONS.map(({ label, value }) => (
+                <button
+                  key={value}
+                  onClick={() => setCategory(value)}
+                  className={cn(
+                    "cursor-pointer rounded-full border px-3 py-1 text-sm transition-colors",
+                    category === value
+                      ? "bg-primary text-primary-foreground border-transparent"
+                      : "bg-accent text-muted-foreground border-border hover:bg-muted",
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium">Status</label>
+            <div className="flex flex-wrap gap-2">
+              {STATUS_OPTIONS.map(({ label, value }) => (
+                <button
+                  key={value}
+                  onClick={() => setStatus(value)}
+                  className={cn(
+                    "cursor-pointer rounded-full border px-3 py-1 text-sm transition-colors",
+                    status === value
+                      ? "bg-primary text-primary-foreground border-transparent"
+                      : "bg-accent text-muted-foreground border-border hover:bg-muted",
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="flex gap-2 pt-2">

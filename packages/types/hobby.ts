@@ -5,6 +5,8 @@ export interface CreateHobbyDto {
   color: string;
   icon: string;
   description?: string | null;
+  category?: HobbyCategory;
+  status?: HobbyStatus;
 }
 
 export interface UpdateHobbyDto extends Partial<CreateHobbyDto> {}
