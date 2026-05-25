@@ -1,6 +1,7 @@
 import { CreateHobbyDto as ICreateHobbyDto } from '@hobbies-dashboard/types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { HobbyCategory, HobbyStatus } from '../../../generated/prisma/enums';
 
 export class CreateHobbyDto implements ICreateHobbyDto {
   @ApiProperty({ type: String, example: 'Art' })
@@ -22,4 +23,14 @@ export class CreateHobbyDto implements ICreateHobbyDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @ApiPropertyOptional({ enum: HobbyCategory })
+  @IsEnum(HobbyCategory)
+  @IsOptional()
+  category?: HobbyCategory;
+
+  @ApiPropertyOptional({ enum: HobbyStatus })
+  @IsEnum(HobbyStatus)
+  @IsOptional()
+  status?: HobbyStatus;
 }

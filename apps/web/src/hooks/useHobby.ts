@@ -14,7 +14,7 @@ interface UseHobbyParams {
   filter?: Omit<HobbyFilterDto, "page" | "limit">;
 }
 
-export function useHobby({ limit = 10, filter }: UseHobbyParams = {}) {
+export function useHobby({ limit = 20, filter }: UseHobbyParams = {}) {
   const [hobbies, setHobbies] = useState<HobbyEntity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
