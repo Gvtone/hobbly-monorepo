@@ -1,19 +1,24 @@
 import {
   BarChart2,
   BookOpen,
+  ChevronLeft,
+  ChevronRight,
   CircleCheck,
   CircleX,
   Eye,
   FileText,
   Plus,
+  Search,
   Smile,
+  SlidersHorizontal,
   Star,
   Trash2,
   TrendingUp,
   Users,
 } from "lucide-react";
 import Button from "../components/ui/Button";
-import { useState } from "react";
+import Input from "../components/ui/Input";
+import { useEffect, useState } from "react";
 import { cn } from "../utils/utils";
 import { Card } from "../components/ui/Card";
 import {
@@ -29,9 +34,17 @@ import { useEntry } from "../hooks/useEntry";
 import { format } from "date-fns";
 import { useHobby } from "../hooks/useHobby";
 import { useUser } from "../hooks/useUser";
-import type { EntryMoodEntity } from "@hobbies-dashboard/types";
+import type {
+  EntryMoodEntity,
+  EntryWithUserHobbyEntity,
+} from "@hobbies-dashboard/types";
 import AddMoodModal from "../components/admin-panel/AddMoodModal";
 import EditMoodModal from "../components/admin-panel/EditMoodModal";
+import DeleteEntryModal from "../components/admin-panel/DeleteEntryModal";
+import EntryFilterModal, {
+  type EntryFilterState,
+} from "../components/admin-panel/EntryFilterModal";
+import EntryModal from "../components/profile/EntryModal";
 
 const tabItems = [
   { label: "Overview", icon: BarChart2 },
@@ -44,12 +57,34 @@ const tabItems = [
 function AdminPanelPage() {
   const [selectedTab, setSelectedTab] = useState(tabItems[0].label);
   const [addMoodOpen, setAddMoodOpen] = useState(false);
-  const [editMoodTarget, setEditMoodTarget] = useState<EntryMoodEntity | null>(null);
+  const [editMoodTarget, setEditMoodTarget] = useState<EntryMoodEntity | null>(
+    null,
+  );
+  const [entrySearch, setEntrySearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [entryFilter, setEntryFilter] = useState<EntryFilterState>({});
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
+  const [viewEntry, setViewEntry] = useState<EntryWithUserHobbyEntity | null>(
+    null,
+  );
+  const [deleteEntry, setDeleteEntry] =
+    useState<EntryWithUserHobbyEntity | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(entrySearch), 400);
+    return () => clearTimeout(timer);
+  }, [entrySearch]);
 
   const { users } = useUser();
   const { hobbies } = useHobby();
-  const { userEntries } = useEntry();
-  const { entryMoods, addEntryMood, updateEntryMood, removeEntryMood } = useEntryMood();
+  const { userEntries, page, meta, goToPage, removeEntry, refresh } = useEntry({
+    filter: { search: debouncedSearch, ...entryFilter },
+  });
+  const { entryMoods, addEntryMood, updateEntryMood, removeEntryMood } =
+    useEntryMood();
+
+  const hasActiveFilters =
+    !!entryFilter.visibility || (entryFilter.moodId?.length ?? 0) > 0;
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
@@ -280,7 +315,34 @@ function AdminPanelPage() {
       )}
 
       {selectedTab === tabItems[3].label && (
-        <div>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search
+                size={16}
+                className="text-muted-foreground absolute top-1/2 left-4 -translate-y-1/2"
+              />
+              <Input
+                placeholder="Search entries..."
+                value={entrySearch}
+                onChange={(e) => setEntrySearch(e.target.value)}
+                className="pl-10"
+                fullWidth
+              />
+            </div>
+            <Button
+              variant="secondary"
+              shape="rounded"
+              onClick={() => setFilterModalOpen(true)}
+            >
+              <SlidersHorizontal size={15} />
+              Filters
+              {hasActiveFilters && (
+                <span className="bg-primary size-2 rounded-full" />
+              )}
+            </Button>
+          </div>
+
           <Table>
             <TableHeader>
               <TableHead>Title</TableHead>
@@ -288,15 +350,16 @@ function AdminPanelPage() {
               <TableHead>Hobby</TableHead>
               <TableHead>Mood</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Likes</TableHead>
               <TableHead>Visibility</TableHead>
               <TableHead>Actions</TableHead>
             </TableHeader>
             <TableBody>
               {userEntries.map((entry) => (
                 <TableRow key={entry.id}>
-                  <TableCell className="flex items-center gap-2">
-                    {entry.title ?? "-"}
+                  <TableCell>
+                    <span className="block max-w-45 truncate">
+                      {entry.title ?? "-"}
+                    </span>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     @{entry.userHobby.user.username}
@@ -306,9 +369,8 @@ function AdminPanelPage() {
                   </TableCell>
                   <TableCell>{entry.mood?.icon ?? "-"}</TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {format(new Date(entry.createdAt), "y-M-d p")}
+                    {format(new Date(entry.createdAt), "y-MM-dd | p")}
                   </TableCell>
-                  <TableCell>14</TableCell>
                   <TableCell>
                     <div
                       className={cn(
@@ -324,70 +386,74 @@ function AdminPanelPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Eye size={20} className="text-muted-foreground" />
-                      <Trash2 size={20} className="text-destructive" />
+                      <Eye
+                        size={20}
+                        className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+                        onClick={() => setViewEntry(entry)}
+                      />
+                      <Trash2
+                        size={20}
+                        className="text-destructive cursor-pointer opacity-70 transition-opacity hover:opacity-100"
+                        onClick={() => setDeleteEntry(entry)}
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
-              <TableRow>
-                <TableCell className="flex items-center gap-2">
-                  Celestial Chronicles
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  @starweaver
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  Anime
-                </TableCell>
-                <TableCell>😭</TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  2026-04-15
-                </TableCell>
-                <TableCell>14</TableCell>
-                <TableCell>
-                  <div className="bg-accent text-muted-foreground size-fit rounded-full px-4 py-1 text-sm">
-                    Private
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Eye size={20} className="text-muted-foreground" />
-                    <Trash2 size={20} className="text-destructive" />
-                  </div>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="flex items-center gap-2">
-                  {/* Reported Entry */}
-                  <div className="bg-destructive size-2 rounded-full" />
-                  Morning Pages
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  @starweaver
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  Anime
-                </TableCell>
-                <TableCell>😭</TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  2026-04-15
-                </TableCell>
-                <TableCell>14</TableCell>
-                <TableCell>
-                  <div className="bg-secondary/20 text-secondary size-fit rounded-full px-4 py-1 text-sm">
-                    Public
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Eye size={20} className="text-muted-foreground" />
-                    <Trash2 size={20} className="text-destructive" />
-                  </div>
-                </TableCell>
-              </TableRow>
             </TableBody>
           </Table>
+
+          <div className="flex items-center justify-between">
+            <p className="text-muted-foreground text-sm">
+              {meta.totalCount} entries
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                shape="pill"
+                size="sm"
+                disabled={meta.isFirstPage}
+                onClick={() => goToPage(page - 1)}
+              >
+                <ChevronLeft size={14} />
+                Previous
+              </Button>
+              <span className="text-muted-foreground text-sm">
+                {page} / {meta.pageCount}
+              </span>
+              <Button
+                variant="secondary"
+                shape="pill"
+                size="sm"
+                disabled={meta.isLastPage}
+                onClick={() => goToPage(page + 1)}
+              >
+                Next
+                <ChevronRight size={14} />
+              </Button>
+            </div>
+          </div>
+
+          {viewEntry && (
+            <EntryModal
+              open={true}
+              onClose={() => setViewEntry(null)}
+              data={viewEntry}
+              onRefresh={refresh}
+            />
+          )}
+          <DeleteEntryModal
+            entry={deleteEntry}
+            onClose={() => setDeleteEntry(null)}
+            onDelete={removeEntry}
+          />
+          <EntryFilterModal
+            open={filterModalOpen}
+            onClose={() => setFilterModalOpen(false)}
+            filter={entryFilter}
+            onApply={setEntryFilter}
+            moods={entryMoods}
+          />
         </div>
       )}
 

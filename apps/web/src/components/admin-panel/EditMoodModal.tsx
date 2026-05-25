@@ -41,6 +41,7 @@ function EditMoodModal({
     setIsSubmitting(true);
     try {
       await onUpdate(mood.id, icon.trim(), name.trim());
+      showToast.success("Mood updated");
       handleClose();
     } catch {
       showToast.error("Failed to update mood");
@@ -54,6 +55,7 @@ function EditMoodModal({
     setIsSubmitting(true);
     try {
       await onDelete(mood.id);
+      showToast.success("Mood deleted");
       handleClose();
     } catch {
       showToast.error("Failed to delete mood");

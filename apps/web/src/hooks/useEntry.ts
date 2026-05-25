@@ -61,7 +61,7 @@ export function useEntry({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [enabled, limit, hobbyId, filter?.visibility, userId],
+    [enabled, limit, hobbyId, filter?.visibility, filter?.search, userId],
   );
 
   useEffect(() => {

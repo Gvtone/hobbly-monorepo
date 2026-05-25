@@ -20,6 +20,7 @@ function AddMoodModal({ open, onClose, onAdd }: AddMoodModalProps) {
     setIsSubmitting(true);
     try {
       await onAdd(icon.trim(), name.trim());
+      showToast.success("Mood added");
       setIcon("");
       setName("");
       onClose();
