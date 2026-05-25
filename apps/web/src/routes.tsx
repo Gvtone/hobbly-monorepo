@@ -4,6 +4,7 @@ import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "./components/layout/RootLayout";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import AppLayout from "./components/layout/AppLayout";
+import AdminPanelPage from "./pages/AdminPanelPage";
 
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
@@ -27,6 +28,16 @@ export const router = createBrowserRouter([
       { path: "forgot-password", Component: ForgotPasswordPage },
       { path: "reset-password", Component: ResetPasswordPage },
       { path: "verify-email", Component: VerifyEmailPage },
+      {
+        path: "admin-panel",
+        element: (
+          <ProtectedRoute role="ADMIN">
+            <AppLayout>
+              <AdminPanelPage />
+            </AppLayout>
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "dashboard",
         element: (

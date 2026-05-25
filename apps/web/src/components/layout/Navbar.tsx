@@ -7,6 +7,7 @@ import {
   Moon,
   Settings,
   LogOut,
+  Shield,
 } from "lucide-react";
 import * as Popover from "@radix-ui/react-popover";
 import Button from "../ui/Button";
@@ -125,21 +126,40 @@ function Navbar() {
                   </div>
 
                   {/* Menu items */}
-                  <button
-                    onClick={() => navigate(`/@${user.username}`)}
-                    className="hover:bg-muted flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors"
+                  <LinkButton
+                    to={`/@${user.username}`}
+                    variant="ghost"
+                    contentPosition="start"
+                    fullWidth
+                    className="text-foreground rounded-xl px-3"
                   >
                     <User size={14} />
                     Profile
-                  </button>
+                  </LinkButton>
 
-                  <button
-                    onClick={() => navigate("/settings")}
-                    className="hover:bg-muted flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors"
+                  <LinkButton
+                    to="/settings"
+                    variant="ghost"
+                    contentPosition="start"
+                    fullWidth
+                    className="text-foreground rounded-xl px-3"
                   >
                     <Settings size={14} />
                     Settings
-                  </button>
+                  </LinkButton>
+
+                  {user.role === "ADMIN" && (
+                    <LinkButton
+                      to="/admin-panel"
+                      variant="ghost"
+                      contentPosition="start"
+                      fullWidth
+                      className="text-foreground rounded-xl px-3"
+                    >
+                      <Shield size={14} />
+                      Admin panel
+                    </LinkButton>
+                  )}
 
                   <div className="border-border mt-1 border-t pt-1">
                     <button
