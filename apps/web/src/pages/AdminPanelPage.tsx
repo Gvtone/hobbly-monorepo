@@ -43,6 +43,9 @@ import AddMoodModal from "../components/admin-panel/AddMoodModal";
 import EditMoodModal from "../components/admin-panel/EditMoodModal";
 import AddHobbyModal from "../components/admin-panel/AddHobbyModal";
 import EditHobbyModal from "../components/admin-panel/EditHobbyModal";
+import HobbyFilterModal, {
+  type HobbyFilterState,
+} from "../components/admin-panel/HobbyFilterModal";
 import DeleteEntryModal from "../components/admin-panel/DeleteEntryModal";
 import EntryFilterModal, {
   type EntryFilterState,
@@ -70,6 +73,10 @@ function AdminPanelPage() {
   const [editHobbyTarget, setEditHobbyTarget] = useState<HobbyEntity | null>(
     null,
   );
+  const [hobbySearch, setHobbySearch] = useState("");
+  const [debouncedHobbySearch, setDebouncedHobbySearch] = useState("");
+  const [hobbyFilter, setHobbyFilter] = useState<HobbyFilterState>({});
+  const [hobbyFilterModalOpen, setHobbyFilterModalOpen] = useState(false);
   const [userSearch, setUserSearch] = useState("");
   const [debouncedUserSearch, setDebouncedUserSearch] = useState("");
   const [userFilter, setUserFilter] = useState<UserFilterState>({});
@@ -90,6 +97,11 @@ function AdminPanelPage() {
   }, [userSearch]);
 
   useEffect(() => {
+    const timer = setTimeout(() => setDebouncedHobbySearch(hobbySearch), 400);
+    return () => clearTimeout(timer);
+  }, [hobbySearch]);
+
+  useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(entrySearch), 400);
     return () => clearTimeout(timer);
   }, [entrySearch]);
@@ -103,7 +115,15 @@ function AdminPanelPage() {
   } = useUser({
     filter: { search: debouncedUserSearch, ...userFilter },
   });
-  const { hobbies, addHobby, updateHobby, removeHobby } = useHobby();
+  const {
+    hobbies,
+    page: hobbyPage,
+    meta: hobbyMeta,
+    goToPage: goToHobbyPage,
+    addHobby,
+    updateHobby,
+    removeHobby,
+  } = useHobby({ filter: { search: debouncedHobbySearch, ...hobbyFilter } });
   const { userEntries, page, meta, goToPage, removeEntry, refresh } = useEntry({
     filter: { search: debouncedSearch, ...entryFilter },
   });
@@ -111,6 +131,7 @@ function AdminPanelPage() {
     useEntryMood();
 
   const hasActiveUserFilters = !!userFilter.role || !!userFilter.status;
+  const hasActiveHobbyFilters = !!hobbyFilter.category || !!hobbyFilter.status;
   const hasActiveFilters =
     !!entryFilter.visibility || (entryFilter.moodId?.length ?? 0) > 0;
 
@@ -263,21 +284,23 @@ function AdminPanelPage() {
             <TableBody>
               {users.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="flex items-center gap-2">
+                  <TableCell className="flex max-w-55 items-center gap-2 overflow-hidden">
                     {user.profilePicture ? (
                       <img
                         src={user.profilePicture}
                         alt="User Profile"
-                        className="size-8 rounded-full object-cover"
+                        className="size-8 shrink-0 rounded-full object-cover"
                       />
                     ) : (
-                      <div className="from-hobbly-sky to-hobbly-lavender flex size-8 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
+                      <div className="from-hobbly-sky to-hobbly-lavender flex size-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
                         {user.username[0].toUpperCase()}
                       </div>
                     )}
-                    <div>
-                      <p>{user.displayName ?? user.username}</p>
-                      <p className="text-muted-foreground text-sm">
+                    <div className="min-w-0">
+                      <p className="truncate">
+                        {user.displayName ?? user.username}
+                      </p>
+                      <p className="text-muted-foreground truncate text-sm">
                         @{user.username}
                       </p>
                     </div>
@@ -399,8 +422,10 @@ function AdminPanelPage() {
 
       {selectedTab === tabItems[2].label && (
         <div className="flex flex-col gap-4">
-          <div className="flex justify-between">
-            <p className="text-muted-foreground">{hobbies.length} hobbies</p>
+          <div className="flex items-center justify-between">
+            <p className="text-muted-foreground">
+              {hobbyMeta.totalCount} hobbies
+            </p>
             <Button
               variant="gradient"
               shape="pill"
@@ -408,6 +433,33 @@ function AdminPanelPage() {
             >
               <Plus />
               Add hobby
+            </Button>
+          </div>
+
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search
+                size={16}
+                className="text-muted-foreground absolute top-1/2 left-4 -translate-y-1/2"
+              />
+              <Input
+                placeholder="Search hobbies..."
+                value={hobbySearch}
+                onChange={(e) => setHobbySearch(e.target.value)}
+                className="pl-10"
+                fullWidth
+              />
+            </div>
+            <Button
+              variant="secondary"
+              shape="rounded"
+              onClick={() => setHobbyFilterModalOpen(true)}
+            >
+              <SlidersHorizontal size={15} />
+              Filters
+              {hasActiveHobbyFilters && (
+                <span className="bg-primary size-2 rounded-full" />
+              )}
             </Button>
           </div>
 
@@ -426,15 +478,46 @@ function AdminPanelPage() {
                     {hobby.icon}
                   </div>
                   <div className="flex flex-col gap-2">
-                    <p>{hobby.name}</p>
-                    <div
-                      className="size-4 rounded-full"
-                      style={{ background: hobby.color }}
-                    />
+                    <p className="text-sm">{hobby.name}</p>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="size-4 rounded-full"
+                        style={{ background: hobby.color }}
+                      />
+                      <p className="text-xs">{hobby.category}</p>
+                    </div>
                   </div>
                 </div>
               </Card>
             ))}
+          </div>
+
+          <div className="flex justify-end">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                shape="pill"
+                size="sm"
+                disabled={hobbyMeta.isFirstPage}
+                onClick={() => goToHobbyPage(hobbyPage - 1)}
+              >
+                <ChevronLeft size={14} />
+                Previous
+              </Button>
+              <span className="text-muted-foreground text-sm">
+                {hobbyPage} / {hobbyMeta.pageCount}
+              </span>
+              <Button
+                variant="secondary"
+                shape="pill"
+                size="sm"
+                disabled={hobbyMeta.isLastPage}
+                onClick={() => goToHobbyPage(hobbyPage + 1)}
+              >
+                Next
+                <ChevronRight size={14} />
+              </Button>
+            </div>
           </div>
 
           <AddHobbyModal
@@ -447,6 +530,12 @@ function AdminPanelPage() {
             onClose={() => setEditHobbyTarget(null)}
             onUpdate={updateHobby}
             onDelete={removeHobby}
+          />
+          <HobbyFilterModal
+            open={hobbyFilterModalOpen}
+            onClose={() => setHobbyFilterModalOpen(false)}
+            filter={hobbyFilter}
+            onApply={setHobbyFilter}
           />
         </div>
       )}
@@ -493,7 +582,7 @@ function AdminPanelPage() {
             <TableBody>
               {userEntries.map((entry) => (
                 <TableRow key={entry.id}>
-                  <TableCell>
+                  <TableCell className="max-w-55">
                     <span className="block max-w-45 truncate">
                       {entry.title ?? "-"}
                     </span>
@@ -504,7 +593,7 @@ function AdminPanelPage() {
                   <TableCell className="text-muted-foreground text-sm">
                     {entry.userHobby.hobby.name}
                   </TableCell>
-                  <TableCell>{entry.mood?.icon ?? "-"}</TableCell>
+                  <TableCell>{entry.mood?.icon}</TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {format(new Date(entry.createdAt), "y-MM-dd | p")}
                   </TableCell>
