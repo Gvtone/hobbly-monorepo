@@ -41,3 +41,13 @@ export interface UserEntity {
   visibility: Visibility;
   status: UserStatus;
 }
+
+export interface UserFilterDto {
+  id?: number[];
+  search?: string;
+  role?: UserRole;
+  visibility?: Visibility;
+  status?: UserStatus;
+  page?: number;
+  limit?: number;
+}

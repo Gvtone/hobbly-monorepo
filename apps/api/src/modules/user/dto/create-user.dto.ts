@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsString,
   Matches,
+  MaxLength,
   MinLength,
 } from 'class-validator';
 
@@ -18,8 +19,10 @@ export class CreateUserDto {
   })
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }: { value: string }) => value?.toLowerCase())
+  @Transform(({ value }: { value: string }) => value.trim().toLowerCase())
   @IsLowercase()
+  @MinLength(3)
+  @MaxLength(30)
   username: string;
 
   @ApiProperty({
@@ -30,6 +33,7 @@ export class CreateUserDto {
   })
   @IsNotEmpty()
   @IsString()
+  @Transform(({ value }: { value: string }) => value.trim().toLowerCase())
   @IsEmail()
   email: string;
 
