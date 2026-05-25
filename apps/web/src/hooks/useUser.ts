@@ -64,6 +64,11 @@ export function useUser({ limit = 10, filter }: UseUserParams = {}) {
     await fetchUsers(page + 1, true);
   };
 
+  const updateUser = async (id: number, data: UpdateUserDto) => {
+    await userService.update(id, data);
+    await fetchUsers(page);
+  };
+
   const updateCurrentUser = async (data: UpdateUserDto) => {
     const updatedUser = await userService.updateCurrentUser(data);
     setCurretUser(updatedUser);
@@ -87,6 +92,7 @@ export function useUser({ limit = 10, filter }: UseUserParams = {}) {
     loadMore,
     hasMore: !meta.isLastPage,
     meta,
+    updateUser,
     updateCurrentUser,
     deleteCurrentUser,
     refresh,

@@ -14,6 +14,7 @@ function LinkButton({
   size,
   fullWidth,
   active,
+  contentPosition,
   className,
   ...props
 }: LinkButtonProps) {
@@ -21,7 +22,14 @@ function LinkButton({
     <Link
       to={to}
       className={cn(
-        buttonVariants({ variant, shape, size, active, fullWidth }),
+        buttonVariants({
+          variant,
+          shape,
+          size,
+          active,
+          fullWidth,
+          contentPosition,
+        }),
         className,
       )}
       {...props}
