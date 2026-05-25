@@ -37,9 +37,12 @@ import { useUser } from "../hooks/useUser";
 import type {
   EntryMoodEntity,
   EntryWithUserHobbyEntity,
+  HobbyEntity,
 } from "@hobbies-dashboard/types";
 import AddMoodModal from "../components/admin-panel/AddMoodModal";
 import EditMoodModal from "../components/admin-panel/EditMoodModal";
+import AddHobbyModal from "../components/admin-panel/AddHobbyModal";
+import EditHobbyModal from "../components/admin-panel/EditHobbyModal";
 import DeleteEntryModal from "../components/admin-panel/DeleteEntryModal";
 import EntryFilterModal, {
   type EntryFilterState,
@@ -60,6 +63,8 @@ function AdminPanelPage() {
   const [editMoodTarget, setEditMoodTarget] = useState<EntryMoodEntity | null>(
     null,
   );
+  const [addHobbyOpen, setAddHobbyOpen] = useState(false);
+  const [editHobbyTarget, setEditHobbyTarget] = useState<HobbyEntity | null>(null);
   const [entrySearch, setEntrySearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [entryFilter, setEntryFilter] = useState<EntryFilterState>({});
@@ -76,7 +81,7 @@ function AdminPanelPage() {
   }, [entrySearch]);
 
   const { users } = useUser();
-  const { hobbies } = useHobby();
+  const { hobbies, addHobby, updateHobby, removeHobby } = useHobby();
   const { userEntries, page, meta, goToPage, removeEntry, refresh } = useEntry({
     filter: { search: debouncedSearch, ...entryFilter },
   });
@@ -274,8 +279,14 @@ function AdminPanelPage() {
       {selectedTab === tabItems[2].label && (
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
-            <p className="text-muted-foreground">15 mood options</p>
-            <Button variant="gradient" shape="pill">
+            <p className="text-muted-foreground">
+              {hobbies.length} hobbies
+            </p>
+            <Button
+              variant="gradient"
+              shape="pill"
+              onClick={() => setAddHobbyOpen(true)}
+            >
               <Plus />
               Add hobby
             </Button>
@@ -285,7 +296,8 @@ function AdminPanelPage() {
             {hobbies.map((hobby) => (
               <Card
                 key={hobby.id}
-                className="group flex-row items-center justify-between"
+                className="flex-row cursor-pointer items-center justify-between transition-opacity hover:opacity-75"
+                onClick={() => setEditHobbyTarget(hobby)}
               >
                 <div className="flex items-center justify-center gap-4">
                   <div
@@ -299,18 +311,24 @@ function AdminPanelPage() {
                     <div
                       className="size-4 rounded-full"
                       style={{ background: hobby.color }}
-                    ></div>
+                    />
                   </div>
                 </div>
-                <Button
-                  variant="transparent"
-                  className="text-destructive hidden p-0 group-hover:flex"
-                >
-                  <Trash2 size={18} />
-                </Button>
               </Card>
             ))}
           </div>
+
+          <AddHobbyModal
+            open={addHobbyOpen}
+            onClose={() => setAddHobbyOpen(false)}
+            onAdd={addHobby}
+          />
+          <EditHobbyModal
+            hobby={editHobbyTarget}
+            onClose={() => setEditHobbyTarget(null)}
+            onUpdate={updateHobby}
+            onDelete={removeHobby}
+          />
         </div>
       )}
 
