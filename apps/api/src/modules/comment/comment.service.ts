@@ -47,7 +47,6 @@ export class CommentService {
 
   async findAll(entryId: number, { page, limit = 10 }: CommentFilterDto) {
     const paginatedDatabase = await this.databaseService.paginateModel();
-    // TODO: Include user
     return await paginatedDatabase.comment
       .paginate({
         where: { entryId },
@@ -64,6 +63,7 @@ export class CommentService {
             },
           },
         },
+        orderBy: { createdAt: 'desc' },
       })
       .withPages({ page, limit });
   }

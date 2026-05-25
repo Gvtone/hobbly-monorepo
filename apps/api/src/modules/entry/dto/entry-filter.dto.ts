@@ -3,6 +3,7 @@ import { Visibility } from '../../../generated/prisma/enums';
 import {
   IsArray,
   IsDate,
+  IsEnum,
   IsInt,
   IsNumber,
   IsOptional,
@@ -51,10 +52,12 @@ export class EntryFilterDto implements IEntryFilterDto {
   moodId?: number[];
 
   @ApiPropertyOptional({ enum: Visibility })
+  @IsEnum(Visibility)
   @IsOptional()
   visibility?: Visibility;
 
   @ApiPropertyOptional({ enum: Visibility })
+  @IsEnum(Visibility)
   @IsOptional()
   userVisibility?: Visibility;
 
