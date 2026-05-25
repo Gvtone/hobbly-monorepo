@@ -11,7 +11,6 @@ import {
   Trash2,
   TrendingUp,
   Users,
-  X,
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import { useState } from "react";
@@ -25,6 +24,14 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/Table";
+import { useEntryMood } from "../hooks/useEntryMood";
+import { useEntry } from "../hooks/useEntry";
+import { format } from "date-fns";
+import { useHobby } from "../hooks/useHobby";
+import { useUser } from "../hooks/useUser";
+import type { EntryMoodEntity } from "@hobbies-dashboard/types";
+import AddMoodModal from "../components/admin-panel/AddMoodModal";
+import EditMoodModal from "../components/admin-panel/EditMoodModal";
 
 const tabItems = [
   { label: "Overview", icon: BarChart2 },
@@ -36,6 +43,13 @@ const tabItems = [
 
 function AdminPanelPage() {
   const [selectedTab, setSelectedTab] = useState(tabItems[0].label);
+  const [addMoodOpen, setAddMoodOpen] = useState(false);
+  const [editMoodTarget, setEditMoodTarget] = useState<EntryMoodEntity | null>(null);
+
+  const { users } = useUser();
+  const { hobbies } = useHobby();
+  const { userEntries } = useEntry();
+  const { entryMoods, addEntryMood, updateEntryMood, removeEntryMood } = useEntryMood();
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
@@ -159,86 +173,64 @@ function AdminPanelPage() {
               <TableHead>Actions</TableHead>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell className="flex items-center gap-2">
-                  <img
-                    src="https://images.unsplash.com/photo-1777997829706-9a493e3da02e?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="User Profile"
-                    className="size-8 rounded-full"
-                  />
-                  <div>
-                    <p>Hana Leo</p>
-                    <p className="text-muted-foreground text-sm">@starweaver</p>
-                  </div>
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  hana@example.com
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  <div className="bg-accent text-muted-foreground size-fit rounded-full px-4 py-1 text-sm">
-                    user
-                  </div>
-                </TableCell>
-                <TableCell>42</TableCell>
-                <TableCell>234</TableCell>
-                <TableCell>
-                  <div className="bg-secondary/20 text-secondary flex size-fit items-center justify-center gap-2 rounded-full px-4 py-1 text-sm">
-                    <CircleCheck size={14} />
-                    active
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="destructive"
-                    shape="pill"
-                    size="sm"
-                    className="bg-destructive/20 text-destructive border-destructive hover:bg-destructive/10 border"
-                  >
-                    Suspend
-                  </Button>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="flex items-center gap-2">
-                  <img
-                    src="https://images.unsplash.com/photo-1777997829706-9a493e3da02e?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="User Profile"
-                    className="size-8 rounded-full"
-                  />
-                  <div>
-                    <p>Mia Ren</p>
-                    <p className="text-muted-foreground text-sm">
-                      @fernwhisper
-                    </p>
-                  </div>
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  mia@example.com
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  <div className="bg-accent text-muted-foreground size-fit rounded-full px-4 py-1 text-sm">
-                    user
-                  </div>
-                </TableCell>
-                <TableCell>67</TableCell>
-                <TableCell>301</TableCell>
-                <TableCell>
-                  <div className="bg-destructive/20 text-destructive flex size-fit items-center justify-center gap-2 rounded-full px-4 py-1 text-sm">
-                    <CircleX size={14} />
-                    suspended
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="secondary"
-                    shape="pill"
-                    size="sm"
-                    className="bg-secondary/20 text-secondary border-secondary hover:bg-secondary/10 border"
-                  >
-                    Reinstate
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {users.map((user) => (
+                <TableRow>
+                  <TableCell className="flex items-center gap-2">
+                    {user?.profilePicture ? (
+                      <img
+                        src={user.profilePicture}
+                        alt="User Profile"
+                        className="size-8 rounded-full"
+                      />
+                    ) : (
+                      <div className="from-hobbly-sky to-hobbly-lavender flex size-8 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
+                        {user?.username?.[0].toUpperCase()}
+                      </div>
+                    )}
+                    <div>
+                      <p>{user.displayName ?? user.username}</p>
+                      <p className="text-muted-foreground text-sm">
+                        @{user.username}
+                      </p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm">
+                    {user.email}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm">
+                    <div className="bg-accent text-muted-foreground size-fit rounded-full px-4 py-1 text-sm">
+                      {user.role}
+                    </div>
+                  </TableCell>
+                  <TableCell>42</TableCell>
+                  <TableCell>234</TableCell>
+                  <TableCell>
+                    <div
+                      className={cn(
+                        "flex size-fit items-center justify-center gap-2 rounded-full px-4 py-1 text-sm",
+                        user.status === "ACTIVE" &&
+                          "bg-secondary/20 text-secondary",
+                        user.status === "SUSPENDED" &&
+                          "bg-destructive/20 text-destructive",
+                      )}
+                    >
+                      {user.status === "ACTIVE" && <CircleCheck size={14} />}
+                      {user.status === "SUSPENDED" && <CircleX size={14} />}
+                      {user.status}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="destructive"
+                      shape="pill"
+                      size="sm"
+                      className="bg-destructive/20 text-destructive border-destructive hover:bg-destructive/10 border"
+                    >
+                      Suspend
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
@@ -254,24 +246,35 @@ function AdminPanelPage() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-3 md:grid-cols-5">
-            <Card className="group flex-row items-center justify-between">
-              <div className="flex items-center justify-center gap-4">
-                <div className="bg-hobbly-lavender/25 flex size-10 items-center justify-center rounded-full text-lg">
-                  🎮
-                </div>
-                <div className="flex flex-col gap-2">
-                  <p>Gaming</p>
-                  <div className="bg-hobbly-lavender size-4 rounded-full"></div>
-                </div>
-              </div>
-              <Button
-                variant="transparent"
-                className="text-destructive hidden p-0 group-hover:flex"
+          <div className="grid grid-cols-3 gap-4 md:grid-cols-5">
+            {hobbies.map((hobby) => (
+              <Card
+                key={hobby.id}
+                className="group flex-row items-center justify-between"
               >
-                <Trash2 size={18} />
-              </Button>
-            </Card>
+                <div className="flex items-center justify-center gap-4">
+                  <div
+                    className="flex size-10 items-center justify-center rounded-full text-lg"
+                    style={{ background: `${hobby.color}7f` }}
+                  >
+                    {hobby.icon}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <p>{hobby.name}</p>
+                    <div
+                      className="size-4 rounded-full"
+                      style={{ background: hobby.color }}
+                    ></div>
+                  </div>
+                </div>
+                <Button
+                  variant="transparent"
+                  className="text-destructive hidden p-0 group-hover:flex"
+                >
+                  <Trash2 size={18} />
+                </Button>
+              </Card>
+            ))}
           </div>
         </div>
       )}
@@ -290,6 +293,43 @@ function AdminPanelPage() {
               <TableHead>Actions</TableHead>
             </TableHeader>
             <TableBody>
+              {userEntries.map((entry) => (
+                <TableRow key={entry.id}>
+                  <TableCell className="flex items-center gap-2">
+                    {entry.title ?? "-"}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm">
+                    @{entry.userHobby.user.username}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm">
+                    {entry.userHobby.hobby.name}
+                  </TableCell>
+                  <TableCell>{entry.mood?.icon ?? "-"}</TableCell>
+                  <TableCell className="text-muted-foreground text-sm">
+                    {format(new Date(entry.createdAt), "y-M-d p")}
+                  </TableCell>
+                  <TableCell>14</TableCell>
+                  <TableCell>
+                    <div
+                      className={cn(
+                        "size-fit rounded-full px-4 py-1 text-sm",
+                        entry.visibility === "PRIVATE" &&
+                          "bg-accent text-muted-foreground",
+                        entry.visibility === "PUBLIC" &&
+                          "bg-secondary/20 text-secondary",
+                      )}
+                    >
+                      {entry.visibility}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Eye size={20} className="text-muted-foreground" />
+                      <Trash2 size={20} className="text-destructive" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
               <TableRow>
                 <TableCell className="flex items-center gap-2">
                   Celestial Chronicles
@@ -354,27 +394,43 @@ function AdminPanelPage() {
       {selectedTab === tabItems[4].label && (
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
-            <p className="text-muted-foreground">15 mood options</p>
-            <Button variant="gradient" shape="pill">
+            <p className="text-muted-foreground">
+              {entryMoods.length} mood options
+            </p>
+            <Button
+              variant="gradient"
+              shape="pill"
+              onClick={() => setAddMoodOpen(true)}
+            >
               <Plus />
               Add mood
             </Button>
           </div>
 
-          <div className="grid grid-cols-3 md:grid-cols-5">
-            <Card className="group relative flex flex-col items-center justify-center gap-2">
-              <p className="text-4xl">😊</p>
-              <p className="text-muted-foreground text-sm">Happy</p>
-              <Button
-                variant="destructive"
-                shape="pill"
-                size="icon"
-                className="bg-destructive/25 text-destructive hover:bg-destructive/50 absolute top-3 right-3 hidden size-6 group-hover:flex hover:cursor-pointer"
+          <div className="grid grid-cols-3 gap-4 md:grid-cols-5">
+            {entryMoods.map((mood) => (
+              <Card
+                key={mood.id}
+                className="flex cursor-pointer flex-col items-center justify-center gap-2 transition-opacity hover:opacity-75"
+                onClick={() => setEditMoodTarget(mood)}
               >
-                <X size={12} />
-              </Button>
-            </Card>
+                <p className="text-4xl">{mood.icon}</p>
+                <p className="text-muted-foreground text-sm">{mood.name}</p>
+              </Card>
+            ))}
           </div>
+
+          <AddMoodModal
+            open={addMoodOpen}
+            onClose={() => setAddMoodOpen(false)}
+            onAdd={(icon, name) => addEntryMood({ icon, name })}
+          />
+          <EditMoodModal
+            mood={editMoodTarget}
+            onClose={() => setEditMoodTarget(null)}
+            onUpdate={(id, icon, name) => updateEntryMood(id, { icon, name })}
+            onDelete={removeEntryMood}
+          />
         </div>
       )}
     </div>
