@@ -42,11 +42,15 @@ function AuthPage() {
     setIsSubmitting(true);
     try {
       if (mode === "login") {
-        await login(data.email, data.password);
+        await login(data.email.toLocaleLowerCase().trim(), data.password);
         showToast.success("Welcome back! ✨");
         navigate("/dashboard");
       } else {
-        await registerUser(data.username, data.email, data.password);
+        await registerUser(
+          data.username.toLocaleLowerCase().trim(),
+          data.email.toLocaleLowerCase().trim(),
+          data.password,
+        );
         navigate(`/verify-email?email=${encodeURIComponent(data.email)}`);
       }
     } catch (err) {
@@ -137,7 +141,7 @@ function AuthPage() {
                     },
                     maxLength: {
                       value: 20,
-                      message: "At most 20 characters",
+                      message: "At most 30 characters",
                     },
                     pattern: {
                       value: /^[a-z0-9_]+$/,
