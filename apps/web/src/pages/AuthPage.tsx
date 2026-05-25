@@ -140,7 +140,7 @@ function AuthPage() {
                       message: "At least 3 characters",
                     },
                     maxLength: {
-                      value: 20,
+                      value: 30,
                       message: "At most 30 characters",
                     },
                     pattern: {
