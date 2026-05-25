@@ -47,6 +47,9 @@ import DeleteEntryModal from "../components/admin-panel/DeleteEntryModal";
 import EntryFilterModal, {
   type EntryFilterState,
 } from "../components/admin-panel/EntryFilterModal";
+import UserFilterModal, {
+  type UserFilterState,
+} from "../components/admin-panel/UserFilterModal";
 import EntryModal from "../components/profile/EntryModal";
 
 const tabItems = [
@@ -64,7 +67,13 @@ function AdminPanelPage() {
     null,
   );
   const [addHobbyOpen, setAddHobbyOpen] = useState(false);
-  const [editHobbyTarget, setEditHobbyTarget] = useState<HobbyEntity | null>(null);
+  const [editHobbyTarget, setEditHobbyTarget] = useState<HobbyEntity | null>(
+    null,
+  );
+  const [userSearch, setUserSearch] = useState("");
+  const [debouncedUserSearch, setDebouncedUserSearch] = useState("");
+  const [userFilter, setUserFilter] = useState<UserFilterState>({});
+  const [userFilterModalOpen, setUserFilterModalOpen] = useState(false);
   const [entrySearch, setEntrySearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [entryFilter, setEntryFilter] = useState<EntryFilterState>({});
@@ -76,11 +85,24 @@ function AdminPanelPage() {
     useState<EntryWithUserHobbyEntity | null>(null);
 
   useEffect(() => {
+    const timer = setTimeout(() => setDebouncedUserSearch(userSearch), 400);
+    return () => clearTimeout(timer);
+  }, [userSearch]);
+
+  useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(entrySearch), 400);
     return () => clearTimeout(timer);
   }, [entrySearch]);
 
-  const { users } = useUser();
+  const {
+    users,
+    page: userPage,
+    meta: userMeta,
+    goToPage: goToUserPage,
+    updateUser,
+  } = useUser({
+    filter: { search: debouncedUserSearch, ...userFilter },
+  });
   const { hobbies, addHobby, updateHobby, removeHobby } = useHobby();
   const { userEntries, page, meta, goToPage, removeEntry, refresh } = useEntry({
     filter: { search: debouncedSearch, ...entryFilter },
@@ -88,6 +110,7 @@ function AdminPanelPage() {
   const { entryMoods, addEntryMood, updateEntryMood, removeEntryMood } =
     useEntryMood();
 
+  const hasActiveUserFilters = !!userFilter.role || !!userFilter.status;
   const hasActiveFilters =
     !!entryFilter.visibility || (entryFilter.moodId?.length ?? 0) > 0;
 
@@ -173,7 +196,7 @@ function AdminPanelPage() {
           <Card>
             <h3 className="text-muted-foreground mb-4 flex items-center gap-2">
               <Star size={16} />
-              Hobby popularity
+              Recent users
             </h3>
             <div className="flex flex-col">
               <div className="flex items-center justify-between">
@@ -201,30 +224,55 @@ function AdminPanelPage() {
       )}
 
       {selectedTab === tabItems[1].label && (
-        <div>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search
+                size={16}
+                className="text-muted-foreground absolute top-1/2 left-4 -translate-y-1/2"
+              />
+              <Input
+                placeholder="Search users..."
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+                className="pl-10"
+                fullWidth
+              />
+            </div>
+            <Button
+              variant="secondary"
+              shape="rounded"
+              onClick={() => setUserFilterModalOpen(true)}
+            >
+              <SlidersHorizontal size={15} />
+              Filters
+              {hasActiveUserFilters && (
+                <span className="bg-primary size-2 rounded-full" />
+              )}
+            </Button>
+          </div>
+
           <Table>
             <TableHeader>
               <TableHead>User</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead>Entries</TableHead>
-              <TableHead>Followers</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableHeader>
             <TableBody>
               {users.map((user) => (
-                <TableRow>
+                <TableRow key={user.id}>
                   <TableCell className="flex items-center gap-2">
-                    {user?.profilePicture ? (
+                    {user.profilePicture ? (
                       <img
                         src={user.profilePicture}
                         alt="User Profile"
-                        className="size-8 rounded-full"
+                        className="size-8 rounded-full object-cover"
                       />
                     ) : (
                       <div className="from-hobbly-sky to-hobbly-lavender flex size-8 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
-                        {user?.username?.[0].toUpperCase()}
+                        {user.username[0].toUpperCase()}
                       </div>
                     )}
                     <div>
@@ -237,51 +285,122 @@ function AdminPanelPage() {
                   <TableCell className="text-muted-foreground text-sm">
                     {user.email}
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    <div className="bg-accent text-muted-foreground size-fit rounded-full px-4 py-1 text-sm">
-                      {user.role}
-                    </div>
-                  </TableCell>
-                  <TableCell>42</TableCell>
-                  <TableCell>234</TableCell>
                   <TableCell>
                     <div
                       className={cn(
-                        "flex size-fit items-center justify-center gap-2 rounded-full px-4 py-1 text-sm",
+                        "size-fit rounded-full px-4 py-1 text-sm",
+                        user.role === "ADMIN"
+                          ? "bg-primary/15 text-primary"
+                          : "bg-accent text-muted-foreground",
+                      )}
+                    >
+                      {user.role}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div
+                      className={cn(
+                        "flex size-fit items-center gap-2 rounded-full px-4 py-1 text-sm",
                         user.status === "ACTIVE" &&
                           "bg-secondary/20 text-secondary",
                         user.status === "SUSPENDED" &&
                           "bg-destructive/20 text-destructive",
+                        user.status === "INACTIVE" &&
+                          "bg-accent text-muted-foreground",
+                        user.status === "VERIFY" &&
+                          "bg-yellow-500/20 text-yellow-600",
+                        user.status === "DELETED" &&
+                          "bg-destructive/10 text-destructive/60",
                       )}
                     >
                       {user.status === "ACTIVE" && <CircleCheck size={14} />}
                       {user.status === "SUSPENDED" && <CircleX size={14} />}
-                      {user.status}
+                      <span
+                        className={cn(
+                          user.status === "DELETED" && "line-through",
+                        )}
+                      >
+                        {user.status}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="destructive"
-                      shape="pill"
-                      size="sm"
-                      className="bg-destructive/20 text-destructive border-destructive hover:bg-destructive/10 border"
-                    >
-                      Suspend
-                    </Button>
+                    {user.status === "ACTIVE" && (
+                      <Button
+                        variant="destructive"
+                        shape="pill"
+                        size="sm"
+                        className="bg-destructive/15 text-destructive border-destructive hover:bg-destructive/25 border"
+                        onClick={() =>
+                          updateUser(user.id, { status: "SUSPENDED" })
+                        }
+                      >
+                        Suspend
+                      </Button>
+                    )}
+                    {user.status === "SUSPENDED" && (
+                      <Button
+                        variant="secondary"
+                        shape="pill"
+                        size="sm"
+                        className="bg-secondary/15 text-secondary border-secondary hover:bg-secondary/25 border"
+                        onClick={() =>
+                          updateUser(user.id, { status: "ACTIVE" })
+                        }
+                      >
+                        Activate
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+
+          <div className="flex items-center justify-between">
+            <p className="text-muted-foreground text-sm">
+              {userMeta.totalCount} users
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                shape="pill"
+                size="sm"
+                disabled={userMeta.isFirstPage}
+                onClick={() => goToUserPage(userPage - 1)}
+              >
+                <ChevronLeft size={14} />
+                Previous
+              </Button>
+              <span className="text-muted-foreground text-sm">
+                {userPage} / {userMeta.pageCount}
+              </span>
+              <Button
+                variant="secondary"
+                shape="pill"
+                size="sm"
+                disabled={userMeta.isLastPage}
+                onClick={() => goToUserPage(userPage + 1)}
+              >
+                Next
+                <ChevronRight size={14} />
+              </Button>
+            </div>
+          </div>
+
+          <UserFilterModal
+            open={userFilterModalOpen}
+            onClose={() => setUserFilterModalOpen(false)}
+            filter={userFilter}
+            onApply={setUserFilter}
+          />
         </div>
       )}
 
       {selectedTab === tabItems[2].label && (
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
-            <p className="text-muted-foreground">
-              {hobbies.length} hobbies
-            </p>
+            <p className="text-muted-foreground">{hobbies.length} hobbies</p>
             <Button
               variant="gradient"
               shape="pill"
@@ -296,7 +415,7 @@ function AdminPanelPage() {
             {hobbies.map((hobby) => (
               <Card
                 key={hobby.id}
-                className="flex-row cursor-pointer items-center justify-between transition-opacity hover:opacity-75"
+                className="cursor-pointer flex-row items-center justify-between transition-opacity hover:opacity-75"
                 onClick={() => setEditHobbyTarget(hobby)}
               >
                 <div className="flex items-center justify-center gap-4">
