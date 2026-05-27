@@ -44,7 +44,7 @@ function Modal({
             <div className="from-accent/75 flex shrink-0 items-start justify-between rounded-t-3xl bg-linear-to-br to-transparent p-6">
               <div className="flex items-center gap-3">
                 {icon && (
-                  <div className="bg-accent/70 flex size-10 items-center justify-center rounded-2xl text-xl">
+                  <div className="bg-accent/70 flex size-10 shrink-0 items-center justify-center rounded-2xl text-xl">
                     {icon}
                   </div>
                 )}
@@ -62,7 +62,7 @@ function Modal({
 
               {/* Close button */}
               <Dialog.Close asChild>
-                <button className="bg-accent hover:bg-accent/50 text-muted-foreground flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors">
+                <button className="bg-accent hover:bg-accent/50 text-muted-foreground flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors">
                   <X size={14} />
                 </button>
               </Dialog.Close>

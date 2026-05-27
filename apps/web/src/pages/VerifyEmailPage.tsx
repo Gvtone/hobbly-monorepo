@@ -75,7 +75,7 @@ function VerifyEmailPage() {
             {!isVerified && (
               <div className="mt-3 w-full">
                 {email ? (
-                  <div className="border-hobbly-sky-dark bg-hobbly-sky-light text-hobbly-sky-dark mx-auto w-fit rounded-full border px-3 py-1 text-sm">
+                  <div className="border-hobbly-sky-dark bg-hobbly-sky-light/25 text-hobbly-sky-dark mx-auto w-fit rounded-full border px-3 py-1 text-sm">
                     {email}
                   </div>
                 ) : (
@@ -114,7 +114,7 @@ function VerifyEmailPage() {
                 variant="primary"
                 shape="pill"
                 fullWidth
-                className="bg-hobbly-sky-light border-hobbly-sky-dark text-hobbly-sky-dark border"
+                className="bg-hobbly-sky-light/25 border-hobbly-sky-dark text-hobbly-sky-dark border"
                 onClick={() => {
                   if (!resolvedEmail) return;
                   setIsResending(true);

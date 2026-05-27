@@ -100,12 +100,11 @@ function ProfilePage() {
       .finally(() => setProfileFetched(true));
   }, [username, isOwnProfile]);
 
-  if (notFound) return <NotFoundPage />;
-  // TODO: Add loading screen
+  if (notFound || !username) return <NotFoundPage />;
   if (authLoading || isLoading) return <LoadingPage />;
 
   const profileUser = isOwnProfile ? authUser : otherUser;
-  if (!profileUser) return null;
+  if (!profileUser) return <NotFoundPage />;
 
   const entryTabs = userHobbies.map((userHobby) => ({
     emoji: userHobby.hobby.icon,

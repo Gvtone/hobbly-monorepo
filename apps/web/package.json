@@ -14,6 +14,7 @@
     "@hobbies-dashboard/types": "*",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-select": "^2.2.6",
     "@tailwindcss/vite": "^4.2.2",
     "axios": "^1.15.2",
     "class-variance-authority": "^0.7.1",
