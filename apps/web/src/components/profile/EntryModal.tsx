@@ -648,7 +648,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                       )}
 
                       <form
-                        onSubmit={() => requireAuth(handleSubmit(onSubmit))}
+                        onSubmit={(e) => { e.preventDefault(); requireAuth(() => handleSubmit(onSubmit)(e)); }}
                         className="flex w-full items-center justify-center gap-2"
                       >
                         <Input
@@ -661,7 +661,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                           {...register("content", {
                             maxLength: {
                               value: 8000,
-                              message: "Title cannot exceed 8000 characters",
+                              message: "Comment cannot exceed 8000 characters",
                             },
                           })}
                         />
