@@ -7,6 +7,7 @@ import type {
   PublicUserEntity,
   UserEntity,
 } from "@hobbies-dashboard/types";
+import { cn } from "../../utils/utils";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -207,7 +208,13 @@ function ActivityCalendar({ entries, user }: ActivityCalendarProps) {
             <button
               onClick={() => setSelectedYear((year) => year - 1)}
               disabled={selectedYear <= new Date(user.createdAt).getFullYear()}
-              className="hover:bg-muted text-muted-foreground hover:text-foreground rounded p-1 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
+              className={cn(
+                "text-muted-foreground rounded p-1 transition-colors",
+                "hover:bg-muted hover:text-foreground",
+                "disabled:cursor-not-allowed disabled:opacity-30",
+                selectedYear <= new Date(user.createdAt).getFullYear() &&
+                  "invisible",
+              )}
               aria-label="Previous year"
             >
               <ChevronLeft size={14} />
@@ -218,7 +225,12 @@ function ActivityCalendar({ entries, user }: ActivityCalendarProps) {
             <button
               onClick={() => setSelectedYear((year) => year + 1)}
               disabled={selectedYear >= CURRENT_YEAR}
-              className="hover:bg-muted text-muted-foreground hover:text-foreground rounded p-1 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
+              className={cn(
+                "text-muted-foreground rounded p-1 transition-colors",
+                "hover:bg-muted hover:text-foreground",
+                "disabled:cursor-not-allowed disabled:opacity-30",
+                selectedYear >= CURRENT_YEAR && "invisible",
+              )}
               aria-label="Next year"
             >
               <ChevronRight size={14} />

@@ -84,7 +84,7 @@ function SettingsPage() {
   };
 
   const COVER_PRESETS = [
-    "https://res.cloudinary.com/dheojbnvv/image/upload/v1779293948/hobbly/commonAsset/backgroundImages/photo-1527842891421-42eec6e703ea_rdbywl.webp",
+    "https://res.cloudinary.com/dheojbnvv/image/upload/v1779865135/hobbly/commonAsset/backgroundImages/photo-1715626350032-96dd588c72aa_ojxlzl.webp",
     "https://res.cloudinary.com/dheojbnvv/image/upload/v1779293921/hobbly/commonAsset/backgroundImages/photo-1586380951230-e6703d9f6833_ngkkrd.webp",
     "https://res.cloudinary.com/dheojbnvv/image/upload/v1779293900/hobbly/commonAsset/backgroundImages/photo-1522383225653-ed111181a951_b4o4or.webp",
     "https://res.cloudinary.com/dheojbnvv/image/upload/v1779293891/hobbly/commonAsset/backgroundImages/photo-1577016029703-cc22a7c0c28c_g4iszx.webp",
@@ -271,29 +271,31 @@ function SettingsPage() {
 
         <div className="flex flex-col gap-8 md:flex-row">
           {/* Left Panel */}
-          <div className="flex flex-2 gap-2 overflow-x-auto md:flex-col lg:flex-1">
-            {tabItems.map(({ label, icon: Icon, devOnly }) => {
-              if (isProd && devOnly) return;
-              return (
-                <Button
-                  key={label}
-                  variant="ghost"
-                  contentPosition="between"
-                  shape="pill"
-                  size="lg"
-                  onClick={() => setSelectedTab(label)}
-                  active={selectedTab === label}
-                  fullWidth
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Icon size={16} />
-                    <span>{label}</span>
-                  </div>
-                  {selectedTab === label && <ChevronRight size={16} />}
-                </Button>
-              );
-            })}
-          </div>
+          {!isProd && (
+            <div className="flex flex-2 gap-2 overflow-x-auto md:flex-col lg:flex-1">
+              {tabItems.map(({ label, icon: Icon, devOnly }) => {
+                if (isProd && devOnly) return;
+                return (
+                  <Button
+                    key={label}
+                    variant="ghost"
+                    contentPosition="between"
+                    shape="pill"
+                    size="lg"
+                    onClick={() => setSelectedTab(label)}
+                    active={selectedTab === label}
+                    fullWidth
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <Icon size={16} />
+                      <span>{label}</span>
+                    </div>
+                    {selectedTab === label && <ChevronRight size={16} />}
+                  </Button>
+                );
+              })}
+            </div>
+          )}
 
           {/* Right Panel */}
           <div className="flex flex-5 flex-col lg:flex-4">

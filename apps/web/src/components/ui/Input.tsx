@@ -38,6 +38,7 @@ interface InputProps
     React.InputHTMLAttributes<HTMLInputElement>,
     VariantProps<typeof inputVariants> {
   textCase?: "lowercase" | "uppercase" | "normal";
+  error?: boolean;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -50,6 +51,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       scale,
       type = "text",
       textCase = "normal",
+      error,
       onChange,
       ...props
     },
@@ -79,6 +81,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         onChange={handleChange}
         className={cn(
           inputVariants({ variant, shape, scale, fullWidth }),
+          error && "ring-2 ring-destructive border-destructive",
           className,
         )}
       />
