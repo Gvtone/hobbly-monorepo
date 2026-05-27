@@ -20,7 +20,7 @@ function AddUserHobbyModal({
   existingHobbyIds,
   onAdd,
 }: AddUserHobbyModalProps) {
-  const { hobbies, isLoading } = useHobby();
+  const { hobbies, isLoading } = useHobby({ filter: { status: "PUBLISHED" } });
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
