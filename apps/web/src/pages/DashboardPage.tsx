@@ -157,8 +157,8 @@ function DashboardPage() {
 
       {/* Modals */}
       <LogEntryModal
-        userId={user?.id ?? null}
         open={isLogEntryOpen}
+        userHobbies={userHobbies}
         onClose={() => setIsLogEntryOpen(false)}
         onRefresh={refreshEntries}
       />
