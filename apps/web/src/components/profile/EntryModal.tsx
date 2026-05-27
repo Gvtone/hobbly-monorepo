@@ -38,7 +38,7 @@ interface LogEntryModalProps {
   open: boolean;
   onClose: () => void;
   data: EntryWithUserHobbyEntity;
-  onRefresh: () => Promise<void>;
+  onRefresh?: () => Promise<void>;
 }
 
 function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
@@ -112,7 +112,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
     try {
       await entryService.delete(data.id);
       showToast.success("Entry deleted.");
-      onRefresh();
+      await onRefresh?.();
       onClose();
     } catch {
       showToast.error("Failed to delete entry.");
@@ -129,7 +129,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
       showToast.success(
         `Entry is now ${newVisibility === "PUBLIC" ? "public" : "private"}.`,
       );
-      await onRefresh();
+      await onRefresh?.();
       setView("default");
     } catch {
       showToast.error("Failed to update visibility.");
@@ -149,7 +149,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
       };
       await entryService.update(data.id, updates);
       showToast.success("Entry updated.");
-      await onRefresh();
+      await onRefresh?.();
       setView("default");
     } catch {
       showToast.error("Failed to update entry.");
@@ -648,7 +648,10 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                       )}
 
                       <form
-                        onSubmit={(e) => { e.preventDefault(); requireAuth(() => handleSubmit(onSubmit)(e)); }}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          requireAuth(() => handleSubmit(onSubmit)(e));
+                        }}
                         className="flex w-full items-center justify-center gap-2"
                       >
                         <Input
