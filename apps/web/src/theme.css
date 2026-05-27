@@ -202,3 +202,12 @@ input[type="color"]::-moz-color-swatch {
 .scrollbar-custom::-webkit-scrollbar-thumb:hover {
   background-color: var(--muted-foreground);
 }
+
+@keyframes marquee {
+  0% { transform: translateX(var(--marquee-start, 6.25rem)); }
+  100% { transform: translateX(-100%); }
+}
+
+.marquee-text {
+  animation: marquee var(--marquee-duration, 4s) linear infinite;
+}

@@ -31,15 +31,20 @@ function EmojiInput({ value, onChange, className }: EmojiInputProps) {
 
       <Popover.Portal>
         <Popover.Content sideOffset={8} className="z-100">
-          <EmojiPicker
-            onEmojiClick={(data: EmojiClickData) => {
-              onChange(data.emoji);
-              setOpen(false);
-            }}
-            searchDisabled={false}
-            height={350}
-            width={300}
-          />
+          <div
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+          >
+            <EmojiPicker
+              onEmojiClick={(data: EmojiClickData) => {
+                onChange(data.emoji);
+                setOpen(false);
+              }}
+              searchDisabled={false}
+              height={350}
+              width={300}
+            />
+          </div>
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
