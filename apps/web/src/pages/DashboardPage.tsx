@@ -59,17 +59,19 @@ function DashboardPage() {
         </div>
 
         {/* Left side */}
-        <div className="flex gap-4">
-          <Button
-            variant="gradient"
-            shape="pill"
-            onClick={() => setIsLogEntryOpen(true)}
-            disabled={userHobbies.length === 0}
-          >
-            <Plus size={16} />
-            New Entry
-          </Button>
-        </div>
+        {userHobbies.length !== 0 && (
+          <div className="flex gap-4">
+            <Button
+              variant="gradient"
+              shape="pill"
+              onClick={() => setIsLogEntryOpen(true)}
+              disabled={userHobbies.length === 0}
+            >
+              <Plus size={16} />
+              New Entry
+            </Button>
+          </div>
+        )}
       </div>
 
       <section>
