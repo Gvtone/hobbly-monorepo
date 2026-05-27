@@ -1,5 +1,6 @@
 import Footer from "./Footer";
 import Navbar from "./Navbar";
+import ScrollToTopButton from "./ScrollToTopButton";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,6 +8,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
       <Navbar></Navbar>
       <main className="flex-1">{children}</main>
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 }
