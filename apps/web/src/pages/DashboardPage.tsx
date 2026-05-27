@@ -104,7 +104,10 @@ function DashboardPage() {
                     backgroundImage: backgroundImage ?? undefined,
                   })
                 }
-                onDelete={removeUserHobby}
+                onDelete={async (id) => {
+                  await removeUserHobby(id);
+                  refreshEntries();
+                }}
               />
             ))}
             <button
