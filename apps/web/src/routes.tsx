@@ -17,6 +17,8 @@ const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
+const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +30,8 @@ export const router = createBrowserRouter([
       { path: "forgot-password", Component: ForgotPasswordPage },
       { path: "reset-password", Component: ResetPasswordPage },
       { path: "verify-email", Component: VerifyEmailPage },
+      { path: "privacy-policy", Component: PrivacyPolicyPage },
+      { path: "terms", Component: TermsPage },
       {
         path: "admin-panel",
         element: (
