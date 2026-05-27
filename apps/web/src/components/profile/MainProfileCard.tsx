@@ -1,7 +1,7 @@
 import { Globe, Lock, Share2, SmilePlus } from "lucide-react";
 import Button from "../ui/Button";
 import { Card } from "../ui/Card";
-import { cn } from "../../utils/utils";
+import { cn, getContrastColor } from "../../utils/utils";
 import { useCurrentMood } from "../../hooks/userCurrentMood";
 import { useState } from "react";
 import MoodModal from "./MoodModal";
@@ -22,11 +22,22 @@ function MainProfileCard({
   className,
   children,
 }: MainProfileCardProps) {
-  const { currentMood, setOrUpdateCurrentMood, removeCurrentMood } = useCurrentMood(user.id);
+  const { currentMood, setOrUpdateCurrentMood, removeCurrentMood } =
+    useCurrentMood(user.id);
 
   const [isCurrentMoodOpen, setIsCurrentMoodOpen] = useState(false);
   const [isVisibilityOpen, setIsVisibilityOpen] = useState(false);
   const [isProfileShareOpen, setIsProfileShareOpen] = useState(false);
+
+  const AVG_CHAR_PX = 7.5;
+  // desktop badge: max-w-25 (100px) inner span, minus emoji+gap (~24px) ≈ 76px
+  const desktopMarquee =
+    !!currentMood?.description &&
+    currentMood.description.length * AVG_CHAR_PX > 76;
+  // mobile chip: w-44 (176px) - px-3×2 (24px) - emoji+gap (~26px) ≈ 126px
+  const mobileMarquee =
+    !!currentMood?.description &&
+    currentMood.description.length * AVG_CHAR_PX > 126;
 
   return (
     <>
@@ -67,7 +78,7 @@ function MainProfileCard({
                 <div
                   className={cn(
                     "border-card group absolute -bottom-2 left-[calc(100%-1.5rem)]",
-                    "flex items-center justify-center gap-1",
+                    "hidden items-center justify-center gap-1 md:flex",
                     "max-w-36 rounded-full border-2 px-1.5 py-1",
                     currentMood.description && "hover:pr-2.5",
                     isOwnProfile && "hover:cursor-pointer",
@@ -85,7 +96,20 @@ function MainProfileCard({
                   {currentMood.icon && <span>{currentMood.icon}</span>}
                   {currentMood.description && (
                     <span className="hidden max-w-25 overflow-hidden group-hover:inline">
-                      <span className="marquee-text inline-block text-sm whitespace-nowrap text-white">
+                      <span
+                        className={cn(
+                          "inline-block text-sm whitespace-nowrap",
+                          desktopMarquee && "marquee-text",
+                        )}
+                        style={
+                          {
+                            "--marquee-duration": `${Math.max(2, 1.25 + currentMood.description.length * 0.1)}s`,
+                            color: currentMood.color
+                              ? getContrastColor(currentMood.color)
+                              : "#ffffff",
+                          } as React.CSSProperties
+                        }
+                      >
                         {currentMood.description}
                       </span>
                     </span>
@@ -96,7 +120,7 @@ function MainProfileCard({
                   <div
                     className={cn(
                       "border-card/50 hover:border-card group absolute -bottom-2 left-[calc(100%-1.5rem)]",
-                      "flex items-center justify-center gap-1",
+                      "hidden items-center justify-center gap-1 md:flex",
                       "max-w-36 rounded-full border-2 p-1 hover:pr-2",
                       "bg-card/50 hover:bg-card hover:text-foreground text-foreground/50 drop-shadow-xl hover:cursor-pointer",
                       "transition-all duration-300",
@@ -161,6 +185,80 @@ function MainProfileCard({
             {/* Bio */}
             {user?.bio && (
               <p className="text-center text-sm md:text-start">{user?.bio}</p>
+            )}
+
+            {/* Mood — mobile only */}
+            {currentMood?.description ? (
+              <div
+                className={cn(
+                  "relative mt-4 flex w-fit max-w-44 items-center gap-1.5 rounded-full px-3 py-1",
+                  "mx-auto md:hidden",
+                  isOwnProfile && "cursor-pointer",
+                )}
+                style={{ backgroundColor: currentMood.color ?? undefined }}
+                onClick={
+                  isOwnProfile ? () => setIsCurrentMoodOpen(true) : undefined
+                }
+              >
+                {currentMood.icon && (
+                  <span className="relative z-10 shrink-0 text-sm leading-none">
+                    {currentMood.icon}
+                  </span>
+                )}
+                <span className="min-w-0 flex-1 overflow-hidden">
+                  <span
+                    className={cn(
+                      "inline-block text-sm whitespace-nowrap",
+                      mobileMarquee && "marquee-text",
+                    )}
+                    style={
+                      {
+                        "--marquee-start": "8rem",
+                        "--marquee-duration": `${(1.6 + currentMood.description.length * 0.1).toFixed(1)}s`,
+                        color: currentMood.color
+                          ? getContrastColor(currentMood.color)
+                          : "#ffffff",
+                      } as React.CSSProperties
+                    }
+                  >
+                    {currentMood.description}
+                  </span>
+                </span>
+              </div>
+            ) : currentMood && isOwnProfile ? (
+              <div
+                className="mx-auto mt-2 w-fit cursor-pointer rounded-full border-2 px-3 py-1 md:hidden"
+                style={
+                  currentMood.color
+                    ? {
+                        backgroundColor: currentMood.color,
+                        borderColor: currentMood.color,
+                      }
+                    : undefined
+                }
+                onClick={() => setIsCurrentMoodOpen(true)}
+              >
+                {currentMood.icon && (
+                  <span className="text-sm leading-none">
+                    {currentMood.icon}
+                  </span>
+                )}
+              </div>
+            ) : (
+              isOwnProfile && (
+                <div
+                  className={cn(
+                    "border-card/50 hover:border-card mx-auto mt-2 w-fit md:hidden",
+                    "flex items-center gap-1.5 rounded-full border-2 px-3 py-1.5",
+                    "bg-card/50 hover:bg-card text-foreground/50 hover:text-foreground",
+                    "border-border cursor-pointer border transition-colors",
+                  )}
+                  onClick={() => setIsCurrentMoodOpen(true)}
+                >
+                  <SmilePlus size={14} />
+                  <span className="text-sm">Set your mood</span>
+                </div>
+              )
             )}
           </div>
 
