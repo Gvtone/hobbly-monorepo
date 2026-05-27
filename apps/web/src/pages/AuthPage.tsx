@@ -36,7 +36,8 @@ function AuthPage() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<SignupFormValues>({ shouldUnregister: true });
+    setError,
+  } = useForm<SignupFormValues>({ shouldUnregister: true, mode: "onChange" });
 
   const onSubmit = async (data: SignupFormValues) => {
     setIsSubmitting(true);
@@ -63,6 +64,10 @@ function AuthPage() {
             ? `/verify-email?email=${encodeURIComponent(data.email)}`
             : "/verify-email",
         );
+      } else if (message === "An account with this email already exists.") {
+        setError("email", { message });
+      } else if (message === "An account with this username already exists.") {
+        setError("username", { message });
       } else {
         showToast.error(message);
       }
@@ -132,6 +137,7 @@ function AuthPage() {
                   variant="auth"
                   shape="pill"
                   fullWidth
+                  error={!!errors.username}
                   placeholder="starweaver"
                   {...register("username", {
                     required: "Username is required",
@@ -175,6 +181,7 @@ function AuthPage() {
                 shape="pill"
                 type="text"
                 fullWidth
+                error={!!errors.email}
                 placeholder={
                   mode === "login"
                     ? "you@example.com or username"
@@ -214,6 +221,7 @@ function AuthPage() {
                   shape="pill"
                   type={showPassword ? "text" : "password"}
                   fullWidth
+                  error={!!errors.password}
                   placeholder="••••••••"
                   className="w-full pr-12"
                   {...register(
@@ -225,10 +233,13 @@ function AuthPage() {
                             value: 8,
                             message: "At least 8 characters",
                           },
-                          pattern: {
-                            value: /(?=.*[A-Z])/,
-                            message:
+                          validate: {
+                            uppercase: (v) =>
+                              /(?=.*[A-Z])/.test(v) ||
                               "Must contain at least one uppercase letter",
+                            specialChar: (v) =>
+                              /(?=.*[!@#$%^&*(),.?":{}|<>])/.test(v) ||
+                              "Must contain at least one special character",
                           },
                         }
                       : {
