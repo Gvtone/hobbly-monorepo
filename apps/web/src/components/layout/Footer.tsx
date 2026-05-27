@@ -1,4 +1,5 @@
 import { Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -13,7 +14,14 @@ function Footer() {
         Made with ✨ for hobby lovers everywhere
       </span>
       <span className="text-xs text-muted-foreground">
-        © 2026 Hobbly · <a href="#">Privacy</a> · <a href="#">Terms</a>
+        © 2026 Hobbly ·{" "}
+        <Link to="/privacy-policy" className="hover:underline">
+          Privacy
+        </Link>{" "}
+        ·{" "}
+        <Link to="/terms" className="hover:underline">
+          Terms
+        </Link>
       </span>
     </footer>
   );

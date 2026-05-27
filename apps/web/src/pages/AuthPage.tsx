@@ -4,7 +4,7 @@ import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/auth/useAuth";
 import { showToast } from "../utils/toast";
 import { useForm } from "react-hook-form";
@@ -336,13 +336,16 @@ function AuthPage() {
         {/* Terms and Policy */}
         <p className="text-muted-foreground text-center text-xs">
           By continuing, you agree to Hobbly's{" "}
-          <a href="#" className="text-hobbly-sky-dark cursor-pointer">
+          <Link to="/terms" className="text-hobbly-sky-dark cursor-pointer">
             Terms
-          </a>{" "}
+          </Link>{" "}
           and{" "}
-          <a href="#" className="text-hobbly-sky-dark cursor-pointer">
+          <Link
+            to="/privacy-policy"
+            className="text-hobbly-sky-dark cursor-pointer"
+          >
             Privacy Policy
-          </a>
+          </Link>
           .
         </p>
       </div>
