@@ -20,6 +20,7 @@ import {
   GenericOutputEntity,
   GenericOutputStatus,
 } from '../../common/entities/generic-output.entity';
+import { CreateGoogleUserDto } from '../user/dto/create-google-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -102,6 +103,36 @@ export class AuthService {
     });
 
     return payload;
+  }
+
+  async findOrCreateGoogleUser(
+    googleUserDto: CreateGoogleUserDto,
+  ): Promise<PayloadEntity> {
+    let user = await this.userService.findUserByEmail(googleUserDto.email);
+
+    if (!user) {
+      user = await this.userService.createWithGoogle(googleUserDto);
+
+      await this.mailService.sendWelcomeEmail({
+        email: user.email,
+        username: user.username,
+      });
+    } else if (!user.googleId) {
+      user = await this.userService.update(user.id, {
+        googleId: googleUserDto.googleId,
+      });
+    }
+
+    return {
+      sub: user.id,
+      displayName: user.displayName,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      visibility: user.visibility,
+      status: user.status,
+      type: 'ACCESS',
+    };
   }
 
   async refreshToken(response: Response, request: Request) {

@@ -6,7 +6,8 @@ model User {
   displayName    String?
   username       String        @unique
   email          String        @unique
-  password       String
+  googleId       String?       @unique
+  password       String?
   profilePicture String?
   coverImage     String?
   bio            String?

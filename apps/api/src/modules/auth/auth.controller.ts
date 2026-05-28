@@ -32,11 +32,16 @@ import { PayloadEntity } from './entities/payload.entity';
 import { UserEntity } from '../user/entities/user.entity';
 import { GenericOutputEntity } from '../../common/entities/generic-output.entity';
 import { Public } from '../../common/decorators/public.decorator';
+import { GoogleAuthGuard } from './guard/google.guard';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Public()
   @Post('login')
@@ -48,6 +53,27 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
   async login(@Res({ passthrough: true }) res: Response, @Req() req: Request) {
     return await this.authService.login(res, req);
+  }
+
+  @Public()
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  googleAuth() {
+    // never runs — passport redirects to Google before reaching here
+  }
+
+  @Public()
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  @ApiOperation({ summary: 'Log in or Sign up with Google Oauth' })
+  @ApiOkResponse({ description: 'Login successful', type: PayloadEntity })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
+  async googleCallback(
+    @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
+  ) {
+    await this.authService.login(res, req);
+    res.redirect(`${this.configService.get('CLIENT_URL')}/dashboard`);
   }
 
   @Public()

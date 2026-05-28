@@ -11,7 +11,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PayloadEntity } from '../auth/entities/payload.entity';
 import { CloudinaryService } from '../../common/cloudinary/cloudinary.service';
 import { UserFilterDto } from './dto/user-filter.dto';
-import { Prisma } from '../../generated/prisma/client';
+import { Prisma, UserStatus } from '../../generated/prisma/client';
+import { CreateGoogleUserDto } from './dto/create-google-user.dto';
+import { GenerateRandomUsername } from './helper/user.helper';
 
 @Injectable()
 export class UserService {
@@ -98,6 +100,15 @@ export class UserService {
     return new UserEntity(user);
   }
 
+  async findUserByGoogleId(googleId: string) {
+    const user = await this.databaseService.user.findFirst({
+      where: { googleId },
+    });
+
+    if (!user) return null;
+    return new UserEntity(user);
+  }
+
   async create({ username, email, password }: CreateUserDto) {
     const existingUsername = await this.databaseService.user.findFirst({
       where: { username },
@@ -124,6 +135,29 @@ export class UserService {
     return new UserEntity(user);
   }
 
+  async createWithGoogle({ email, googleId, avatar }: CreateGoogleUserDto) {
+    let randomUsername: string;
+    let existingUsername: UserEntity;
+
+    do {
+      randomUsername = GenerateRandomUsername();
+      existingUsername = await this.findUserByUsername(randomUsername);
+    } while (existingUsername);
+
+    const user = await this.databaseService.user.create({
+      data: {
+        email,
+        googleId,
+        profilePicture: avatar,
+        username: randomUsername,
+        status: UserStatus.ACTIVE,
+      },
+      omit: { password: true },
+    });
+
+    return new UserEntity(user);
+  }
+
   async uploadProfilePicture(user: PayloadEntity, image: Express.Multer.File) {
     const { profilePicture } = await this.findUserById(user.sub);
 
@@ -136,11 +170,13 @@ export class UserService {
       'profilePicture',
     );
 
-    return await this.databaseService.user.update({
+    const updatedUser = await this.databaseService.user.update({
       where: { id: user.sub },
       data: { profilePicture: secure_url },
       omit: { password: true },
     });
+
+    return new UserEntity(updatedUser);
   }
 
   async removeProfilePicture(user: PayloadEntity) {
@@ -153,11 +189,13 @@ export class UserService {
 
     if (isCloudinaryUrl) await this.cloudinary.delete(profilePicture);
 
-    return await this.databaseService.user.update({
+    const updatedUser = await this.databaseService.user.update({
       where: { id: user.sub },
       data: { profilePicture: null },
       omit: { password: true },
     });
+
+    return new UserEntity(updatedUser);
   }
 
   async uploadCoverImage(user: PayloadEntity, image: Express.Multer.File) {
@@ -169,11 +207,13 @@ export class UserService {
 
     const { secure_url } = await this.cloudinary.upload(image, 'coverImage');
 
-    return await this.databaseService.user.update({
+    const updatedUser = await this.databaseService.user.update({
       where: { id: user.sub },
       data: { coverImage: secure_url },
       omit: { password: true },
     });
+
+    return new UserEntity(updatedUser);
   }
 
   async removeCoverImage(user: PayloadEntity) {
@@ -186,25 +226,31 @@ export class UserService {
 
     if (isCloudinaryUrl) await this.cloudinary.delete(coverImage);
 
-    return await this.databaseService.user.update({
+    const updatedUser = await this.databaseService.user.update({
       where: { id: user.sub },
       data: { coverImage: null },
       omit: { password: true },
     });
+
+    return new UserEntity(updatedUser);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    return await this.databaseService.user.update({
+    const user = await this.databaseService.user.update({
       where: { id },
       data: { ...updateUserDto },
       omit: { password: true },
     });
+
+    return new UserEntity(user);
   }
 
   async delete(id: number) {
-    return await this.databaseService.user.delete({
+    const user = await this.databaseService.user.delete({
       where: { id },
       omit: { password: true },
     });
+
+    return new UserEntity(user);
   }
 }

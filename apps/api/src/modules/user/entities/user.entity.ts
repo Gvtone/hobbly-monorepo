@@ -63,6 +63,9 @@ export class UserEntity implements UserModel, IUserEntity {
   @ApiProperty({ type: String })
   email: string;
 
+  @ApiProperty({ type: String })
+  googleId: string;
+
   @Exclude()
   @ApiHideProperty()
   password: string;
