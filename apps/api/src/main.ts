@@ -7,9 +7,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const config = new DocumentBuilder()
     .setTitle('Hobbly API Documentation')
@@ -23,6 +24,8 @@ async function bootstrap() {
     origin: process.env.CLIENT_URL ?? 'http://localhost:5173',
     credentials: true,
   });
+
+  app.set('trust proxy', 'loopback');
 
   app.use(cookieParser());
 

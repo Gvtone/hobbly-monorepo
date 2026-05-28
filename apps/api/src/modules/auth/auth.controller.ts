@@ -34,6 +34,7 @@ import { GenericOutputEntity } from '../../common/entities/generic-output.entity
 import { Public } from '../../common/decorators/public.decorator';
 import { GoogleAuthGuard } from './guard/google.guard';
 import { ConfigService } from '@nestjs/config';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -44,6 +45,7 @@ export class AuthController {
   ) {}
 
   @Public()
+  @Throttle({ default: { ttl: 15 * 60 * 1000, limit: 5 } })
   @Post('login')
   @UseGuards(LocalGuard)
   @HttpCode(HttpStatus.OK)
@@ -77,6 +79,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { ttl: 15 * 60 * 1000, limit: 5 } })
   @Post('register')
   @ApiOperation({ summary: 'Register a new user account' })
   @ApiBody({ type: CreateUserDto })
@@ -90,6 +93,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { ttl: 15 * 60 * 1000, limit: 10 } })
   @Post('refresh-token')
   @ApiOperation({ summary: 'Refreshes access token in cookies' })
   @ApiOkResponse({ description: 'Refresh Successful', type: PayloadEntity })
@@ -113,6 +117,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { ttl: 60 * 60 * 1000, limit: 3 } })
   @Post('forgot')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request a password reset email' })
@@ -127,6 +132,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { ttl: 60 * 60 * 1000, limit: 3 } })
   @Post('resend-verification')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Resend the email verification link' })
@@ -153,6 +159,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { ttl: 60 * 60 * 1000, limit: 3 } })
   @Post('reset')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset the account password using a token' })
