@@ -4,6 +4,11 @@ import { UserStatus, Visibility } from '../../../generated/prisma/enums';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
+  @ApiPropertyOptional({ type: String })
+  @IsString()
+  @IsOptional()
+  googleId?: string;
+
   @ApiPropertyOptional({ enum: UserStatus })
   @IsEnum({ UserStatus })
   @IsOptional()

@@ -34,6 +34,7 @@ export interface UserEntity {
   displayName: string | null;
   username: string;
   email: string;
+  googleId: string;
   profilePicture: string | null;
   coverImage: string | null;
   bio: string | null;

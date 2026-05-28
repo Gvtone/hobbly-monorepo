@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HashService } from '../../common/utils/hash.service';
 import { MailModule } from '../mail/mail.module';
 import { TokenModule } from '../token/token.module';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
@@ -27,6 +28,12 @@ import { TokenModule } from '../token/token.module';
     TokenModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, HashService],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    HashService,
+    GoogleStrategy,
+  ],
 })
 export class AuthModule {}
