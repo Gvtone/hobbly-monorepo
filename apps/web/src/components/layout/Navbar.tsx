@@ -162,13 +162,16 @@ function Navbar() {
                   )}
 
                   <div className="border-border mt-1 border-t pt-1">
-                    <button
+                    <Button
+                      variant="ghost"
+                      contentPosition="start"
+                      className="text-destructive rounded-xl"
+                      fullWidth
                       onClick={handleLogout}
-                      className="hover:bg-muted text-destructive flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-colors"
                     >
                       <LogOut size={14} />
                       Log out
-                    </button>
+                    </Button>
                   </div>
                 </Popover.Content>
               </Popover.Portal>
