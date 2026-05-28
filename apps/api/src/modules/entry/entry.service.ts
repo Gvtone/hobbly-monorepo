@@ -5,7 +5,7 @@ import { DatabaseService } from '../../common/database/database.service';
 import { EntryFilterDto } from './dto/entry-filter.dto';
 import { Prisma } from '../../generated/prisma/client';
 import { EntryMoodService } from '../entry-mood/entry-mood.service';
-import { CloudinaryService } from '../../cloudinary/cloudinary.service';
+import { CloudinaryService } from '../../common/cloudinary/cloudinary.service';
 
 @Injectable()
 export class EntryService {
