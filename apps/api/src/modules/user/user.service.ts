@@ -9,9 +9,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { HashService } from '../../common/utils/hash.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PayloadEntity } from '../auth/entities/payload.entity';
-import { CloudinaryService } from '../../cloudinary/cloudinary.service';
+import { CloudinaryService } from '../../common/cloudinary/cloudinary.service';
 import { UserFilterDto } from './dto/user-filter.dto';
-import { Prisma } from '../../generated/prisma/client';
+import { Prisma, UserStatus } from '../../generated/prisma/client';
+import { CreateGoogleUserDto } from './dto/create-google-user.dto';
+import { GenerateRandomUsername } from './helper/user.helper';
 
 @Injectable()
 export class UserService {
@@ -67,16 +69,14 @@ export class UserService {
   }
 
   async findUserById(id: number) {
-    const user = await this.databaseService.user.findFirst({
+    return await this.databaseService.user.findFirst({
       where: { id },
+      omit: { password: true },
     });
-
-    if (!user) return null;
-    return new UserEntity(user);
   }
 
   async findUserByUsernamePublic(username: string) {
-    const user = await this.databaseService.user.findFirst({
+    return await this.databaseService.user.findFirst({
       where: { username },
       select: {
         id: true,
@@ -89,13 +89,20 @@ export class UserService {
         visibility: true,
       },
     });
-
-    return user;
   }
 
   async findUserByUsername(username: string) {
     const user = await this.databaseService.user.findFirst({
       where: { username },
+    });
+
+    if (!user) return null;
+    return new UserEntity(user);
+  }
+
+  async findUserByGoogleId(googleId: string) {
+    const user = await this.databaseService.user.findFirst({
+      where: { googleId },
     });
 
     if (!user) return null;
@@ -128,10 +135,35 @@ export class UserService {
     return new UserEntity(user);
   }
 
+  async createWithGoogle({ email, googleId, avatar }: CreateGoogleUserDto) {
+    let randomUsername: string;
+    let existingUsername: UserEntity;
+
+    do {
+      randomUsername = GenerateRandomUsername();
+      existingUsername = await this.findUserByUsername(randomUsername);
+    } while (existingUsername);
+
+    const user = await this.databaseService.user.create({
+      data: {
+        email,
+        googleId,
+        profilePicture: avatar,
+        username: randomUsername,
+        status: UserStatus.ACTIVE,
+      },
+      omit: { password: true },
+    });
+
+    return new UserEntity(user);
+  }
+
   async uploadProfilePicture(user: PayloadEntity, image: Express.Multer.File) {
     const { profilePicture } = await this.findUserById(user.sub);
 
-    if (profilePicture) await this.cloudinary.delete(profilePicture);
+    const isCloudinaryUrl = profilePicture?.includes('res.cloudinary.com');
+
+    if (isCloudinaryUrl) await this.cloudinary.delete(profilePicture);
 
     const { secure_url } = await this.cloudinary.upload(
       image,
@@ -141,6 +173,7 @@ export class UserService {
     const updatedUser = await this.databaseService.user.update({
       where: { id: user.sub },
       data: { profilePicture: secure_url },
+      omit: { password: true },
     });
 
     return new UserEntity(updatedUser);
@@ -152,11 +185,14 @@ export class UserService {
     if (!profilePicture)
       throw new NotFoundException('User have no profile picture');
 
-    await this.cloudinary.delete(profilePicture);
+    const isCloudinaryUrl = profilePicture?.includes('res.cloudinary.com');
+
+    if (isCloudinaryUrl) await this.cloudinary.delete(profilePicture);
 
     const updatedUser = await this.databaseService.user.update({
       where: { id: user.sub },
       data: { profilePicture: null },
+      omit: { password: true },
     });
 
     return new UserEntity(updatedUser);
@@ -165,13 +201,16 @@ export class UserService {
   async uploadCoverImage(user: PayloadEntity, image: Express.Multer.File) {
     const { coverImage } = await this.findUserById(user.sub);
 
-    if (coverImage) await this.cloudinary.delete(coverImage);
+    const isCloudinaryUrl = coverImage?.includes('res.cloudinary.com');
+
+    if (isCloudinaryUrl) await this.cloudinary.delete(coverImage);
 
     const { secure_url } = await this.cloudinary.upload(image, 'coverImage');
 
     const updatedUser = await this.databaseService.user.update({
       where: { id: user.sub },
       data: { coverImage: secure_url },
+      omit: { password: true },
     });
 
     return new UserEntity(updatedUser);
@@ -183,11 +222,14 @@ export class UserService {
     if (!coverImage)
       throw new NotFoundException('User have no profile picture');
 
-    await this.cloudinary.delete(coverImage);
+    const isCloudinaryUrl = coverImage?.includes('res.cloudinary.com');
+
+    if (isCloudinaryUrl) await this.cloudinary.delete(coverImage);
 
     const updatedUser = await this.databaseService.user.update({
       where: { id: user.sub },
       data: { coverImage: null },
+      omit: { password: true },
     });
 
     return new UserEntity(updatedUser);
@@ -197,6 +239,7 @@ export class UserService {
     const user = await this.databaseService.user.update({
       where: { id },
       data: { ...updateUserDto },
+      omit: { password: true },
     });
 
     return new UserEntity(user);
@@ -205,6 +248,7 @@ export class UserService {
   async delete(id: number) {
     const user = await this.databaseService.user.delete({
       where: { id },
+      omit: { password: true },
     });
 
     return new UserEntity(user);
