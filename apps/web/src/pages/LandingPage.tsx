@@ -93,9 +93,18 @@ function LandingPage() {
               Start your journal
               <ArrowRight size={20} />
             </LinkButton>
-            <LinkButton to="/#info" variant="default" shape="rounded" size="lg">
+            <Button
+              variant="default"
+              shape="rounded"
+              size="lg"
+              onClick={() =>
+                document
+                  .getElementById("info")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
               Learn more
-            </LinkButton>
+            </Button>
           </div>
         </div>
       </section>
@@ -170,10 +179,14 @@ function LandingPage() {
               <h2 className="text-center text-3xl text-white md:text-5xl">
                 Begin your hobby journey today
               </h2>
-              <Button variant="translucent" size="lg">
+              <LinkButton
+                to="/auth?mode=signup"
+                variant="translucent"
+                size="lg"
+              >
                 Start for free
                 <ArrowRight></ArrowRight>
-              </Button>
+              </LinkButton>
             </div>
           </Card>
         </div>
