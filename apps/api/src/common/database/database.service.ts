@@ -7,6 +7,7 @@ import {
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../../generated/prisma/client';
 import { pagination } from 'prisma-extension-pagination';
+import { ConfigService } from '@nestjs/config';
 
 @Global()
 @Injectable()
@@ -14,9 +15,10 @@ export class DatabaseService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
+    const connectionString = configService.get('DATABASE_URL');
     super({
-      adapter: new PrismaPg({ connectionString: process.env['DATABASE_URL'] }),
+      adapter: new PrismaPg({ connectionString }),
     });
   }
 
