@@ -20,6 +20,25 @@ interface SignupFormValues extends LoginFormValues {
   username: string;
 }
 
+function TermsNotice({ className }: { className?: string }) {
+  return (
+    <p className={`text-muted-foreground text-center text-xs ${className}`}>
+      By continuing, you agree to Hobbly's{" "}
+      <Link to="/terms" className="text-hobbly-sky-dark cursor-pointer">
+        Terms
+      </Link>{" "}
+      and{" "}
+      <Link
+        to="/privacy-policy"
+        className="text-hobbly-sky-dark cursor-pointer"
+      >
+        Privacy Policy
+      </Link>
+      .
+    </p>
+  );
+}
+
 function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,16 +102,27 @@ function AuthPage() {
       subtitle='"A cozy place for everything you love."'
       icons
     >
-      <div className="w-full max-w-md">
-        <div className="text-muted-foreground hover:text-foreground mb-8 flex items-center gap-2 self-start">
+      <div className="w-full max-w-md md:py-8">
+        <LinkButton
+          to="/"
+          variant="transparent"
+          className="mb-8 px-0 max-md:hidden"
+        >
           <ArrowLeft size={14} />
-          <a href="/" className="text-sm">
-            Back to Hobbly
-          </a>
-        </div>
+          Back to Hobbly
+        </LinkButton>
 
         {/* Main card */}
-        <Card className="mb-6 items-center p-10 shadow-xl">
+        <Card className="items-center p-10 shadow-xl max-md:min-h-lvh max-md:rounded-none md:mb-6">
+          <LinkButton
+            to="/"
+            variant="transparent"
+            className="mb-8 self-start px-0 md:hidden"
+          >
+            <ArrowLeft size={14} />
+            Back to Hobbly
+          </LinkButton>
+
           <div className="mb-8 flex flex-col items-center gap-2">
             <h2 className="xs:text-2xl text-center text-lg">
               {mode === "login" ? "Welcome back ✨" : "Create your space 🌸"}
@@ -235,12 +265,15 @@ function AuthPage() {
                             message: "At least 8 characters",
                           },
                           validate: {
+                            lowercase: (v) =>
+                              /(?=.*[a-z])/.test(v) ||
+                              "Must contain at least 1 lowercase letter",
                             uppercase: (v) =>
                               /(?=.*[A-Z])/.test(v) ||
-                              "Must contain at least one uppercase letter",
+                              "Must contain at least 1 uppercase letter",
                             specialChar: (v) =>
                               /(?=.*[!@#$%^&*(),.?":{}|<>])/.test(v) ||
-                              "Must contain at least one special character",
+                              `Must contain at least 1 special character [ !@#$%^&*(),.?":{}|<> ]`,
                           },
                         }
                       : {
@@ -268,10 +301,21 @@ function AuthPage() {
 
             <a
               href="/forgot-password"
-              className="text-hobbly-sky-dark mb-6 self-end text-sm"
+              className="text-hobbly-sky-dark mb-2 self-end text-sm"
             >
               Forgot password?
             </a>
+
+            {mode === "signup" && (
+              <div className="text-muted-foreground mb-6 text-xs">
+                <p>At least 8 characters</p>
+                <p>At least 1 lowercase character</p>
+                <p>At least 1 uppercase character</p>
+                <p>
+                  At least 1 special character [ !@#$%^&*(),.?":{}|&lt;&gt; ]
+                </p>
+              </div>
+            )}
 
             <Button
               type="submit"
@@ -306,7 +350,7 @@ function AuthPage() {
               shape="pill"
               size="lg"
               fullWidth
-              className="max-xs:text-xs"
+              className="max-xs:text-xs mb-8"
             >
               <span className="max-xs:hidden size-5">
                 <svg viewBox="0 0 24 24">
@@ -331,23 +375,13 @@ function AuthPage() {
               <span>Continue with Google</span>
             </LinkButton>
           </>
+
+          {/* Terms and Policy — inside card on mobile */}
+          <TermsNotice className="md:hidden" />
         </Card>
 
-        {/* Terms and Policy */}
-        <p className="text-muted-foreground text-center text-xs">
-          By continuing, you agree to Hobbly's{" "}
-          <Link to="/terms" className="text-hobbly-sky-dark cursor-pointer">
-            Terms
-          </Link>{" "}
-          and{" "}
-          <Link
-            to="/privacy-policy"
-            className="text-hobbly-sky-dark cursor-pointer"
-          >
-            Privacy Policy
-          </Link>
-          .
-        </p>
+        {/* Terms and Policy — outside card on desktop */}
+        <TermsNotice className="max-md:hidden" />
       </div>
     </AuthLayout>
   );

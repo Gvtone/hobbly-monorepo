@@ -46,7 +46,7 @@ function AuthLayout({
         <div className="absolute size-full bg-linear-to-br from-[#0f1b35d9] to-[#5bb3d04d]"></div>
       </div>
 
-      <div className="bg-background flex w-full flex-col items-center justify-center p-12 lg:w-1/2">
+      <div className="bg-background flex w-full flex-col items-center justify-center lg:w-1/2">
         {children}
       </div>
     </div>

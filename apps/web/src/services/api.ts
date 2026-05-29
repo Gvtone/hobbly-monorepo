@@ -20,7 +20,10 @@ const api = axios.create({
 
 api.interceptors.response.use(
   (response) => {
-    if (sessionStorage.getItem("maintenance") && window.location.pathname === "/maintenance") {
+    if (
+      sessionStorage.getItem("maintenance") &&
+      window.location.pathname === "/maintenance"
+    ) {
       sessionStorage.removeItem("maintenance");
       window.location.href = "/dashboard";
     }
@@ -47,7 +50,10 @@ api.interceptors.response.use(
       }
     }
 
-    if (error.response?.status === 503 && window.location.pathname !== "/maintenance") {
+    if (
+      error.response?.status === 503 &&
+      window.location.pathname !== "/maintenance"
+    ) {
       sessionStorage.setItem("maintenance", "true");
       window.location.href = "/maintenance";
     }
