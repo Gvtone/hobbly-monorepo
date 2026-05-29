@@ -9,6 +9,7 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
+import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -16,6 +17,8 @@ async function bootstrap() {
   app.set('trust proxy', 'loopback');
 
   app.use(helmet());
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   app.enableCors({
     origin: process.env.CLIENT_URL ?? 'http://localhost:5173',
