@@ -31,6 +31,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { imageFilePipe } from '../../common/pipes/image-file.pipe';
 import { UserFilterDto } from './dto/user-filter.dto';
 import { PaginatedEntity } from '../../common/entities/paginated.entity';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('User')
 @Controller('user')
@@ -80,6 +81,7 @@ export class UserController {
     return await this.userService.create(createUserDto);
   }
 
+  @Throttle({ default: { ttl: 15 * 60 * 1000, limit: 20 } })
   @Post('upload/profile-picture')
   @ApiOperation({ summary: 'Uploads profile picture' })
   @ApiConsumes('multipart/form-data')
@@ -92,12 +94,14 @@ export class UserController {
     return await this.userService.uploadProfilePicture(user, image);
   }
 
+  @Throttle({ default: { ttl: 15 * 60 * 1000, limit: 30 } })
   @Post('remove/profile-picture')
   @ApiOperation({ summary: 'Removes profile picture' })
   async removeProfilePicture(@AuthUser() user: PayloadEntity) {
     return await this.userService.removeProfilePicture(user);
   }
 
+  @Throttle({ default: { ttl: 15 * 60 * 1000, limit: 20 } })
   @Post('upload/cover-image')
   @ApiOperation({ summary: 'Uploads cover image' })
   @ApiConsumes('multipart/form-data')
@@ -110,6 +114,7 @@ export class UserController {
     return await this.userService.uploadCoverImage(user, image);
   }
 
+  @Throttle({ default: { ttl: 15 * 60 * 1000, limit: 30 } })
   @Post('remove/cover-image')
   @ApiOperation({ summary: 'Removes cover image' })
   async removeCoverImage(@AuthUser() user: PayloadEntity) {
@@ -147,6 +152,7 @@ export class UserController {
   }
 
   @Roles('ADMIN')
+  @Throttle({ default: { ttl: 60 * 60 * 1000, limit: 3 } })
   @Delete(':id')
   @ApiOperation({ summary: 'Deletes a user' })
   @ApiOkResponse({ description: 'Delete successful', type: UserEntity })

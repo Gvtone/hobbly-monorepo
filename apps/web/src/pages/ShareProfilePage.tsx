@@ -10,12 +10,15 @@ import { useShareEntry } from "../hooks/useShareEntry";
 import { profileShareService } from "../services/profile-share";
 import type { PublicUserEntity } from "@hobbies-dashboard/types";
 import HobbyCard from "../components/dashboard/HobbyCard";
+import LoadingPage from "./LoadingPage";
+import EntryModal from "../components/profile/EntryModal";
 
 function ShareProfilePage() {
   const { referenceId } = useParams();
   const [user, setUser] = useState<PublicUserEntity | null>(null);
   const [fetched, setFetched] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
 
   const { userHobbies } = usePublicUserHobby(user?.id ?? null);
   const { entries, loadMore, hasMore } = useShareEntry(referenceId);
@@ -30,8 +33,10 @@ function ShareProfilePage() {
   }, [referenceId]);
 
   if (notFound) return <NotFoundPage />;
-  if (!fetched) return <div>Loading...</div>;
+  if (!fetched) return <LoadingPage />;
   if (!user) return null;
+
+  const selectedEntry = entries.find((e) => e.id === selectedEntryId) ?? null;
 
   const entryTabs = userHobbies.map((userHobby) => ({
     emoji: userHobby.hobby.icon,
@@ -73,7 +78,12 @@ function ShareProfilePage() {
 
         <ProfileEntriesLayout entryTabs={entryTabs}>
           {entries.map((data) => (
-            <EntryCard key={data.id} data={data} dashboard />
+            <EntryCard
+              key={data.id}
+              data={data}
+              dashboard
+              onClick={() => setSelectedEntryId(data.id)}
+            />
           ))}
           {hasMore && (
             <button
@@ -85,6 +95,14 @@ function ShareProfilePage() {
           )}
         </ProfileEntriesLayout>
       </section>
+
+      {selectedEntry && (
+        <EntryModal
+          open={!!selectedEntry}
+          onClose={() => setSelectedEntryId(null)}
+          data={selectedEntry}
+        />
+      )}
     </div>
   );
 }

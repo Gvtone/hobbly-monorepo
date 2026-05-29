@@ -1,15 +1,19 @@
 import type {
+  PaginatedEntity,
   PublicUserEntity,
   UpdateUserDto,
   UserEntity,
+  UserFilterDto,
 } from "@hobbies-dashboard/types";
 import api from "./api";
 
 const serviceRoute = "/user";
 
 export const userService = {
-  async findAll() {
-    const res = await api.get<UserEntity[]>(`${serviceRoute}`);
+  async findAll(filter: UserFilterDto) {
+    const res = await api.get<PaginatedEntity<UserEntity>>(`${serviceRoute}`, {
+      params: { ...filter },
+    });
     return res.data;
   },
 

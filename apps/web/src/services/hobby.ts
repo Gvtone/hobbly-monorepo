@@ -1,6 +1,8 @@
 import type {
   CreateHobbyDto,
   HobbyEntity,
+  HobbyFilterDto,
+  PaginatedEntity,
   UpdateHobbyDto,
 } from "@hobbies-dashboard/types";
 import api from "./api";
@@ -13,13 +15,15 @@ export const hobbyService = {
     return res.data;
   },
 
-  async findAll() {
-    const res = await api.get<HobbyEntity[]>(`${serviceRoute}`);
+  async findAll({ page = 1, limit = 10, ...filter }: HobbyFilterDto) {
+    const res = await api.get<PaginatedEntity<HobbyEntity>>(`${serviceRoute}`, {
+      params: { page, limit, ...filter },
+    });
     return res.data;
   },
 
   async update(id: number, data: UpdateHobbyDto) {
-    const res = await api.put<HobbyEntity>(`${serviceRoute}/${id}`, data);
+    const res = await api.patch<HobbyEntity>(`${serviceRoute}/${id}`, data);
     return res.data;
   },
 

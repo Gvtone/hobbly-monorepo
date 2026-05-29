@@ -4,11 +4,12 @@ import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/auth/useAuth";
 import { showToast } from "../utils/toast";
 import { useForm } from "react-hook-form";
 import { moonSky } from "../assets";
+import LinkButton from "../components/ui/LinkButton";
 
 interface LoginFormValues {
   email: string;
@@ -36,17 +37,22 @@ function AuthPage() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<SignupFormValues>({ shouldUnregister: true });
+    setError,
+  } = useForm<SignupFormValues>({ shouldUnregister: true, mode: "onChange" });
 
   const onSubmit = async (data: SignupFormValues) => {
     setIsSubmitting(true);
     try {
       if (mode === "login") {
-        await login(data.email, data.password);
+        await login(data.email.toLocaleLowerCase().trim(), data.password);
         showToast.success("Welcome back! ✨");
         navigate("/dashboard");
       } else {
-        await registerUser(data.username, data.email, data.password);
+        await registerUser(
+          data.username.toLocaleLowerCase().trim(),
+          data.email.toLocaleLowerCase().trim(),
+          data.password,
+        );
         navigate(`/verify-email?email=${encodeURIComponent(data.email)}`);
       }
     } catch (err) {
@@ -59,6 +65,10 @@ function AuthPage() {
             ? `/verify-email?email=${encodeURIComponent(data.email)}`
             : "/verify-email",
         );
+      } else if (message === "An account with this email already exists.") {
+        setError("email", { message });
+      } else if (message === "An account with this username already exists.") {
+        setError("username", { message });
       } else {
         showToast.error(message);
       }
@@ -114,7 +124,7 @@ function AuthPage() {
 
           {/* Form */}
           <form
-            onSubmit={() => handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit)}
             className="mb-8 flex w-full flex-col"
           >
             {mode === "signup" && (
@@ -128,6 +138,7 @@ function AuthPage() {
                   variant="auth"
                   shape="pill"
                   fullWidth
+                  error={!!errors.username}
                   placeholder="starweaver"
                   {...register("username", {
                     required: "Username is required",
@@ -136,8 +147,8 @@ function AuthPage() {
                       message: "At least 3 characters",
                     },
                     maxLength: {
-                      value: 20,
-                      message: "At most 20 characters",
+                      value: 30,
+                      message: "At most 30 characters",
                     },
                     pattern: {
                       value: /^[a-z0-9_]+$/,
@@ -171,6 +182,7 @@ function AuthPage() {
                 shape="pill"
                 type="text"
                 fullWidth
+                error={!!errors.email}
                 placeholder={
                   mode === "login"
                     ? "you@example.com or username"
@@ -210,6 +222,7 @@ function AuthPage() {
                   shape="pill"
                   type={showPassword ? "text" : "password"}
                   fullWidth
+                  error={!!errors.password}
                   placeholder="••••••••"
                   className="w-full pr-12"
                   {...register(
@@ -221,10 +234,13 @@ function AuthPage() {
                             value: 8,
                             message: "At least 8 characters",
                           },
-                          pattern: {
-                            value: /(?=.*[A-Z])/,
-                            message:
+                          validate: {
+                            uppercase: (v) =>
+                              /(?=.*[A-Z])/.test(v) ||
                               "Must contain at least one uppercase letter",
+                            specialChar: (v) =>
+                              /(?=.*[!@#$%^&*(),.?":{}|<>])/.test(v) ||
+                              "Must contain at least one special character",
                           },
                         }
                       : {
@@ -274,60 +290,62 @@ function AuthPage() {
             </Button>
           </form>
 
-          {import.meta.env.VITE_NODE_ENV !== "production" && (
-            <>
-              <div className="mb-8 flex w-full items-center justify-center">
-                <div className="border-border h-px flex-1 border"></div>
-                <span className="text-muted-foreground bg-card rounded-full px-2 text-sm">
-                  or
-                </span>
-                <div className="border-border h-px flex-1 border"></div>
-              </div>
+          <>
+            <div className="mb-8 flex w-full items-center justify-center">
+              <div className="border-border h-px flex-1 border"></div>
+              <span className="text-muted-foreground bg-card rounded-full px-2 text-sm">
+                or
+              </span>
+              <div className="border-border h-px flex-1 border"></div>
+            </div>
 
-              {/* Sign in with Google */}
-              <Button
-                variant="secondary"
-                shape="pill"
-                size="lg"
-                fullWidth
-                className="max-xs:text-xs"
-              >
-                <span className="max-xs:hidden size-5">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      fill="#4285F4"
-                    />
-                    <path
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      fill="#34A853"
-                    />
-                    <path
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      fill="#FBBC05"
-                    />
-                    <path
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      fill="#EA4335"
-                    />
-                  </svg>
-                </span>
-                <span>Continue with Google</span>
-              </Button>
-            </>
-          )}
+            {/* Sign in with Google */}
+            <LinkButton
+              to={`${import.meta.env.VITE_API_URL}/auth/google`}
+              variant="secondary"
+              shape="pill"
+              size="lg"
+              fullWidth
+              className="max-xs:text-xs"
+            >
+              <span className="max-xs:hidden size-5">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    fill="#4285F4"
+                  />
+                  <path
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    fill="#34A853"
+                  />
+                  <path
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                    fill="#FBBC05"
+                  />
+                  <path
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    fill="#EA4335"
+                  />
+                </svg>
+              </span>
+              <span>Continue with Google</span>
+            </LinkButton>
+          </>
         </Card>
 
         {/* Terms and Policy */}
         <p className="text-muted-foreground text-center text-xs">
           By continuing, you agree to Hobbly's{" "}
-          <a href="#" className="text-hobbly-sky-dark cursor-pointer">
+          <Link to="/terms" className="text-hobbly-sky-dark cursor-pointer">
             Terms
-          </a>{" "}
+          </Link>{" "}
           and{" "}
-          <a href="#" className="text-hobbly-sky-dark cursor-pointer">
+          <Link
+            to="/privacy-policy"
+            className="text-hobbly-sky-dark cursor-pointer"
+          >
             Privacy Policy
-          </a>
+          </Link>
           .
         </p>
       </div>

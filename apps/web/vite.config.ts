@@ -6,15 +6,21 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
-    rolldownOptions: {
+    rollupOptions: {
       output: {
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
           if (id.includes("emoji-picker-react")) return "vendor-emoji";
           if (id.includes("/motion/")) return "vendor-motion";
-          if (id.includes("@radix-ui") || id.includes("lucide-react")) return "vendor-ui";
+          if (id.includes("@radix-ui") || id.includes("lucide-react"))
+            return "vendor-ui";
           if (id.includes("date-fns")) return "vendor-date";
-          if (id.includes("react") || id.includes("react-dom") || id.includes("react-router")) return "vendor-react";
+          if (
+            id.includes("react") ||
+            id.includes("react-dom") ||
+            id.includes("react-router")
+          )
+            return "vendor-react";
         },
       },
     },
@@ -24,8 +30,8 @@ export default defineConfig({
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
-        secure: false
-      }
-    }
-  }
+        secure: false,
+      },
+    },
+  },
 });

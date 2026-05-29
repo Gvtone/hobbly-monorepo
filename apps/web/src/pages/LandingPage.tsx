@@ -13,16 +13,16 @@ const infoCardData: InfoCardProps[] = [
   {
     icon: "✨",
     iconBgColor: "bg-primary/40",
-    title: "Your Hobby Board",
+    title: "Pick Your Hobbies",
     description:
-      "Drag, resize, and rearrange your hobby widgets into a board that feels uniquely yours.",
+      "Choose from a curated list of hobbies across art, gaming, fitness, and more — then make them yours.",
   },
   {
     icon: "🌸",
     iconBgColor: "bg-secondary/40",
-    title: "Visual Tracking",
+    title: "Log & Reflect",
     description:
-      "See your progress through beautiful cover images, progress bars, and soft stats — not endless spreadsheets.",
+      "Track your sessions, write journal entries, and see your activity history at a glance with a yearly heatmap.",
   },
   {
     icon: "🔮",
@@ -88,14 +88,23 @@ function LandingPage() {
             Anime, books, gaming, art — collect it all in a dreamy, visual board
             that's completely yours.
           </p>
-          <div className="flex flex-col justify-center gap-4 md:flex-row">
+          <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
             <LinkButton to="/auth" variant="gradient" shape="rounded" size="lg">
               Start your journal
               <ArrowRight size={20} />
             </LinkButton>
-            <LinkButton to="/#info" variant="default" shape="rounded" size="lg">
+            <Button
+              variant="default"
+              shape="rounded"
+              size="lg"
+              onClick={() =>
+                document
+                  .getElementById("info")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
               Learn more
-            </LinkButton>
+            </Button>
           </div>
         </div>
       </section>
@@ -112,7 +121,9 @@ function LandingPage() {
               </div>
               <div className="flex-1 p-2">
                 <div className="bg-muted mr-6 flex items-center rounded-full px-4">
-                  <span className="text-muted-foreground">hobbly.app/Jade</span>
+                  <span className="text-muted-foreground">
+                    hobbly.dev/@jade
+                  </span>
                 </div>
               </div>
             </div>
@@ -168,10 +179,14 @@ function LandingPage() {
               <h2 className="text-center text-3xl text-white md:text-5xl">
                 Begin your hobby journey today
               </h2>
-              <Button variant="translucent" size="lg">
+              <LinkButton
+                to="/auth?mode=signup"
+                variant="translucent"
+                size="lg"
+              >
                 Start for free
                 <ArrowRight></ArrowRight>
-              </Button>
+              </LinkButton>
             </div>
           </Card>
         </div>

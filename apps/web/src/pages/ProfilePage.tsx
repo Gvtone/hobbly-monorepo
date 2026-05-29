@@ -17,6 +17,7 @@ import { userService } from "../services/user";
 import EntryModal from "../components/profile/EntryModal";
 import LinkButton from "../components/ui/LinkButton";
 import HobbyCard from "../components/dashboard/HobbyCard";
+import LoadingPage from "./LoadingPage";
 
 function ProfilePage() {
   const { slug } = useParams();
@@ -99,12 +100,11 @@ function ProfilePage() {
       .finally(() => setProfileFetched(true));
   }, [username, isOwnProfile]);
 
-  if (notFound) return <NotFoundPage />;
-  // TODO: Add loading screen
-  if (authLoading || isLoading) return <div>Loading...</div>;
+  if (notFound || !username) return <NotFoundPage />;
+  if (authLoading || isLoading) return <LoadingPage />;
 
   const profileUser = isOwnProfile ? authUser : otherUser;
-  if (!profileUser) return null;
+  if (!profileUser) return <NotFoundPage />;
 
   const entryTabs = userHobbies.map((userHobby) => ({
     emoji: userHobby.hobby.icon,

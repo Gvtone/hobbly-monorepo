@@ -4,6 +4,7 @@ import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "./components/layout/RootLayout";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import AppLayout from "./components/layout/AppLayout";
+import AdminPanelPage from "./pages/AdminPanelPage";
 
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
@@ -16,6 +17,8 @@ const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
+const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +30,18 @@ export const router = createBrowserRouter([
       { path: "forgot-password", Component: ForgotPasswordPage },
       { path: "reset-password", Component: ResetPasswordPage },
       { path: "verify-email", Component: VerifyEmailPage },
+      { path: "privacy-policy", Component: PrivacyPolicyPage },
+      { path: "terms", Component: TermsPage },
+      {
+        path: "admin-panel",
+        element: (
+          <ProtectedRoute role="ADMIN">
+            <AppLayout>
+              <AdminPanelPage />
+            </AppLayout>
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "dashboard",
         element: (

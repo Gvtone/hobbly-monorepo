@@ -1,22 +1,26 @@
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import type { SetCurrentMoodDto } from "@hobbies-dashboard/types";
+import type { CurrentMoodEntity, SetCurrentMoodDto } from "@hobbies-dashboard/types";
 import Modal from "../layout/Modal";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import EmojiInput from "../ui/EmojiInput";
-import { useCurrentMood } from "../../hooks/userCurrentMood";
 
 interface MoodModalProps {
-  userId: number;
+  currentMood: CurrentMoodEntity | undefined;
+  setOrUpdateCurrentMood: (data: SetCurrentMoodDto) => Promise<void>;
+  removeCurrentMood: () => Promise<void>;
   open: boolean;
   onClose: () => void;
 }
 
-function MoodModal({ userId, open, onClose }: MoodModalProps) {
-  const { currentMood, setOrUpdateCurrentMood, removeCurrentMood } =
-    useCurrentMood(userId);
-
+function MoodModal({
+  currentMood,
+  setOrUpdateCurrentMood,
+  removeCurrentMood,
+  open,
+  onClose,
+}: MoodModalProps) {
   const { register, handleSubmit, setValue, reset, control } =
     useForm<SetCurrentMoodDto>({
       defaultValues: {
@@ -40,7 +44,6 @@ function MoodModal({ userId, open, onClose }: MoodModalProps) {
 
   const onSubmit = async (data: SetCurrentMoodDto) => {
     await setOrUpdateCurrentMood(data);
-    reset();
     onClose();
   };
 
@@ -52,13 +55,14 @@ function MoodModal({ userId, open, onClose }: MoodModalProps) {
       open={open}
       onClose={() => {
         onClose();
-        reset({ color: undefined });
+        reset({
+          icon: currentMood?.icon ?? "😊",
+          color: currentMood?.color ?? "#c8a2e3",
+          description: currentMood?.description ?? "",
+        });
       }}
     >
-      <form
-        onSubmit={() => handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex gap-1">
           <input
             type="color"

@@ -3,6 +3,7 @@ import type {
   AuthPayloadDto,
   CreateUserDto,
   GenericOutputEntity,
+  JwtPayload,
   UserEntity,
 } from "@hobbies-dashboard/types";
 
@@ -10,7 +11,7 @@ const serviceRoute = "/auth";
 
 export const authService = {
   async login(data: AuthPayloadDto) {
-    const res = await api.post<UserEntity>(`${serviceRoute}/login`, data);
+    const res = await api.post<JwtPayload>(`${serviceRoute}/login`, data);
     return res.data;
   },
 
@@ -57,5 +58,9 @@ export const authService = {
   async me() {
     const res = await api.get<UserEntity>(`${serviceRoute}/me`);
     return res.data;
+  },
+
+  async refreshToken() {
+    await api.post(`${serviceRoute}/refresh-token`);
   },
 };

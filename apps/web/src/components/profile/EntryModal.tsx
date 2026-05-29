@@ -2,6 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Button from "../ui/Button";
 import {
   Check,
+  ChevronDown,
   Globe,
   Heart,
   Lock,
@@ -19,7 +20,7 @@ import type {
 } from "@hobbies-dashboard/types";
 import { format, formatDate, formatRelative, subDays } from "date-fns";
 import Input from "../ui/Input";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { entryService } from "../../services/entry";
 import { showToast } from "../../utils/toast";
 import { useEntryMood } from "../../hooks/useEntryMood";
@@ -37,13 +38,15 @@ interface LogEntryModalProps {
   open: boolean;
   onClose: () => void;
   data: EntryWithUserHobbyEntity;
-  onRefresh: () => Promise<void>;
+  onRefresh?: () => Promise<void>;
 }
 
 function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
   const hobby = data.userHobby.hobby;
   const entryUser = data.userHobby.user;
   const hasImage = !!data.image;
+  const isPublic = data.visibility === "PUBLIC";
+  const switchingToPublic = !isPublic;
 
   const { entryMoods } = useEntryMood();
   const { liked, count, isToggling, toggle } = useLike(data.id);
@@ -58,7 +61,6 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
 
   const [view, setView] = useState<View>("default");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [editTitle, setEditTitle] = useState(data.title ?? "");
   const [editNote, setEditNote] = useState(data.note ?? "");
   const [editMoodId, setEditMoodId] = useState<number | undefined>(
@@ -69,6 +71,29 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
       ? new Date(data.activityDate).toISOString().split("T")[0]
       : "",
   );
+  const [canScrollDownNote, setCanSCrollDownNote] = useState(false);
+
+  const scrollCleanup = useRef<(() => void) | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollCallback = useCallback((el: HTMLDivElement | null) => {
+    scrollCleanup.current?.();
+    scrollCleanup.current = null;
+    scrollRef.current = el;
+    if (!el) return;
+    const check = () =>
+      setCanSCrollDownNote(
+        el.scrollTop + el.clientHeight < el.scrollHeight - 1,
+      );
+    el.addEventListener("scroll", check);
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    check();
+    scrollCleanup.current = () => {
+      el.removeEventListener("scroll", check);
+      ro.disconnect();
+    };
+  }, []);
 
   const enterEdit = () => {
     setEditTitle(data.title ?? "");
@@ -87,7 +112,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
     try {
       await entryService.delete(data.id);
       showToast.success("Entry deleted.");
-      onRefresh();
+      await onRefresh?.();
       onClose();
     } catch {
       showToast.error("Failed to delete entry.");
@@ -104,7 +129,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
       showToast.success(
         `Entry is now ${newVisibility === "PUBLIC" ? "public" : "private"}.`,
       );
-      await onRefresh();
+      await onRefresh?.();
       setView("default");
     } catch {
       showToast.error("Failed to update visibility.");
@@ -124,7 +149,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
       };
       await entryService.update(data.id, updates);
       showToast.success("Entry updated.");
-      await onRefresh();
+      await onRefresh?.();
       setView("default");
     } catch {
       showToast.error("Failed to update entry.");
@@ -144,9 +169,6 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
     await addComment(formData.content);
     reset();
   };
-
-  const isPublic = data.visibility === "PUBLIC";
-  const switchingToPublic = !isPublic;
 
   return (
     <Dialog.Root open={open} onOpenChange={onClose}>
@@ -180,15 +202,16 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                 hasImage ? "max-w-5xl" : "max-w-2xl",
               )}
             >
-              {/* Image or Hobby Logo */}
+              {/* Image/Logo and Content */}
               <div
                 className={cn(
                   "flex flex-col gap-4",
                   hasImage && "md:h-130 md:flex-row",
                 )}
               >
+                {/* Image or Hobby Logo */}
                 {hasImage ? (
-                  <Card className="min-h-130 flex-6 overflow-hidden border-none p-0 md:h-full md:min-h-0">
+                  <Card className="aspect-square flex-6 overflow-hidden border-none p-0 md:h-full md:min-h-0">
                     <img
                       src={data.image}
                       alt={data.title}
@@ -219,8 +242,8 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                 {/* Entry Content Card */}
                 <Card
                   className={cn(
-                    "flex flex-col overflow-hidden",
-                    hasImage && "flex-4",
+                    "flex max-h-120 flex-col overflow-hidden md:max-h-130",
+                    hasImage && "-order-1 flex-4 md:order-2",
                   )}
                 >
                   {/* Header — always visible */}
@@ -252,9 +275,34 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                             {format(new Date(data.activityDate), "PPPPp")}
                           </p>
                         </div>
-                        <Dialog.Description className="scrollbar-custom text-muted-foreground min-h-0 flex-1 overflow-y-auto text-sm leading-relaxed">
-                          {data.note}
-                        </Dialog.Description>
+                        <div
+                          ref={scrollCallback}
+                          className="scrollbar-custom relative min-h-0 flex-1 overflow-y-auto"
+                        >
+                          <Dialog.Description className="text-muted-foreground min-h-0 flex-1 text-sm leading-relaxed">
+                            {data.note}
+                          </Dialog.Description>
+                          {canScrollDownNote && (
+                            <div className="sticky bottom-0 h-0 overflow-visible md:hidden">
+                              <Button
+                                shape="pill"
+                                size="icon"
+                                onClick={() =>
+                                  scrollRef.current?.scrollTo({
+                                    top: scrollRef.current.scrollHeight,
+                                    behavior: "smooth",
+                                  })
+                                }
+                                className={cn(
+                                  "absolute bottom-2 left-1/2 size-8 -translate-x-1/2",
+                                  "bg-hobbly-sky-dark text-white opacity-75 hover:opacity-100",
+                                )}
+                              >
+                                <ChevronDown />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       <div className="border-border mt-4 mb-2 border" />
@@ -549,7 +597,10 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
 
                 {/* Comment collection */}
                 {comments.map((comment) => (
-                  <div className="mb-4 flex items-center gap-2">
+                  <div
+                    key={comment.id}
+                    className="mb-4 flex items-center gap-2"
+                  >
                     {comment.user.profilePicture ? (
                       <img
                         src={comment.user.profilePicture}
@@ -597,7 +648,10 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                       )}
 
                       <form
-                        onSubmit={() => requireAuth(handleSubmit(onSubmit))}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          requireAuth(() => handleSubmit(onSubmit)(e));
+                        }}
                         className="flex w-full items-center justify-center gap-2"
                       >
                         <Input
@@ -610,7 +664,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                           {...register("content", {
                             maxLength: {
                               value: 8000,
-                              message: "Title cannot exceed 8000 characters",
+                              message: "Comment cannot exceed 8000 characters",
                             },
                           })}
                         />

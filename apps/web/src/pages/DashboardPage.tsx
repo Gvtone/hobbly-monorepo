@@ -59,17 +59,19 @@ function DashboardPage() {
         </div>
 
         {/* Left side */}
-        <div className="flex gap-4">
-          <Button
-            variant="gradient"
-            shape="pill"
-            onClick={() => setIsLogEntryOpen(true)}
-            disabled={userHobbies.length === 0}
-          >
-            <Plus size={16} />
-            New Entry
-          </Button>
-        </div>
+        {userHobbies.length !== 0 && (
+          <div className="flex gap-4">
+            <Button
+              variant="gradient"
+              shape="pill"
+              onClick={() => setIsLogEntryOpen(true)}
+              disabled={userHobbies.length === 0}
+            >
+              <Plus size={16} />
+              New Entry
+            </Button>
+          </div>
+        )}
       </div>
 
       <section>
@@ -102,7 +104,10 @@ function DashboardPage() {
                     backgroundImage: backgroundImage ?? undefined,
                   })
                 }
-                onDelete={removeUserHobby}
+                onDelete={async (id) => {
+                  await removeUserHobby(id);
+                  refreshEntries();
+                }}
               />
             ))}
             <button
@@ -155,8 +160,8 @@ function DashboardPage() {
 
       {/* Modals */}
       <LogEntryModal
-        userId={user?.id ?? null}
         open={isLogEntryOpen}
+        userHobbies={userHobbies}
         onClose={() => setIsLogEntryOpen(false)}
         onRefresh={refreshEntries}
       />
