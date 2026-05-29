@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { DatabaseModule } from './common/database/database.module';
@@ -18,10 +18,20 @@ import { ProfileShareModule } from './modules/profile-share/profile-share.module
 import { CurrentMoodModule } from './modules/current-mood/current-mood.module';
 import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 import { HealthModule } from './modules/health/health.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { MaintenanceMiddleware } from './middleware/maintenance.middleware';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 15 * 60 * 1000, // 15 minutes
+          limit: 100,
+        },
+      ],
+    }),
     DatabaseModule,
     AuthModule,
     UserModule,
@@ -47,6 +57,14 @@ import { HealthModule } from './modules/health/health.module';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(MaintenanceMiddleware).forRoutes('*');
+  }
+}
