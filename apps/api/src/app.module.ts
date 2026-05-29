@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { DatabaseModule } from './common/database/database.module';
@@ -19,6 +19,7 @@ import { CurrentMoodModule } from './modules/current-mood/current-mood.module';
 import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 import { HealthModule } from './modules/health/health.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { MaintenanceMiddleware } from './middleware/maintenance.middleware';
 
 @Module({
   imports: [
@@ -62,4 +63,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(MaintenanceMiddleware).forRoutes('*');
+  }
+}

@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -111,6 +112,10 @@ export class AuthService {
     let user = await this.userService.findUserByEmail(googleUserDto.email);
 
     if (!user) {
+      if (this.configService.get('DISABLE_SIGNUPS') === 'true') {
+        throw new ForbiddenException('New signups are temporarily disabled.');
+      }
+
       user = await this.userService.createWithGoogle(googleUserDto);
 
       await this.mailService.sendWelcomeEmail({

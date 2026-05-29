@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -58,6 +59,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { ttl: 15 * 60 * 1000, limit: 5 } })
   @Get('google')
   @UseGuards(GoogleAuthGuard)
   googleAuth() {
@@ -89,6 +91,10 @@ export class AuthController {
   })
   @ApiConflictResponse({ description: 'Email or username already in use' })
   async register(@Body() createUserDto: CreateUserDto) {
+    if (this.configService.get('DISABLE_SIGNUPS') === 'true') {
+      throw new ForbiddenException('New signups are temporarily disabled.');
+    }
+
     return await this.authService.register(createUserDto);
   }
 
