@@ -47,6 +47,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
   const hasImage = !!data.image;
   const isPublic = data.visibility === "PUBLIC";
   const switchingToPublic = !isPublic;
+  console.log(data);
 
   const { entryMoods } = useEntryMood();
   const { liked, count, isToggling, toggle } = useLike(data.id);
@@ -272,7 +273,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                             {data.title}
                           </Dialog.Title>
                           <p className="text-muted-foreground text-xs">
-                            {format(new Date(data.activityDate), "PPPPp")}
+                            {format(new Date(data.createdAt), "PPPPp")}
                           </p>
                         </div>
                         <div
