@@ -14,6 +14,7 @@ import { useRef, useState } from "react";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/auth/useAuth";
 import Input from "../components/ui/Input";
+import Modal from "../components/layout/Modal";
 import TextArea from "../components/ui/TextArea";
 import { useForm, useWatch } from "react-hook-form";
 import { useTheme } from "../context/theme/useTheme";
@@ -21,10 +22,9 @@ import SettingToggleRow from "../components/ui/SettingToggleRow";
 import { userService } from "../services/user";
 import { showToast } from "../utils/toast";
 import type { UpdateUserDto } from "@hobbies-dashboard/types";
-// import RadioPill from "../components/ui/RadioPill";
 
 function SettingsPage() {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const [selectedTab, setSelectedTab] = useState("Profile");
 
@@ -33,6 +33,21 @@ function SettingsPage() {
   const [isUploadingProfilePicture, setIsUploadingProfilePicture] =
     useState(false);
   const [isUploadingCoverImage, setIsUploadingCoverImage] = useState(false);
+
+  const [deleteStep, setDeleteStep] = useState<0 | 1 | 2>(0);
+  const [deleteEmailInput, setDeleteEmailInput] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      await userService.deleteCurrentUser();
+      await logout();
+    } catch {
+      showToast.error("Failed to delete account");
+      setIsDeleting(false);
+    }
+  };
 
   const handleProfilePictureChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -126,7 +141,7 @@ function SettingsPage() {
     { label: "Appearance", icon: Palette, devOnly: true },
     { label: "Privacy", icon: Lock, devOnly: true },
     { label: "Notifications", icon: Bell, devOnly: true },
-    { label: "Account", icon: Shield, devOnly: true },
+    { label: "Account", icon: Shield },
   ];
 
   const dashboardLayoutSettings = [
@@ -260,9 +275,9 @@ function SettingsPage() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-6 py-10">
+      <div className="mx-auto max-w-7xl py-10 md:px-6">
         {/* Header */}
-        <div className="mb-8 flex flex-col gap-2">
+        <div className="mb-8 flex flex-col gap-2 max-md:px-6">
           <h1 className="text-4xl">Settings</h1>
           <p className="text-muted-foreground text-sm">
             Manage your Hobbly profile and preferences
@@ -271,31 +286,32 @@ function SettingsPage() {
 
         <div className="flex flex-col gap-8 md:flex-row">
           {/* Left Panel */}
-          {!isProd && (
-            <div className="flex flex-2 gap-2 overflow-x-auto md:flex-col lg:flex-1">
-              {tabItems.map(({ label, icon: Icon, devOnly }) => {
-                if (isProd && devOnly) return;
-                return (
-                  <Button
-                    key={label}
-                    variant="ghost"
-                    contentPosition="between"
-                    shape="pill"
-                    size="lg"
-                    onClick={() => setSelectedTab(label)}
-                    active={selectedTab === label}
-                    fullWidth
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <Icon size={16} />
-                      <span>{label}</span>
-                    </div>
-                    {selectedTab === label && <ChevronRight size={16} />}
-                  </Button>
-                );
-              })}
-            </div>
-          )}
+
+          <div className="flex flex-2 gap-2 overflow-x-auto max-md:px-6 md:flex-col lg:flex-1">
+            {tabItems.map(({ label, icon: Icon, devOnly }) => {
+              if (isProd && devOnly) return;
+              return (
+                <Button
+                  key={label}
+                  variant="ghost"
+                  contentPosition="between"
+                  shape="pill"
+                  size="lg"
+                  onClick={() => setSelectedTab(label)}
+                  active={selectedTab === label}
+                  fullWidth
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Icon size={16} />
+                    <span>{label}</span>
+                  </div>
+                  {selectedTab === label && (
+                    <ChevronRight size={16} className="max-md:hidden" />
+                  )}
+                </Button>
+              );
+            })}
+          </div>
 
           {/* Right Panel */}
           <div className="flex flex-5 flex-col lg:flex-4">
@@ -306,7 +322,7 @@ function SettingsPage() {
                 onSubmit={handleSubmit(onSubmit)}
               >
                 {/* Profile Picture */}
-                <Card>
+                <Card className="max-md:rounded-none">
                   <div className="flex flex-col gap-4">
                     <h3 className="text-muted-foreground">Profile picture</h3>
                     <div className="flex flex-col items-center gap-8 md:flex-row">
@@ -376,7 +392,7 @@ function SettingsPage() {
                 </Card>
 
                 {/* Cover Image */}
-                <Card>
+                <Card className="max-md:rounded-none">
                   <div className="flex flex-col gap-4">
                     <h3 className="text-muted-foreground">Cover image</h3>
 
@@ -487,7 +503,7 @@ function SettingsPage() {
                 </Card>
 
                 {/* Basic Info */}
-                <Card>
+                <Card className="max-md:rounded-none">
                   <div className="flex flex-col gap-4">
                     <h3 className="text-muted-foreground">Basic info</h3>
                     <div className="flex flex-col">
@@ -759,7 +775,7 @@ function SettingsPage() {
             {selectedTab === tabItems[4].label && (
               <div className="flex flex-col gap-8">
                 {/* Account Details */}
-                <Card>
+                <Card className="max-md:rounded-none">
                   <div className="flex flex-col gap-4">
                     <h3 className="text-muted-foreground">Account Details</h3>
                     <div>
@@ -771,31 +787,19 @@ function SettingsPage() {
                         variant="auth"
                         shape="pill"
                         fullWidth
-                        placeholder="Your display name"
-                        {...register("displayName", { maxLength: 25 })}
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="username" className="mb-2 ml-2">
-                        Username
-                      </label>
-                      <Input
-                        id="username"
-                        variant="auth"
-                        shape="pill"
-                        fullWidth
-                        placeholder="username"
+                        placeholder="Your email"
+                        value={user?.email}
+                        disabled
                       />
                     </div>
                   </div>
                 </Card>
 
-                <Card>
+                <Card className="max-md:rounded-none">
                   <div className="flex flex-col gap-4">
                     <h3 className="text-destructive">DANGER ZONE</h3>
                     <div className="bg-destructive/5 border-destructive/50 lex flex flex-col gap-4 rounded-xl border p-4">
-                      <div className="flex items-center justify-between">
+                      {/* <div className="flex items-center justify-between">
                         <div className="flex flex-col gap-1">
                           <p>Deactivate account</p>{" "}
                           <p className="text-muted-foreground text-sm">
@@ -809,7 +813,7 @@ function SettingsPage() {
                         >
                           Deactivate
                         </Button>
-                      </div>
+                      </div> */}
 
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col gap-1">
@@ -822,6 +826,7 @@ function SettingsPage() {
                           shape="pill"
                           size="sm"
                           className="border-destructive/50 bg-destructive/10 text-destructive h-10 w-28 justify-center border"
+                          onClick={() => setDeleteStep(1)}
                         >
                           <Trash size={12} />
                           Delete
@@ -835,6 +840,91 @@ function SettingsPage() {
           </div>
         </div>
       </div>
+      {/* Step 1 — are you sure? */}
+      <Modal
+        open={deleteStep === 1}
+        onClose={() => setDeleteStep(0)}
+        title="Delete account"
+        icon="🗑️"
+      >
+        <div className="flex flex-col gap-5">
+          <p className="text-muted-foreground text-sm">
+            This will permanently delete your account and all associated data —
+            hobbies, journal entries, and profile info. This cannot be undone.
+          </p>
+          <p className="text-sm font-medium">Are you sure you want to continue?</p>
+          <div className="flex gap-3">
+            <Button
+              variant="secondary"
+              shape="pill"
+              size="lg"
+              fullWidth
+              onClick={() => setDeleteStep(0)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              shape="pill"
+              size="lg"
+              fullWidth
+              onClick={() => {
+                setDeleteEmailInput("");
+                setDeleteStep(2);
+              }}
+            >
+              Continue
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Step 2 — confirm with email */}
+      <Modal
+        open={deleteStep === 2}
+        onClose={() => setDeleteStep(0)}
+        title="Confirm deletion"
+        icon="⚠️"
+      >
+        <div className="flex flex-col gap-5">
+          <p className="text-muted-foreground text-sm">
+            Type your email address{" "}
+            <span className="text-foreground font-medium">{user?.email}</span>{" "}
+            to confirm account deletion.
+          </p>
+          <Input
+            variant="auth"
+            shape="pill"
+            fullWidth
+            placeholder="Your email address"
+            value={deleteEmailInput}
+            onChange={(e) => setDeleteEmailInput(e.target.value)}
+            autoComplete="off"
+          />
+          <div className="flex gap-3">
+            <Button
+              variant="secondary"
+              shape="pill"
+              size="lg"
+              fullWidth
+              onClick={() => setDeleteStep(0)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              shape="pill"
+              size="lg"
+              fullWidth
+              disabled={deleteEmailInput !== user?.email || isDeleting}
+              onClick={handleDeleteConfirm}
+            >
+              {isDeleting ? "Deleting..." : "Delete my account"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }

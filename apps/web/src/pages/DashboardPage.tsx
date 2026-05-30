@@ -71,18 +71,18 @@ function DashboardPage() {
                 <Plus size={16} />
                 New entry
               </Button>
+
+              <Button
+                variant="gradient"
+                shape="pill"
+                onClick={() => setIsAddHobbyOpen(true)}
+                className="md:hidden"
+              >
+                <Plus size={16} />
+                Add a hobby
+              </Button>
             </div>
           )}
-
-          <Button
-            variant="gradient"
-            shape="pill"
-            onClick={() => setIsAddHobbyOpen(true)}
-            className="md:hidden"
-          >
-            <Plus size={16} />
-            Add a hobby
-          </Button>
         </div>
       </div>
 
