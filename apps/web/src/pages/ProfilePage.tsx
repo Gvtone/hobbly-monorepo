@@ -112,7 +112,7 @@ function ProfilePage() {
   }));
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
+    <div className="mx-auto max-w-5xl md:px-6 md:py-10">
       {/* Main profile card */}
       <MainProfileCard
         isOwnProfile={isOwnProfile}
@@ -126,7 +126,7 @@ function ProfilePage() {
           <ActivityCalendar entries={calendarEntries} user={profileUser} />
 
           {/* Hobbies */}
-          <section>
+          <section className="max-md:px-4">
             <div className="mb-4 flex items-baseline justify-between">
               <h3 className="text-xl">
                 {isOwnProfile ? "My Hobby Board" : "Hobby Board"}
@@ -159,7 +159,7 @@ function ProfilePage() {
 
           {/* Entries */}
           {(entries.length > 0 || activeHobby !== null) && (
-            <section>
+            <section className="max-md:px-4">
               <div className="mb-4 flex items-baseline justify-between">
                 <h3 className="text-xl">Entries</h3>
                 <p className="text-muted-foreground text-sm">

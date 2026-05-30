@@ -40,70 +40,81 @@ function HobbyCard({
           : { backgroundColor: `${hobby.color}22` }
       }
     >
+      <div
+        className="flex size-6 items-center justify-center rounded-full md:hidden"
+        style={{ backgroundColor: `${hobby.color}` }}
+      >
+        <span className="text-xs">{hobby.icon}</span>
+      </div>
+
+      <div className="z-10">
+        <div
+          className="flex h-fit w-fit items-center justify-center gap-2 rounded-md px-2 text-xs md:rounded-full md:text-sm"
+          style={{ backgroundColor: `${hobby.color}` }}
+        >
+          <span className="max-md:hidden">{hobby.icon}</span>
+          <span className="font-semibold text-white">{hobby.name}</span>
+        </div>
+      </div>
+
+      {backgroundImage && (
+        <div className="absolute right-0 bottom-0 left-0 h-full rounded-xl bg-linear-to-t from-black/50 to-transparent" />
+      )}
+
       {!backgroundImage && (
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-6xl opacity-25">{hobby.icon}</span>
         </div>
       )}
-      <div className="z-10 flex justify-between">
-        <div
-          className={`h-fit w-fit rounded-full px-2`}
-          style={{ backgroundColor: `${hobby.color}` }}
-        >
-          <span className="text-sm font-semibold text-white">
-            {hobby.icon} {hobby.name}
-          </span>
-        </div>
-        {enableOptions && (
-          <>
-            <Popover.Root onOpenChange={setOptionIsActive}>
-              <Popover.Trigger asChild>
+
+      {enableOptions && (
+        <>
+          <Popover.Root onOpenChange={setOptionIsActive}>
+            <Popover.Trigger asChild>
+              <Button
+                variant="translucent"
+                size="icon"
+                shape="pill"
+                className={cn(
+                  "absolute top-3 right-3 z-10 flex size-6 hover:cursor-pointer",
+                  "lg:pointer-events-none lg:opacity-0",
+                  "md:group-hover:pointer-events-auto lg:group-hover:opacity-100",
+                  optionIsActive && "lg:pointer-events-auto lg:opacity-100",
+                )}
+              >
+                <Ellipsis size={12} className="text-white" />
+              </Button>
+            </Popover.Trigger>
+
+            <Popover.Portal>
+              <Popover.Content
+                className="bg-card border-border z-50 flex w-40 flex-col gap-2 rounded-2xl border p-2 shadow-lg"
+                sideOffset={8}
+                align="end"
+              >
                 <Button
-                  variant="translucent"
-                  size="icon"
-                  shape="pill"
-                  className={cn(
-                    "hidden size-6 group-hover:flex hover:cursor-pointer",
-                    optionIsActive && "flex",
-                  )}
+                  variant="ghost"
+                  fullWidth
+                  className="justify-start"
+                  onClick={() => setEditOpen(true)}
                 >
-                  <Ellipsis size={12} className="text-white" />
+                  <Edit size={14} />
+                  Edit
                 </Button>
-              </Popover.Trigger>
 
-              <Popover.Portal>
-                <Popover.Content
-                  className="bg-card border-border z-50 flex w-40 flex-col gap-2 rounded-2xl border p-2 shadow-lg"
-                  sideOffset={8}
-                  align="end"
+                <Button
+                  variant="ghost"
+                  fullWidth
+                  className="text-destructive justify-start transition-colors"
+                  onClick={() => setDeleteOpen(true)}
                 >
-                  <Button
-                    variant="ghost"
-                    fullWidth
-                    className="justify-start"
-                    onClick={() => setEditOpen(true)}
-                  >
-                    <Edit size={14} />
-                    Edit
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    fullWidth
-                    className="text-destructive justify-start transition-colors"
-                    onClick={() => setDeleteOpen(true)}
-                  >
-                    <Trash2 size={14} />
-                    Delete
-                  </Button>
-                </Popover.Content>
-              </Popover.Portal>
-            </Popover.Root>
-          </>
-        )}
-      </div>
-      {backgroundImage && (
-        <div className="absolute right-0 bottom-0 left-0 h-full rounded-xl bg-linear-to-t from-black/50 to-transparent" />
+                  <Trash2 size={14} />
+                  Delete
+                </Button>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+        </>
       )}
 
       {onUpdate && (

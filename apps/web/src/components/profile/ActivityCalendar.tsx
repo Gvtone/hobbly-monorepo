@@ -192,7 +192,7 @@ function ActivityCalendar({ entries, user }: ActivityCalendarProps) {
 
   return (
     <>
-      <Card className="mb-10">
+      <Card className="mb-10 max-md:rounded-none">
         {/* Header */}
         <div className="mb-3 flex items-start justify-between">
           <div>
