@@ -13,6 +13,7 @@ import { CreateEntryMoodDto } from './dto/create-entry-mood.dto';
 import { UpdateEntryMoodDto } from './dto/update-entry-mood.dto';
 import { ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { EntryMoodEntity } from './entities/entry-mood.entity';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('entry-mood')
 export class EntryMoodController {
@@ -27,6 +28,7 @@ export class EntryMoodController {
   }
 
   @Get()
+  @SkipThrottle()
   @ApiOperation({ summary: 'Fetches all entry moods' })
   @ApiOkResponse({ description: 'Fetch successful', type: [EntryMoodEntity] })
   findAll() {
@@ -34,6 +36,7 @@ export class EntryMoodController {
   }
 
   @Get(':id')
+  @SkipThrottle()
   @ApiOperation({ summary: 'Fetches a single entry mood' })
   @ApiOkResponse({ description: 'Fetch successful', type: EntryMoodEntity })
   findOne(@Param('id', ParseIntPipe) id: number) {

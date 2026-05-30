@@ -21,6 +21,7 @@ import { CurrentMoodEntity } from './entities/current-mood.entity';
 import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { PayloadEntity } from '../auth/entities/payload.entity';
 import { Public } from '../../common/decorators/public.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Current Mood')
 @Controller('current-mood')
@@ -46,6 +47,7 @@ export class CurrentMoodController {
 
   @Public()
   @Get(':userId')
+  @SkipThrottle()
   @ApiOperation({ summary: 'Fetch mood' })
   @ApiParam({ name: 'userId', type: Number })
   @ApiOkResponse({

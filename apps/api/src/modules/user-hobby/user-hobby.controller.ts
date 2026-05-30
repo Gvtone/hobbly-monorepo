@@ -25,6 +25,7 @@ import { UpdateUserHobbyDto } from './dto/update-user-hobby.dto';
 import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { PayloadEntity } from '../auth/entities/payload.entity';
 import { Public } from '../../common/decorators/public.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('User Hobby')
 @Controller('user-hobby')
@@ -44,6 +45,7 @@ export class UserHobbyController {
 
   @Public()
   @Get('user/:userId')
+  @SkipThrottle()
   @ApiOperation({
     summary: 'Finds all of existing user-hobby connection of the current user',
   })
@@ -57,6 +59,7 @@ export class UserHobbyController {
   }
 
   @Get(':id')
+  @SkipThrottle()
   @ApiOperation({ summary: 'Fetch hobby based on ID' })
   @ApiOkResponse({
     description: 'Fetch successful',

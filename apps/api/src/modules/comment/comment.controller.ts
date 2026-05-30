@@ -28,6 +28,7 @@ import {
 } from './entities/comment.entity';
 import { PaginatedEntity } from '../../common/entities/paginated.entity';
 import { Public } from '../../common/decorators/public.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Comment')
 @Controller('entry/:id/comment')
@@ -52,6 +53,7 @@ export class CommentController {
 
   @Public()
   @Get()
+  @SkipThrottle()
   @ApiOperation({ summary: 'Fetch all comment in the entry' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: CreateCommentDto })
