@@ -35,7 +35,7 @@ function AddUserHobbyModal({
     return () => clearTimeout(timer);
   }, [hobbySearch]);
 
-  const { hobbies } = useHobby({
+  const { hobbies, loadMore, hasMore, isLoading } = useHobby({
     filter: { status: "PUBLISHED", search: debouncedHobbySearch },
   });
 
@@ -116,6 +116,19 @@ function AddUserHobbyModal({
           <p className="text-muted-foreground py-4 text-center text-sm">
             You've added all available hobbies! 🎉
           </p>
+        )}
+        {hasMore && (
+          <div className="mt-2 flex w-full justify-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              shape="pill"
+              disabled={isLoading}
+              onClick={loadMore}
+            >
+              {isLoading ? "Loading..." : "Load more"}
+            </Button>
+          </div>
         )}
       </div>
 
