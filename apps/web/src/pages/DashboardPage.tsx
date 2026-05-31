@@ -111,11 +111,11 @@ function DashboardPage() {
                 data={data}
                 enableOptions
                 className="size-28 shrink-0 md:size-56"
-                onUpdate={(id, backgroundImage) =>
-                  updateUserHobby(id, {
-                    backgroundImage: backgroundImage ?? undefined,
-                  })
-                }
+                onUpdate={(id, file, clearImage) => {
+                  if (file) return updateUserHobby(id, {}, file);
+                  if (clearImage) return updateUserHobby(id, { backgroundImage: "" });
+                  return Promise.resolve();
+                }}
                 onDelete={async (id) => {
                   await removeUserHobby(id);
                   refreshEntries();

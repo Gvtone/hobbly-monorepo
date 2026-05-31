@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Modal from "../layout/Modal";
 import Button from "../ui/Button";
 import { showToast } from "../../utils/toast";
 import type { UserHobbyWithHobbyEntity } from "@hobbies-dashboard/types";
+import { Camera } from "lucide-react";
 
 interface EditHobbyCardModalProps {
   open: boolean;
   onClose: () => void;
   data: UserHobbyWithHobbyEntity;
-  onSave: (id: number, backgroundImage: string | null) => Promise<void>;
+  onSave: (id: number, file: File | null, clearImage: boolean) => Promise<void>;
 }
 
 function EditHobbyCardModal({
@@ -17,13 +18,36 @@ function EditHobbyCardModal({
   data,
   onSave,
 }: EditHobbyCardModalProps) {
-  const [url, setUrl] = useState<string | null>(data.backgroundImage ?? null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    data.backgroundImage ?? null,
+  );
+  const [removed, setRemoved] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageInputKey, setImageInputKey] = useState(0);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (previewUrl?.startsWith("blob:")) URL.revokeObjectURL(previewUrl);
+    setImageFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    setRemoved(false);
+  };
+
+  const handleRemove = () => {
+    if (previewUrl?.startsWith("blob:")) URL.revokeObjectURL(previewUrl);
+    setImageFile(null);
+    setPreviewUrl(null);
+    setRemoved(true);
+    setImageInputKey((k) => k + 1);
+  };
 
   const handleSave = async () => {
     setIsSubmitting(true);
     try {
-      await onSave(data.id, url ?? null);
+      await onSave(data.id, imageFile, removed);
       showToast.success("Card updated!");
       onClose();
     } catch {
@@ -46,12 +70,12 @@ function EditHobbyCardModal({
         <div
           className="relative flex h-32 w-full items-start justify-between rounded-xl bg-cover bg-center p-3"
           style={
-            url
-              ? { backgroundImage: `url(${url})` }
+            previewUrl
+              ? { backgroundImage: `url(${previewUrl})` }
               : { backgroundColor: `${data.hobby.color}22` }
           }
         >
-          {!url && (
+          {!previewUrl && (
             <div className="absolute inset-0 flex items-center justify-center">
               <span className="text-5xl opacity-25">{data.hobby.icon}</span>
             </div>
@@ -64,26 +88,35 @@ function EditHobbyCardModal({
               {data.hobby.icon} {data.hobby.name}
             </span>
           </div>
-          {url && (
+          {previewUrl && (
             <div className="absolute right-0 bottom-0 left-0 h-full rounded-xl bg-linear-to-t from-black/50 to-transparent" />
           )}
         </div>
 
-        {/* URL input */}
+        {/* File upload */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium">Background image URL</label>
           <input
-            type="url"
-            value={url ?? undefined}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://example.com/image.jpg"
-            className="border-border bg-background focus:ring-primary/30 w-full rounded-xl border px-4 py-2.5 text-sm outline-none focus:ring-2"
+            key={imageInputKey}
+            ref={imageInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageChange}
           />
-          {url && (
+          <Button
+            type="button"
+            variant="secondary"
+            shape="pill"
+            onClick={() => imageInputRef.current?.click()}
+          >
+            <Camera size={14} />
+            {imageFile ? "Change image" : "Upload image"}
+          </Button>
+          {previewUrl && (
             <Button
               variant="transparent"
               type="button"
-              onClick={() => setUrl(null)}
+              onClick={handleRemove}
               className="text-muted-foreground justify-start self-start p-0 text-xs underline"
             >
               Remove background image

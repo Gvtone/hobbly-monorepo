@@ -11,7 +11,7 @@ import DeleteHobbyCardModal from "./DeleteHobbyCardModal";
 interface HobbyCardProps extends React.HTMLAttributes<HTMLDivElement> {
   data: UserHobbyWithHobbyEntity;
   enableOptions?: boolean;
-  onUpdate?: (id: number, backgroundImage: string | null) => Promise<void>;
+  onUpdate?: (id: number, file: File | null, clearImage: boolean) => Promise<void>;
   onDelete?: (id: number) => Promise<void>;
 }
 
