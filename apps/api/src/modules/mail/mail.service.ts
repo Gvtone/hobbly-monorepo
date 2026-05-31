@@ -5,7 +5,7 @@ import * as handlebars from 'handlebars';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ForgotPasswordEmailDto } from './dto/forgot-password-email.dto';
-import { WelcomeDto } from './dto/welcome.dto';
+import { GoodbyeDto, WelcomeDto } from './dto/welcome.dto';
 import { PasswordChangeEmailDto } from './dto/password-changed-email.dto';
 import { SendVerifyEmailDto } from './dto/send-verify-email.dto';
 import {
@@ -15,6 +15,7 @@ import {
 
 @Injectable()
 export class MailService {
+  // TODO: migrate templates to Resend
   private readonly logger = new Logger(MailService.name);
   private readonly resend: Resend;
   private readonly from: string;
@@ -34,6 +35,7 @@ export class MailService {
       'verify-email',
       'forgot-password',
       'password-changed',
+      'account-deleted',
     ]) {
       const src = fs.readFileSync(
         path.join(templateDir, `${name}.hbs`),
@@ -125,6 +127,19 @@ export class MailService {
         username,
         email: to,
         changedAt: new Date().toLocaleString(),
+      },
+    );
+  }
+
+  async sendAccountDeletedEmail({ email: to, username }: GoodbyeDto) {
+    return this.send(
+      to,
+      'Your Hobbly account has been deleted',
+      'account-deleted',
+      {
+        username,
+        email: to,
+        deletedAt: new Date().toLocaleString(),
       },
     );
   }
