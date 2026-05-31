@@ -19,7 +19,16 @@ const api = axios.create({
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (
+      sessionStorage.getItem("maintenance") &&
+      window.location.pathname === "/maintenance"
+    ) {
+      sessionStorage.removeItem("maintenance");
+      window.location.href = "/dashboard";
+    }
+    return response;
+  },
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
@@ -39,6 +48,14 @@ api.interceptors.response.use(
       } catch {
         window.dispatchEvent(new CustomEvent("auth:session-expired"));
       }
+    }
+
+    if (
+      error.response?.status === 503 &&
+      window.location.pathname !== "/maintenance"
+    ) {
+      sessionStorage.setItem("maintenance", "true");
+      window.location.href = "/maintenance";
     }
 
     const data = error.response?.data as { message?: string | string[] };

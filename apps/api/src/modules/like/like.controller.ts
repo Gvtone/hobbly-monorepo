@@ -9,6 +9,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Public } from '../../common/decorators/public.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Like')
 @Controller('entry/:id/like')
@@ -35,6 +36,7 @@ export class LikeController {
   }
 
   @Get('status')
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({
     summary: 'Get status if current user have liked it or not',
   })
@@ -58,6 +60,7 @@ export class LikeController {
 
   @Public()
   @Get('count')
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Get ammount of like of entry' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({

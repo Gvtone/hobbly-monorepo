@@ -31,6 +31,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { imageFilePipe } from '../../common/pipes/image-file.pipe';
 import { UserFilterDto } from './dto/user-filter.dto';
 import { PaginatedEntity } from '../../common/entities/paginated.entity';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @ApiTags('User')
 @Controller('user')
@@ -38,6 +39,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('current-user')
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch the current logged in user' })
   @ApiOkResponse({
     description: 'Fetch successful',
@@ -49,6 +51,7 @@ export class UserController {
 
   @Public()
   @Get('public/:username')
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({
     summary: 'Fetch the user based on username return public info',
   })
@@ -62,6 +65,7 @@ export class UserController {
   }
 
   @Get()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Finds all of existing users' })
   @ApiOkResponse({
     description: 'Fetch successful',
@@ -81,6 +85,7 @@ export class UserController {
   }
 
   @Post('upload/profile-picture')
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 20 } })
   @ApiOperation({ summary: 'Uploads profile picture' })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('image'))
@@ -93,12 +98,14 @@ export class UserController {
   }
 
   @Post('remove/profile-picture')
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 20 } })
   @ApiOperation({ summary: 'Removes profile picture' })
   async removeProfilePicture(@AuthUser() user: PayloadEntity) {
     return await this.userService.removeProfilePicture(user);
   }
 
   @Post('upload/cover-image')
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 20 } })
   @ApiOperation({ summary: 'Uploads cover image' })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('image'))
@@ -111,6 +118,7 @@ export class UserController {
   }
 
   @Post('remove/cover-image')
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 20 } })
   @ApiOperation({ summary: 'Removes cover image' })
   async removeCoverImage(@AuthUser() user: PayloadEntity) {
     return await this.userService.removeCoverImage(user);

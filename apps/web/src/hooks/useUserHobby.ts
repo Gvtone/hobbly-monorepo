@@ -38,8 +38,9 @@ export function useUserHobby(userId: number | null) {
   const updateUserHobby = async (
     id: number,
     data: Partial<CreateUserHobbyDto>,
+    file?: File,
   ) => {
-    await userHobbyService.update(id, data);
+    await userHobbyService.update(id, data, file);
     await fetchUserHobbies();
   };
 

@@ -47,6 +47,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
   const hasImage = !!data.image;
   const isPublic = data.visibility === "PUBLIC";
   const switchingToPublic = !isPublic;
+  console.log(data);
 
   const { entryMoods } = useEntryMood();
   const { liked, count, isToggling, toggle } = useLike(data.id);
@@ -195,23 +196,23 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
             </Button>
           </Dialog.Close>
 
-          <div className="flex min-h-full w-full flex-col items-center px-4 py-16">
+          <div className="flex min-h-full w-full flex-col items-center py-18 md:px-4">
             <div
               className={cn(
-                "flex w-full flex-col gap-4",
+                "flex w-full flex-col md:gap-4",
                 hasImage ? "max-w-5xl" : "max-w-2xl",
               )}
             >
               {/* Image/Logo and Content */}
               <div
                 className={cn(
-                  "flex flex-col gap-4",
+                  "flex flex-col md:gap-4",
                   hasImage && "md:h-130 md:flex-row",
                 )}
               >
                 {/* Image or Hobby Logo */}
                 {hasImage ? (
-                  <Card className="aspect-square flex-6 overflow-hidden border-none p-0 md:h-full md:min-h-0">
+                  <Card className="aspect-square flex-6 overflow-hidden border-none p-0 max-md:rounded-none md:h-full md:min-h-0">
                     <img
                       src={data.image}
                       alt={data.title}
@@ -220,7 +221,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                   </Card>
                 ) : (
                   <Card
-                    className="flex flex-col items-center justify-center gap-3 py-10"
+                    className="flex flex-col items-center justify-center gap-3 py-10 max-md:rounded-none"
                     style={{
                       background: `${hobby.color}18`,
                       borderColor: `${hobby.color}30`,
@@ -242,7 +243,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                 {/* Entry Content Card */}
                 <Card
                   className={cn(
-                    "flex max-h-120 flex-col overflow-hidden md:max-h-130",
+                    "flex max-h-120 flex-col overflow-hidden max-md:rounded-none md:max-h-130",
                     hasImage && "-order-1 flex-4 md:order-2",
                   )}
                 >
@@ -272,7 +273,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
                             {data.title}
                           </Dialog.Title>
                           <p className="text-muted-foreground text-xs">
-                            {format(new Date(data.activityDate), "PPPPp")}
+                            {format(new Date(data.createdAt), "PPPPp")}
                           </p>
                         </div>
                         <div
@@ -587,7 +588,7 @@ function EntryModal({ open, onClose, data, onRefresh }: LogEntryModalProps) {
               </div>
 
               {/* Comments */}
-              <Card>
+              <Card className="max-md:rounded-none">
                 <div className="mb-2 flex items-center gap-2">
                   <h3>Comments</h3>
                   <div className="bg-accent rounded-full px-2 py-1 text-xs">

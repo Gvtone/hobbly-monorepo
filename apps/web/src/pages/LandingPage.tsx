@@ -85,8 +85,7 @@ function LandingPage() {
             you love
           </h1>
           <p className="text-md text-muted-foreground max-w-md text-center md:text-lg">
-            Anime, books, gaming, art — collect it all in a dreamy, visual board
-            that's completely yours.
+            Track your hobbies, journal your progress, and share what you love.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
             <LinkButton to="/auth" variant="gradient" shape="rounded" size="lg">

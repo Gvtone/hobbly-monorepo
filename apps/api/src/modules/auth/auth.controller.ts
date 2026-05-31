@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -34,6 +35,7 @@ import { GenericOutputEntity } from '../../common/entities/generic-output.entity
 import { Public } from '../../common/decorators/public.decorator';
 import { GoogleAuthGuard } from './guard/google.guard';
 import { ConfigService } from '@nestjs/config';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -45,6 +47,7 @@ export class AuthController {
 
   @Public()
   @Post('login')
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 10 } })
   @UseGuards(LocalGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with email or username and password' })
@@ -57,6 +60,7 @@ export class AuthController {
 
   @Public()
   @Get('google')
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 10 } })
   @UseGuards(GoogleAuthGuard)
   googleAuth() {
     // never runs — passport redirects to Google before reaching here
@@ -78,6 +82,7 @@ export class AuthController {
 
   @Public()
   @Post('register')
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 10 } })
   @ApiOperation({ summary: 'Register a new user account' })
   @ApiBody({ type: CreateUserDto })
   @ApiCreatedResponse({
@@ -86,11 +91,16 @@ export class AuthController {
   })
   @ApiConflictResponse({ description: 'Email or username already in use' })
   async register(@Body() createUserDto: CreateUserDto) {
+    if (this.configService.get('DISABLE_SIGNUPS') === 'true') {
+      throw new ForbiddenException('New signups are temporarily disabled.');
+    }
+
     return await this.authService.register(createUserDto);
   }
 
   @Public()
   @Post('refresh-token')
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Refreshes access token in cookies' })
   @ApiOkResponse({ description: 'Refresh Successful', type: PayloadEntity })
   async refreshToken(
@@ -101,6 +111,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @SkipThrottle({ short: true, long: true })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Log out the current user' })
   @ApiOkResponse({
@@ -114,6 +125,7 @@ export class AuthController {
 
   @Public()
   @Post('forgot')
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 3 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request a password reset email' })
   @ApiBody({ type: ForgotPasswordDto })
@@ -128,6 +140,7 @@ export class AuthController {
 
   @Public()
   @Post('resend-verification')
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 3 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Resend the email verification link' })
   @ApiBody({ type: ResendVerification })
@@ -154,6 +167,7 @@ export class AuthController {
 
   @Public()
   @Post('reset')
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 10 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset the account password using a token' })
   @ApiBody({ type: ResetPasswordDto })
@@ -166,6 +180,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Get the current authenticated user' })
   @ApiOkResponse({ description: 'Current user payload', type: PayloadEntity })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })

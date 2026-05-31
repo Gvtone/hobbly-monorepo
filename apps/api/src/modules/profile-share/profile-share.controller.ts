@@ -22,6 +22,7 @@ import {
   ProfileShareWithUserEntity,
 } from './entities/profile-share.entity';
 import { Public } from '../../common/decorators/public.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Profile Share')
 @Controller('share')
@@ -39,6 +40,7 @@ export class ProfileShareController {
   }
 
   @Get()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({
     summary: 'Finds the reference id of the current user',
   })
@@ -49,6 +51,7 @@ export class ProfileShareController {
 
   @Public()
   @Get(':referenceId')
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({
     summary: 'Finds the user by the reference id',
   })
@@ -63,6 +66,7 @@ export class ProfileShareController {
 
   @Public()
   @Get(':referenceId/entries')
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch public entries via share link' })
   @ApiParam({ name: 'referenceId', type: String })
   async findEntriesByReference(

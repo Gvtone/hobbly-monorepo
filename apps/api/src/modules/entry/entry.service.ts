@@ -118,7 +118,7 @@ export class EntryService {
           },
           mood: true,
         },
-        orderBy: { activityDate: 'desc' },
+        orderBy: { createdAt: 'desc' },
       })
       .withPages({ page, limit });
   }

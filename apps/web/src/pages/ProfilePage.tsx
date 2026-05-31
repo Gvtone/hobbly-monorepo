@@ -112,7 +112,7 @@ function ProfilePage() {
   }));
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
+    <div className="mx-auto max-w-5xl md:px-6 md:py-10">
       {/* Main profile card */}
       <MainProfileCard
         isOwnProfile={isOwnProfile}
@@ -126,40 +126,60 @@ function ProfilePage() {
           <ActivityCalendar entries={calendarEntries} user={profileUser} />
 
           {/* Hobbies */}
-          <section>
-            <div className="mb-4 flex items-baseline justify-between">
-              <h3 className="text-xl">
-                {isOwnProfile ? "My Hobby Board" : "Hobby Board"}
-              </h3>
-              {isOwnProfile && (
-                <LinkButton
-                  variant="transparent"
-                  to="/dashboard"
-                  className="text-hobbly-sky-dark flex items-center gap-2 text-sm"
-                >
-                  Manage
-                  <MoveRight size={14} />
-                </LinkButton>
-              )}
-            </div>
+          {userHobbies.length > 0 && (
+            <section className="max-md:px-4">
+              <div className="mb-4 flex items-baseline justify-between">
+                <h3 className="text-xl">
+                  {isOwnProfile ? "My Hobby Board" : "Hobby Board"}
+                </h3>
+                {isOwnProfile && (
+                  <LinkButton
+                    variant="transparent"
+                    to="/dashboard"
+                    className="text-hobbly-sky-dark flex items-center gap-2 text-sm"
+                  >
+                    Manage
+                    <MoveRight size={14} />
+                  </LinkButton>
+                )}
+              </div>
 
-            {userHobbies.length > 0 ? (
-              <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <div className="xs:grid-cols-3 mb-10 grid grid-cols-2 gap-3">
                 {userHobbies.map((data) => (
                   <HobbyCard key={data.id} data={data} className="min-h-36" />
                 ))}
               </div>
-            ) : (
+            </section>
+          )}
+
+          {isOwnProfile && userHobbies.length === 0 && (
+            <section className="max-md:px-4">
+              <div className="mb-4 flex items-baseline justify-between">
+                <h3 className="text-xl">
+                  {isOwnProfile ? "My Hobby Board" : "Hobby Board"}
+                </h3>
+                {isOwnProfile && (
+                  <LinkButton
+                    variant="transparent"
+                    to="/dashboard"
+                    className="text-hobbly-sky-dark flex items-center gap-2 text-sm"
+                  >
+                    Manage
+                    <MoveRight size={14} />
+                  </LinkButton>
+                )}
+              </div>
+
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <span className="mb-4 text-6xl">🦗</span>
                 <h3 className="mb-2 text-2xl">No hobbies yet</h3>
               </div>
-            )}
-          </section>
+            </section>
+          )}
 
           {/* Entries */}
           {(entries.length > 0 || activeHobby !== null) && (
-            <section>
+            <section className="max-md:px-4">
               <div className="mb-4 flex items-baseline justify-between">
                 <h3 className="text-xl">Entries</h3>
                 <p className="text-muted-foreground text-sm">
@@ -189,6 +209,26 @@ function ProfilePage() {
                   </button>
                 )}
               </ProfileEntriesLayout>
+            </section>
+          )}
+
+          {isOwnProfile && entries.length === 0 && (
+            <section className="max-md:px-4">
+              <div className="mb-4 flex items-baseline justify-between">
+                <h3 className="text-xl">Entries</h3>
+                <p className="text-muted-foreground text-sm">
+                  {entries.length} total
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <span className="mb-4 text-6xl">📯</span>
+                <h3 className="mb-2 text-2xl">Share your entries</h3>
+                <p className="text-muted-foreground mb-6 max-w-md">
+                  Select one of your entries and switch it to public. All of
+                  your public entries will show here.
+                </p>
+              </div>
             </section>
           )}
         </>

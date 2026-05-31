@@ -10,3 +10,5 @@ export class WelcomeDto {
   @IsNotEmpty()
   username: string;
 }
+
+export class GoodbyeDto extends WelcomeDto {}
