@@ -144,7 +144,7 @@ function ProfilePage() {
             </div>
 
             {userHobbies.length > 0 ? (
-              <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <div className="xs:grid-cols-3 mb-10 grid grid-cols-2 gap-3">
                 {userHobbies.map((data) => (
                   <HobbyCard key={data.id} data={data} className="min-h-36" />
                 ))}

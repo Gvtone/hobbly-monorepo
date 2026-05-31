@@ -576,7 +576,7 @@ function SettingsPage() {
                 <Button
                   type="submit"
                   variant="gradient"
-                  className="self-end"
+                  className="self-end max-md:mr-6"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Saving..." : "Save changes"}
@@ -852,7 +852,9 @@ function SettingsPage() {
             This will permanently delete your account and all associated data —
             hobbies, journal entries, and profile info. This cannot be undone.
           </p>
-          <p className="text-sm font-medium">Are you sure you want to continue?</p>
+          <p className="text-sm font-medium">
+            Are you sure you want to continue?
+          </p>
           <div className="flex gap-3">
             <Button
               variant="secondary"
