@@ -7,10 +7,13 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserHobbyService } from './user-hobby.service';
 import {
   ApiBody,
+  ApiConsumes,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -26,6 +29,7 @@ import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { PayloadEntity } from '../auth/entities/payload.entity';
 import { Public } from '../../common/decorators/public.decorator';
 import { SkipThrottle } from '@nestjs/throttler';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User Hobby')
 @Controller('user-hobby')
@@ -74,14 +78,22 @@ export class UserHobbyController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Updates a hobby' })
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateUserHobbyDto })
+  @UseInterceptors(FileInterceptor('image'))
   @ApiOkResponse({ description: 'Update successful', type: UserHobbyEntity })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @AuthUser() userId: PayloadEntity,
     @Body() updateHobbyDto: UpdateUserHobbyDto,
+    @UploadedFile() image?: Express.Multer.File,
   ) {
-    return await this.userHobbyService.update(id, userId.sub, updateHobbyDto);
+    return await this.userHobbyService.update(
+      id,
+      userId.sub,
+      updateHobbyDto,
+      image,
+    );
   }
 
   @Delete(':id')
