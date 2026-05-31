@@ -144,26 +144,46 @@ function DashboardPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {userEntries.map((data) => (
-              <EntryCard
-                key={data.id}
-                data={data}
-                dashboard
-                onClick={() => setSelectedEntryId(data.id)}
-              />
-            ))}
-          </div>
+          {userEntries.length !== 0 ? (
+            <>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {userEntries.map((data) => (
+                  <EntryCard
+                    key={data.id}
+                    data={data}
+                    dashboard
+                    onClick={() => setSelectedEntryId(data.id)}
+                  />
+                ))}
+              </div>
 
-          {hasMore && (
-            <div className="mt-6 flex justify-center">
+              {hasMore && (
+                <div className="mt-6 flex justify-center">
+                  <Button
+                    variant="outline"
+                    shape="pill"
+                    onClick={loadMore}
+                    disabled={isEntriesLoading}
+                  >
+                    {isEntriesLoading ? "Loading..." : "Load more"}
+                  </Button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <span className="mb-4 text-6xl">🧵</span>
+              <h3 className="mb-2 text-2xl">Start logging</h3>
+              <p className="text-muted-foreground mb-6">
+                No entries yet — click bellow to log your first hobby moment ✨
+              </p>
               <Button
-                variant="outline"
+                variant="gradient"
                 shape="pill"
-                onClick={loadMore}
-                disabled={isEntriesLoading}
+                onClick={() => setIsLogEntryOpen(true)}
               >
-                {isEntriesLoading ? "Loading..." : "Load more"}
+                <Plus size={16} />
+                Add your first entry
               </Button>
             </div>
           )}
