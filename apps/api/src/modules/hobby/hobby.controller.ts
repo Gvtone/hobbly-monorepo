@@ -41,7 +41,7 @@ export class HobbyController {
   }
 
   @Get()
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Finds all of existing hobbies' })
   @ApiOkResponse({
     description: 'Fetch successful',
@@ -53,7 +53,7 @@ export class HobbyController {
   }
 
   @Get(':id')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch hobby based on ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Fetch successful', type: HobbyEntity })

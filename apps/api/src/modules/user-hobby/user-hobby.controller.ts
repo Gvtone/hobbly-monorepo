@@ -45,7 +45,7 @@ export class UserHobbyController {
 
   @Public()
   @Get('user/:userId')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({
     summary: 'Finds all of existing user-hobby connection of the current user',
   })
@@ -59,7 +59,7 @@ export class UserHobbyController {
   }
 
   @Get(':id')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch hobby based on ID' })
   @ApiOkResponse({
     description: 'Fetch successful',

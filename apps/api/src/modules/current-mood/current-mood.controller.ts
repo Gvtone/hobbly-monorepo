@@ -47,7 +47,7 @@ export class CurrentMoodController {
 
   @Public()
   @Get(':userId')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch mood' })
   @ApiParam({ name: 'userId', type: Number })
   @ApiOkResponse({

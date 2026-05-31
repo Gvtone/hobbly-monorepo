@@ -8,7 +8,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 export class HealthController {
   @Public()
   @Get()
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Get Server status' })
   @ApiOkResponse({
     description: 'Got status',

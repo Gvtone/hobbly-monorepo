@@ -28,7 +28,7 @@ export class EntryMoodController {
   }
 
   @Get()
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetches all entry moods' })
   @ApiOkResponse({ description: 'Fetch successful', type: [EntryMoodEntity] })
   findAll() {
@@ -36,7 +36,7 @@ export class EntryMoodController {
   }
 
   @Get(':id')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetches a single entry mood' })
   @ApiOkResponse({ description: 'Fetch successful', type: EntryMoodEntity })
   findOne(@Param('id', ParseIntPipe) id: number) {

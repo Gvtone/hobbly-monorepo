@@ -36,7 +36,7 @@ export class LikeController {
   }
 
   @Get('status')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({
     summary: 'Get status if current user have liked it or not',
   })
@@ -60,7 +60,7 @@ export class LikeController {
 
   @Public()
   @Get('count')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Get ammount of like of entry' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({

@@ -53,7 +53,7 @@ export class CommentController {
 
   @Public()
   @Get()
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch all comment in the entry' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: CreateCommentDto })

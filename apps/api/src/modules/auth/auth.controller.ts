@@ -100,7 +100,7 @@ export class AuthController {
 
   @Public()
   @Post('refresh-token')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Refreshes access token in cookies' })
   @ApiOkResponse({ description: 'Refresh Successful', type: PayloadEntity })
   async refreshToken(
@@ -111,7 +111,7 @@ export class AuthController {
   }
 
   @Post('logout')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Log out the current user' })
   @ApiOkResponse({
@@ -180,7 +180,7 @@ export class AuthController {
   }
 
   @Get('me')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Get the current authenticated user' })
   @ApiOkResponse({ description: 'Current user payload', type: PayloadEntity })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })

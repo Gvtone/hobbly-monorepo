@@ -40,7 +40,7 @@ export class ProfileShareController {
   }
 
   @Get()
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({
     summary: 'Finds the reference id of the current user',
   })
@@ -51,7 +51,7 @@ export class ProfileShareController {
 
   @Public()
   @Get(':referenceId')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({
     summary: 'Finds the user by the reference id',
   })
@@ -66,7 +66,7 @@ export class ProfileShareController {
 
   @Public()
   @Get(':referenceId/entries')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch public entries via share link' })
   @ApiParam({ name: 'referenceId', type: String })
   async findEntriesByReference(

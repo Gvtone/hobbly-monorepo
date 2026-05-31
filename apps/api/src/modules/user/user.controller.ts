@@ -39,7 +39,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('current-user')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch the current logged in user' })
   @ApiOkResponse({
     description: 'Fetch successful',
@@ -51,7 +51,7 @@ export class UserController {
 
   @Public()
   @Get('public/:username')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({
     summary: 'Fetch the user based on username return public info',
   })
@@ -65,7 +65,7 @@ export class UserController {
   }
 
   @Get()
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Finds all of existing users' })
   @ApiOkResponse({
     description: 'Fetch successful',

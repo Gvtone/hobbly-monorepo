@@ -26,7 +26,7 @@ import { MaintenanceMiddleware } from './middleware/maintenance.middleware';
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot({
       throttlers: [
-        { name: 'short', ttl: 1000, limit: 3 }, // max 3/sec burst
+        { name: 'short', ttl: 1000, limit: 5 }, // max 5/sec burst
         { name: 'long', ttl: 60 * 1000, limit: 100 }, // max 100/min sustaine
       ],
     }),

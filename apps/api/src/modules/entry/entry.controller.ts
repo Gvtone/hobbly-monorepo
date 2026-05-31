@@ -52,7 +52,7 @@ export class EntryController {
 
   @Public()
   @Get('public')
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch all entries' })
   @ApiOkResponse({
     description: 'Fetch successful',
@@ -68,7 +68,7 @@ export class EntryController {
   }
 
   @Get()
-  @SkipThrottle()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch all entries' })
   @ApiOkResponse({
     description: 'Fetch successful',
