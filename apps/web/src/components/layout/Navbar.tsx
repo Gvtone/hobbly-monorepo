@@ -57,7 +57,7 @@ function Navbar() {
         {/* Navigation links/buttons */}
         {user && (
           <>
-            <div className="right-0 left-0 flex items-center justify-center gap-2 md:absolute">
+            <div className="absolute right-0 left-0 flex items-center justify-center gap-2">
               {navItems.map(({ to, label, icon: Icon }) => (
                 <LinkButton
                   to={to}

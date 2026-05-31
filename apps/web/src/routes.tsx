@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { lazy } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import RootLayout from "./components/layout/RootLayout";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import AppLayout from "./components/layout/AppLayout";
@@ -19,6 +19,13 @@ const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
+const MaintenancePage = lazy(() => import("./pages/MaintenancePage"));
+
+function MaintenanceGuard() {
+  if (!sessionStorage.getItem("maintenance"))
+    return <Navigate to="/" replace />;
+  return <MaintenancePage />;
+}
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +39,7 @@ export const router = createBrowserRouter([
       { path: "verify-email", Component: VerifyEmailPage },
       { path: "privacy-policy", Component: PrivacyPolicyPage },
       { path: "terms", Component: TermsPage },
+      { path: "maintenance", Component: MaintenanceGuard },
       {
         path: "admin-panel",
         element: (

@@ -26,8 +26,29 @@ export const userHobbyService = {
     return res.data;
   },
 
-  async update(id: number, data: UpdateUserHobbyDto) {
-    const res = await api.patch<UserHobbyEntity>(`${serviceRoute}/${id}`, data);
+  async update(id: number, data: UpdateUserHobbyDto, file?: File) {
+    const form = new FormData();
+
+    (
+      Object.entries(data) as [
+        keyof UpdateUserHobbyDto,
+        UpdateUserHobbyDto[keyof UpdateUserHobbyDto],
+      ][]
+    ).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
+
+      form.append(key, String(value));
+    });
+
+    if (file) form.append("image", file);
+
+    const res = await api.patch<UserHobbyEntity>(
+      `${serviceRoute}/${id}`,
+      form,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
     return res.data;
   },
 

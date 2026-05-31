@@ -43,7 +43,7 @@ function DashboardPage() {
     userEntries.find((e) => e.id === selectedEntryId) ?? null;
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10">
+    <div className="mx-auto max-w-7xl px-3 py-10 md:px-6">
       {/* Header */}
       <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
         {/* Right side */}
@@ -59,19 +59,31 @@ function DashboardPage() {
         </div>
 
         {/* Left side */}
-        {userHobbies.length !== 0 && (
-          <div className="flex gap-4">
-            <Button
-              variant="gradient"
-              shape="pill"
-              onClick={() => setIsLogEntryOpen(true)}
-              disabled={userHobbies.length === 0}
-            >
-              <Plus size={16} />
-              New Entry
-            </Button>
-          </div>
-        )}
+        <div className="flex gap-4">
+          {userHobbies.length !== 0 && (
+            <div className="flex gap-4">
+              <Button
+                variant="gradient"
+                shape="pill"
+                onClick={() => setIsLogEntryOpen(true)}
+                disabled={userHobbies.length === 0}
+              >
+                <Plus size={16} />
+                New entry
+              </Button>
+
+              <Button
+                variant="gradient"
+                shape="pill"
+                onClick={() => setIsAddHobbyOpen(true)}
+                className="md:hidden"
+              >
+                <Plus size={16} />
+                Add a hobby
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       <section>
@@ -98,12 +110,12 @@ function DashboardPage() {
                 key={data.id}
                 data={data}
                 enableOptions
-                className="size-56 shrink-0"
-                onUpdate={(id, backgroundImage) =>
-                  updateUserHobby(id, {
-                    backgroundImage: backgroundImage ?? undefined,
-                  })
-                }
+                className="size-28 shrink-0 md:size-56"
+                onUpdate={(id, file, clearImage) => {
+                  if (file) return updateUserHobby(id, {}, file);
+                  if (clearImage) return updateUserHobby(id, { backgroundImage: "" });
+                  return Promise.resolve();
+                }}
                 onDelete={async (id) => {
                   await removeUserHobby(id);
                   refreshEntries();
@@ -112,7 +124,7 @@ function DashboardPage() {
             ))}
             <button
               onClick={() => setIsAddHobbyOpen(true)}
-              className="border-border bg-background text-muted-foreground hover:border-primary flex size-56 shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-4 border-dashed"
+              className="border-border bg-background text-muted-foreground hover:border-primary flex size-28 shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-4 border-dashed md:size-56"
             >
               <div className="bg-muted flex size-12 items-center justify-center rounded-2xl">
                 <Plus size={20} />
@@ -132,26 +144,46 @@ function DashboardPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {userEntries.map((data) => (
-              <EntryCard
-                key={data.id}
-                data={data}
-                dashboard
-                onClick={() => setSelectedEntryId(data.id)}
-              />
-            ))}
-          </div>
+          {userEntries.length !== 0 ? (
+            <>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {userEntries.map((data) => (
+                  <EntryCard
+                    key={data.id}
+                    data={data}
+                    dashboard
+                    onClick={() => setSelectedEntryId(data.id)}
+                  />
+                ))}
+              </div>
 
-          {hasMore && (
-            <div className="mt-6 flex justify-center">
+              {hasMore && (
+                <div className="mt-6 flex justify-center">
+                  <Button
+                    variant="outline"
+                    shape="pill"
+                    onClick={loadMore}
+                    disabled={isEntriesLoading}
+                  >
+                    {isEntriesLoading ? "Loading..." : "Load more"}
+                  </Button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <span className="mb-4 text-6xl">🧵</span>
+              <h3 className="mb-2 text-2xl">Start logging</h3>
+              <p className="text-muted-foreground mb-6">
+                No entries yet — click bellow to log your first hobby moment ✨
+              </p>
               <Button
-                variant="outline"
+                variant="gradient"
                 shape="pill"
-                onClick={loadMore}
-                disabled={isEntriesLoading}
+                onClick={() => setIsLogEntryOpen(true)}
               >
-                {isEntriesLoading ? "Loading..." : "Load more"}
+                <Plus size={16} />
+                Add your first entry
               </Button>
             </div>
           )}
@@ -169,7 +201,7 @@ function DashboardPage() {
       <AddUserHobbyModal
         open={isAddHobbyOpen}
         onClose={() => setIsAddHobbyOpen(false)}
-        existingHobbyIds={userHobbies.map((userHobby) => userHobby.hobbyId)}
+        userHobbies={userHobbies}
         onAdd={addUserHobby}
       />
 

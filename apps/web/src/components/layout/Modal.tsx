@@ -33,15 +33,15 @@ function Modal({
         <Dialog.Content
           className={cn(
             "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-            "bg-card z-50 rounded-3xl shadow-2xl",
+            "bg-card z-50 shadow-2xl focus:outline-none md:rounded-3xl",
             "w-full max-w-md",
             variant === "default" && "max-h-[90vh] max-w-md",
             className,
           )}
         >
           {/* Header */}
-          <div className="bg-card sticky top-0 z-10 rounded-t-3xl shadow-sm">
-            <div className="from-accent/75 flex shrink-0 items-start justify-between rounded-t-3xl bg-linear-to-br to-transparent p-6">
+          <div className="bg-card sticky top-0 z-10 shadow-sm md:rounded-t-3xl">
+            <div className="from-accent/75 flex shrink-0 items-start justify-between bg-linear-to-br to-transparent p-6 md:rounded-t-3xl">
               <div className="flex items-center gap-3">
                 {icon && (
                   <div className="bg-accent/70 flex size-10 shrink-0 items-center justify-center rounded-2xl text-xl">

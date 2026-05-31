@@ -14,6 +14,7 @@ import { UserFilterDto } from './dto/user-filter.dto';
 import { Prisma, UserStatus } from '../../generated/prisma/client';
 import { CreateGoogleUserDto } from './dto/create-google-user.dto';
 import { GenerateRandomUsername } from './helper/user.helper';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UserService {
@@ -21,6 +22,7 @@ export class UserService {
     private readonly databaseService: DatabaseService,
     private readonly hashService: HashService,
     private readonly cloudinary: CloudinaryService,
+    private readonly mailService: MailService,
   ) {}
 
   async findAll({
@@ -249,6 +251,11 @@ export class UserService {
     const user = await this.databaseService.user.delete({
       where: { id },
       omit: { password: true },
+    });
+
+    await this.mailService.sendAccountDeletedEmail({
+      email: user.email,
+      username: user.username,
     });
 
     return new UserEntity(user);

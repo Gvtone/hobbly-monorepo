@@ -41,10 +41,15 @@ function MainProfileCard({
 
   return (
     <>
-      <Card className={cn(className, "flex flex-col p-0 shadow-lg")}>
+      <Card
+        className={cn(
+          className,
+          "flex flex-col p-0 shadow-lg max-md:rounded-none",
+        )}
+      >
         {/* Profile Cover */}
         <div className="relative h-28">
-          <div className="absolute top-0 right-0 left-0 h-42 overflow-hidden rounded-t-3xl">
+          <div className="absolute top-0 right-0 left-0 h-42 overflow-hidden md:rounded-t-3xl">
             {user?.coverImage && (
               <>
                 <img

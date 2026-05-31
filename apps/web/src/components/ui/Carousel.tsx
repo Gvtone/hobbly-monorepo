@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../../utils/utils";
 
 function Carousel({
@@ -11,7 +11,7 @@ function Carousel({
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   function updateScrollState() {
     const el = scrollRef.current;
@@ -20,10 +20,13 @@ function Carousel({
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
   }
 
+  useLayoutEffect(() => {
+    updateScrollState();
+  });
+
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    updateScrollState();
     el.addEventListener("scroll", updateScrollState);
     return () => el.removeEventListener("scroll", updateScrollState);
   }, []);

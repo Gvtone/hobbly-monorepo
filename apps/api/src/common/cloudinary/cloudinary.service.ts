@@ -1,14 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v2 as cloudinary } from 'cloudinary';
 import { extractPublicIdFromUrl } from './helper/image.helper';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CloudinaryService {
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
     cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
+      cloud_name: this.configService.get('CLOUDINARY_CLOUD_NAME'),
+      api_key: this.configService.get('CLOUDINARY_API_KEY'),
+      api_secret: this.configService.get('CLOUDINARY_API_SECRET'),
       secure: true,
     });
   }
@@ -17,7 +18,7 @@ export class CloudinaryService {
     file: Express.Multer.File,
     folderName: string = '',
   ): Promise<{ secure_url: string; public_id: string }> {
-    if (process.env.NODE_ENV === 'development') {
+    if (this.configService.get('NODE_ENV') === 'development') {
       folderName = `dev/${folderName}`;
     } else {
       folderName = `prod/${folderName}`;
@@ -27,7 +28,7 @@ export class CloudinaryService {
       cloudinary.uploader
         .upload_stream(
           {
-            folder: `${process.env.CLOUDINARY_ROOT_FOLDER_NAME}/${folderName}`,
+            folder: `${this.configService.get('CLOUDINARY_ROOT_FOLDER_NAME')}/${folderName}`,
             transformation: {
               quality: 'auto',
               fetch_format: 'webp',
