@@ -29,15 +29,15 @@ import { EntryFilterDto, PublicEntryFilterDto } from './dto/entry-filter.dto';
 import { PaginatedEntity } from '../../common/entities/paginated.entity';
 import { Public } from '../../common/decorators/public.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Throttle } from '@nestjs/throttler';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @ApiTags('Entry')
 @Controller('entry')
 export class EntryController {
   constructor(private readonly entryService: EntryService) {}
 
-  @Throttle({ default: { ttl: 15 * 60 * 1000, limit: 20 } })
   @Post()
+  @Throttle({ long: { ttl: 15 * 60 * 1000, limit: 20 } })
   @ApiOperation({ summary: 'Creates new entry under a user hobby' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateEntryDto })
@@ -52,6 +52,7 @@ export class EntryController {
 
   @Public()
   @Get('public')
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch all entries' })
   @ApiOkResponse({
     description: 'Fetch successful',
@@ -67,6 +68,7 @@ export class EntryController {
   }
 
   @Get()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch all entries' })
   @ApiOkResponse({
     description: 'Fetch successful',

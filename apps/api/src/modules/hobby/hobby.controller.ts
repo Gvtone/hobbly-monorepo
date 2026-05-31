@@ -24,6 +24,7 @@ import { UserRole } from '../../generated/prisma/enums';
 import { HobbyEntity } from './entities/hobby.entity';
 import { HobbyFilterDto } from './dto/hobby-filter.dto';
 import { PaginatedEntity } from '../../common/entities/paginated.entity';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Hobby')
 @Controller('hobby')
@@ -40,6 +41,7 @@ export class HobbyController {
   }
 
   @Get()
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Finds all of existing hobbies' })
   @ApiOkResponse({
     description: 'Fetch successful',
@@ -51,6 +53,7 @@ export class HobbyController {
   }
 
   @Get(':id')
+  @SkipThrottle({ short: true, long: true })
   @ApiOperation({ summary: 'Fetch hobby based on ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Fetch successful', type: HobbyEntity })
