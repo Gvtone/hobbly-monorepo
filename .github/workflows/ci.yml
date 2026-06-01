@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate Prisma client
+        run: npx prisma generate --schema=apps/api/prisma
+
       - name: Lint
         run: npx turbo run lint
 
@@ -37,9 +40,6 @@ jobs:
 
       - name: Build
         run: npx turbo run build
-
-      - name: Generate Prisma client
-        run: npx prisma generate --schema=apps/api/prisma
 
       - name: Test
         run: npx turbo run test
