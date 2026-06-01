@@ -13,15 +13,18 @@ export default defineConfig([
       js.configs.recommended,
       tseslint.configs.recommended,
       reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite
+      reactRefresh.configs.vite,
     ],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
         project: ["./tsconfig.app.json", "./tsconfig.node.json"],
-        tsconfigRootDir: import.meta.dirname
-      }
-    }
-  }
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      "react-hooks/set-state-in-effect": "warn",
+    },
+  },
 ]);
