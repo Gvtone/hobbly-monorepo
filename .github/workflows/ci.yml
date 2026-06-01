@@ -38,6 +38,9 @@ jobs:
       - name: Build
         run: npx turbo run build
 
+      - name: Generate Prisma client
+        run: npx prisma generate --schema=apps/api/prisma
+
       - name: Test
         run: npx turbo run test
         env:
