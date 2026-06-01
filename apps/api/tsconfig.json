@@ -4,7 +4,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
-    "types": ["node", "multer"],
+    "types": ["node", "multer", "jest"],
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
@@ -24,6 +24,6 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src/**/*", "prisma.config.ts"],
+  "include": ["src/**/*", "prisma.config.ts", "jest.config.ts"],
   "exclude": ["node_modules", "dist"]
 }
