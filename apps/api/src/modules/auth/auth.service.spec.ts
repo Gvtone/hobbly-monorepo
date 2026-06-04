@@ -14,6 +14,8 @@ import {
 import { UserEntity } from '../user/entities/user.entity';
 import { TokenType } from '../../generated/prisma/enums';
 import { ConflictException } from '@nestjs/common';
+import { AuthPayloadDto } from './dto/auth.dto';
+import { PayloadEntity } from './entities/payload.entity';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -45,6 +47,96 @@ describe('AuthService', () => {
     expect(service).toBeDefined();
   });
 
+  describe('validateUser', () => {
+    const usernameIdentifierDto: AuthPayloadDto = {
+      identifier: 'testuser',
+      password: 'Testpassword123!',
+    };
+
+    const emailIdentifierDto: AuthPayloadDto = {
+      identifier: 'test@test.com',
+      password: 'Testpassword123!',
+    };
+
+    const mockFoundUser: UserEntity = {
+      id: 1,
+      email: 'test@test.com',
+      username: 'testuser',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: undefined,
+      displayName: '',
+      googleId: '',
+      password: '',
+      profilePicture: '',
+      coverImage: '',
+      bio: '',
+      role: 'HOBBYIST',
+      visibility: 'PRIVATE',
+      status: 'ACTIVE',
+    };
+
+    const mockPayload: PayloadEntity = {
+      sub: 1,
+      displayName: '',
+      username: 'testuser',
+      email: 'test@test.com',
+      role: 'HOBBYIST',
+      visibility: 'PRIVATE',
+      status: 'ACTIVE',
+      type: 'ACCESS',
+    };
+
+    beforeEach(() => {
+      mockUserService.findUserByEmail = jest
+        .fn()
+        .mockResolvedValue(mockFoundUser);
+
+      mockUserService.findUserByUsername = jest
+        .fn()
+        .mockResolvedValue(mockFoundUser);
+
+      mockHashService.comparePassword = jest.fn().mockResolvedValue(true);
+    });
+
+    it('should call service.validateUser with the provided DTO with email as identifier', async () => {
+      await service.validateUser(emailIdentifierDto);
+
+      expect(mockUserService.findUserByEmail).toHaveBeenCalledWith(
+        emailIdentifierDto.identifier,
+      );
+      expect(mockUserService.findUserByUsername).not.toHaveBeenCalled();
+    });
+
+    it('should call service.validateUser with the provided DTO with username as identifier', async () => {
+      await service.validateUser(usernameIdentifierDto);
+
+      expect(mockUserService.findUserByUsername).toHaveBeenCalledWith(
+        usernameIdentifierDto.identifier,
+      );
+      expect(mockUserService.findUserByEmail).not.toHaveBeenCalled();
+    });
+
+    it('should return the payload when user and passwords match', async () => {
+      const payload = await service.validateUser(usernameIdentifierDto);
+
+      expect(payload).toEqual(mockPayload);
+    });
+
+    it('should return null when user is not found', async () => {
+      mockUserService.findUserByEmail = jest.fn().mockResolvedValue(null);
+
+      expect(await service.validateUser(emailIdentifierDto)).toBe(null);
+    });
+
+    it('should return null when password does not match', async () => {
+      mockHashService.comparePassword = jest.fn().mockResolvedValue(false);
+
+      expect(await service.validateUser(emailIdentifierDto)).toBe(null);
+    });
+  });
+
+  // Register
   describe('register', () => {
     const createUserDto: CreateUserDto = {
       email: 'test@test.com',
