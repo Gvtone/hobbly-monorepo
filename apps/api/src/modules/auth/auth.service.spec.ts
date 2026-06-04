@@ -220,4 +220,139 @@ describe('AuthService', () => {
       expect(mockMailService.sendVerificationEmail).not.toHaveBeenCalled();
     });
   });
+
+  describe('forgot', () => {
+    const mockFoundUser: UserEntity = {
+      id: 1,
+      email: 'test@test.com',
+      username: 'testuser',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: undefined,
+      displayName: '',
+      googleId: '',
+      password: '',
+      profilePicture: '',
+      coverImage: '',
+      bio: '',
+      role: 'HOBBYIST',
+      visibility: 'PRIVATE',
+      status: 'VERIFY',
+    };
+
+    const mockExistingToken = {
+      id: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      token: '7012db91b57b3708729fce23aa63c1f8435f9ec783290bd5d99c8d5fd4e1f94b',
+      type: TokenType.PASSWORD_RESET,
+      expiresAt: new Date(),
+      userId: mockFoundUser.id,
+    };
+
+    const mockNewToken =
+      '0458db91b57b3708729fce23aa63c1f8435f9ec783290bd5d99c8d5fd4e1j37s';
+
+    const mockNewTokenDto = {
+      userId: mockFoundUser.id,
+      type: TokenType.PASSWORD_RESET,
+      expiresAt: expect.any(Date),
+    };
+
+    const mockSendForgotEmailDto = {
+      to: mockFoundUser.email,
+      username: mockFoundUser.username,
+      token: mockNewToken,
+    };
+
+    const mockEmailResult: GenericOutputEntity = {
+      status: GenericOutputStatus.SUCCESS,
+      message: 'Forgot Password email sent',
+    };
+
+    beforeEach(() => {
+      mockUserService.findUserByEmail = jest
+        .fn()
+        .mockResolvedValue(mockFoundUser);
+
+      mockTokenService.findTokenByUserId = jest
+        .fn()
+        .mockResolvedValue(mockExistingToken);
+
+      mockTokenService.deleteToken = jest
+        .fn()
+        .mockResolvedValue(mockExistingToken);
+
+      mockTokenService.generateToken = jest
+        .fn()
+        .mockResolvedValue(mockNewToken);
+
+      mockMailService.sendForgotPasswordEmail = jest
+        .fn()
+        .mockResolvedValue(mockEmailResult);
+    });
+
+    it('should call userService.findUserByEmail with an email', async () => {
+      await service.forgot(mockFoundUser.email);
+
+      expect(mockUserService.findUserByEmail).toHaveBeenCalledWith(
+        mockFoundUser.email,
+      );
+    });
+
+    it('should call tokenService.findTokenByUserId with the user ID and PASSWORD_RESET as token type', async () => {
+      await service.forgot(mockFoundUser.email);
+
+      expect(mockTokenService.findTokenByUserId).toHaveBeenCalledWith(
+        mockFoundUser.id,
+        TokenType.PASSWORD_RESET,
+      );
+    });
+
+    it('should call tokenService.deleteToken if token exist', async () => {
+      await service.forgot(mockFoundUser.email);
+
+      expect(mockTokenService.deleteToken).toHaveBeenCalledWith(
+        mockExistingToken.id,
+      );
+    });
+
+    it('should call tokenService.generateToken with userId, type, and expiresAt', async () => {
+      await service.forgot(mockFoundUser.email);
+
+      expect(mockTokenService.generateToken).toHaveBeenCalledWith(
+        mockNewTokenDto,
+      );
+    });
+
+    it('should call mailService.sendForgotPasswordEmail with to, username, and token', async () => {
+      await service.forgot(mockFoundUser.email);
+
+      expect(mockMailService.sendForgotPasswordEmail).toHaveBeenCalledWith(
+        mockSendForgotEmailDto,
+      );
+    });
+
+    it('should return the result of mailService.sendForgotPasswordEmail', async () => {
+      const result = await service.forgot(mockFoundUser.email);
+
+      expect(result).toEqual(mockEmailResult);
+    });
+
+    it('should not call tokenService.deleteToken when token does not exist', async () => {
+      mockTokenService.findTokenByUserId = jest.fn().mockResolvedValue(null);
+      await service.forgot(mockFoundUser.email);
+
+      expect(mockTokenService.deleteToken).not.toHaveBeenCalled();
+    });
+
+    it('should throw when user is not found', async () => {
+      mockUserService.findUserByEmail = jest.fn().mockResolvedValue(null);
+
+      await expect(service.forgot(mockFoundUser.email)).rejects.toThrow();
+      expect(mockTokenService.findTokenByUserId).not.toHaveBeenCalled();
+      expect(mockTokenService.generateToken).not.toHaveBeenCalled();
+      expect(mockMailService.sendForgotPasswordEmail).not.toHaveBeenCalled();
+    });
+  });
 });
