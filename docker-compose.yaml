@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   api:
     build:
@@ -9,34 +7,18 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: production
-      MAINTENANCE_MODE: ${MAINTENANCE_MODE}
-      DISABLE_SIGNUPS: ${DISABLE_SIGNUPS}
-      CLIENT_URL: ${CLIENT_URL}
-      DATABASE_URL: ${DATABASE_URL}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_ACCESS_TOKEN_EXPIRATION: ${JWT_ACCESS_TOKEN_EXPIRATION}
-      JWT_REFRESH_TOKEN_EXPIRATION: ${JWT_REFRESH_TOKEN_EXPIRATION}
-      PORT: ${PORT}
-      RESEND_API_KEY: ${RESEND_API_KEY}
-      MAILER_FROM_NAME: ${MAILER_FROM_NAME}
-      MAILER_FROM_EMAIL: ${MAILER_FROM_EMAIL}
-      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
-      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
-      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
-      CLOUDINARY_ROOT_FOLDER_NAME: ${CLOUDINARY_ROOT_FOLDER_NAME}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL}
     env_file:
-      - .env
+      - ./apps/api/.env
   web:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
       args:
-        VITE_NODE_ENV: ${VITE_NODE_ENV}
-        VITE_API_URL: ${VITE_API_URL}
+        VITE_NODE_ENV: production
+        VITE_API_URL: ""
     ports:
-      - "5173:5173"
+      - "5173:80"
     depends_on:
       - api
+    env_file:
+      - ./apps/web/.env
