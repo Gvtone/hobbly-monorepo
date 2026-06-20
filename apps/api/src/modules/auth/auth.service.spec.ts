@@ -365,9 +365,13 @@ describe('AuthService', () => {
   });
 
   describe('logout', () => {
-    const mockResponse = {
-      clearCookie: jest.fn(),
-    };
+    let mockResponse: { clearCookie: jest.Mock };
+
+    beforeEach(() => {
+      mockResponse = {
+        clearCookie: jest.fn(),
+      };
+    });
 
     it('should clear access_token and refresh_token cookies', async () => {
       await service.logout(mockResponse as unknown as Response);
@@ -393,10 +397,12 @@ describe('AuthService', () => {
       type: 'ACCESS',
     };
 
-    const mockResponse = { cookie: jest.fn() };
-    const mockRequest = { user: mockPayload };
+    let mockResponse: { cookie: jest.Mock };
+    let mockRequest: { user: PayloadEntity };
 
     beforeEach(() => {
+      mockResponse = { cookie: jest.fn() };
+      mockRequest = { user: mockPayload };
       mockConfigService.get = jest.fn().mockImplementation((key: string) => {
         if (key === 'JWT_ACCESS_TOKEN_EXPIRATION') return '15m';
         if (key === 'JWT_REFRESH_TOKEN_EXPIRATION') return '7d';
@@ -680,10 +686,12 @@ describe('AuthService', () => {
       displayName: '',
     };
 
-    const mockResponse = { cookie: jest.fn(), clearCookie: jest.fn() };
-    const mockRequest = { cookies: { refresh_token: 'valid-refresh-token' } };
+    let mockResponse: { cookie: jest.Mock; clearCookie: jest.Mock };
+    let mockRequest: { cookies: { refresh_token: string } };
 
     beforeEach(() => {
+      mockResponse = { cookie: jest.fn(), clearCookie: jest.fn() };
+      mockRequest = { cookies: { refresh_token: 'valid-refresh-token' } };
       mockJwtService.verify = jest.fn().mockReturnValue(mockRefreshPayload);
       mockConfigService.get = jest.fn().mockImplementation((key: string) => {
         if (key === 'JWT_SECRET') return 'secret';
