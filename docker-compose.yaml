@@ -1,0 +1,24 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    env_file:
+      - ./apps/api/.env
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_NODE_ENV: production
+        VITE_API_URL: ""
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+    env_file:
+      - ./apps/web/.env

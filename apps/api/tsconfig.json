@@ -4,7 +4,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
-    "types": ["node", "multer"],
+    "types": ["node", "multer", "jest"],
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
