@@ -44,21 +44,23 @@ describe('CommentService', () => {
     beforeEach(() => {
       mockUserService.findUserById = jest.fn().mockResolvedValue(mockUser);
       mockEntryService.findById = jest.fn().mockResolvedValue(mockEntry);
-      mockDatabaseService.comment.create = jest.fn().mockResolvedValue(mockComment);
+      mockDatabaseService.comment.create = jest
+        .fn()
+        .mockResolvedValue(mockComment);
     });
 
     it('should throw UnauthorizedException when user not found', async () => {
       mockUserService.findUserById = jest.fn().mockResolvedValue(null);
-      await expect(
-        service.create(1, 5, { content: 'Nice!' }),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.create(1, 5, { content: 'Nice!' })).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('should throw NotFoundException when entry not found', async () => {
       mockEntryService.findById = jest.fn().mockResolvedValue(null);
-      await expect(
-        service.create(1, 5, { content: 'Nice!' }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.create(1, 5, { content: 'Nice!' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should call databaseService.comment.create with userId, entryId, content', async () => {
@@ -96,7 +98,9 @@ describe('CommentService', () => {
 
   describe('delete', () => {
     beforeEach(() => {
-      mockDatabaseService.comment.delete = jest.fn().mockResolvedValue(mockComment);
+      mockDatabaseService.comment.delete = jest
+        .fn()
+        .mockResolvedValue(mockComment);
     });
 
     it('should call databaseService.comment.delete with entryId and id scoping', async () => {

@@ -46,13 +46,29 @@ describe('HobbyService', () => {
     });
 
     it('should call databaseService.hobby.create with the dto', async () => {
-      const dto = { name: 'Reading', description: 'Read books', icon: '📚', color: '#fff', category: 'ARTS' as any, status: 'ACTIVE' as any };
+      const dto = {
+        name: 'Reading',
+        description: 'Read books',
+        icon: '📚',
+        color: '#fff',
+        category: 'ARTS' as any,
+        status: 'ACTIVE' as any,
+      };
       await service.create(dto);
-      expect(mockDatabaseService.hobby.create).toHaveBeenCalledWith({ data: dto });
+      expect(mockDatabaseService.hobby.create).toHaveBeenCalledWith({
+        data: dto,
+      });
     });
 
     it('should return the created hobby', async () => {
-      const dto = { name: 'Reading', description: 'Read books', icon: '📚', color: '#fff', category: 'ARTS' as any, status: 'ACTIVE' as any };
+      const dto = {
+        name: 'Reading',
+        description: 'Read books',
+        icon: '📚',
+        color: '#fff',
+        category: 'ARTS' as any,
+        status: 'ACTIVE' as any,
+      };
       const result = await service.create(dto);
       expect(result).toEqual(mockHobby);
     });
@@ -60,7 +76,9 @@ describe('HobbyService', () => {
 
   describe('findById', () => {
     beforeEach(() => {
-      mockDatabaseService.hobby.findFirst = jest.fn().mockResolvedValue(mockHobby);
+      mockDatabaseService.hobby.findFirst = jest
+        .fn()
+        .mockResolvedValue(mockHobby);
     });
 
     it('should call databaseService.hobby.findFirst with the id', async () => {
