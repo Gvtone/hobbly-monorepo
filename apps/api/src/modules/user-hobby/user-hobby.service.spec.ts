@@ -26,6 +26,7 @@ describe('UserHobbyService', () => {
   const mockCloudinary: Partial<CloudinaryService> = {};
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserHobbyService,
