@@ -27,6 +27,7 @@ describe('ProfileShareService', () => {
   const mockHashService: Partial<HashService> = {};
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProfileShareService,
