@@ -1,10 +1,10 @@
-FROM node:22-alpine AS builder
+FROM node:26-alpine AS builder
 RUN npm install -g turbo
 WORKDIR /app
 COPY . .
 RUN turbo prune @hobbies-dashboard/api --docker
 
-FROM node:22-alpine AS installer
+FROM node:26-alpine AS installer
 WORKDIR /app
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
@@ -13,7 +13,7 @@ COPY --from=builder /app/out/full/ .
 RUN npx prisma generate --schema=apps/api/prisma
 RUN npx turbo run build --filter=@hobbies-dashboard/api
 
-FROM node:22-alpine AS runner
+FROM node:26-alpine AS runner
 WORKDIR /app
 COPY --from=installer /app/apps/api/dist ./dist
 COPY --from=installer /app/apps/api/package.json .

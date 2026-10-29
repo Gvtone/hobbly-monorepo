@@ -1,10 +1,10 @@
-FROM node:22-alpine AS builder
+FROM node:26-alpine AS builder
 RUN npm i -g turbo
 WORKDIR /app
 COPY . .
 RUN turbo prune @hobbies-dashboard/web --docker
 
-FROM node:22-alpine AS installer
+FROM node:26-alpine AS installer
 WORKDIR /app
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
